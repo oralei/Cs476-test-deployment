@@ -8,8 +8,7 @@ Purpose:It is used connect django with home html file through an http request
 
 """
 def studentHome(request):  
-    return render(request, 'StudentHomePage.html')
-
+    return render(request, 'StudentHomePage/templates/StudentHomePage.html')
 """
 Name Function: Calender
 type: Function 
@@ -46,4 +45,4 @@ Purpose:It is used connect django with Calender Tasks file through an http reque
 
 """
 def Courses(request):  
-    return render(request, 'Courses.html')
+    return render(request, 'Courses/templates/Courses.html')

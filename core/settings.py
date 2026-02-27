@@ -64,6 +64,24 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         # DIRS tells Django to look for a root 'templates' folder for your Sidebar/Base
         'DIRS': [
+            #Users App Connection Logic:
+            os.path.join(BASE_DIR, 'users/MainHome/templates'),
+            os.path.join(BASE_DIR, 'users/TeacherRegistration/templates'),
+            os.path.join(BASE_DIR, 'users/StudentRegistration/templates'),
+            os.path.join(BASE_DIR, 'users/SignInPage/templates'),
+
+            # Student App templates (This is likely where BaseStudent.html lives)
+            os.path.join(BASE_DIR, 'students/BaseStudent/templates'), 
+            os.path.join(BASE_DIR, 'students/features'),
+
+            # Teacher App templates
+            os.path.join(BASE_DIR, 'teachers/BaseTeacher/templates'),
+            os.path.join(BASE_DIR, 'teachers/features'),
+
+
+
+
+            """
             BASE_DIR / 'users' / 'TeacherRegistration' / 'templates',
             BASE_DIR / 'users' / 'StudentRegistration' / 'templates',
             BASE_DIR / 'users' / 'SignInPage' / 'templates',
@@ -78,6 +96,7 @@ TEMPLATES = [
             BASE_DIR / 'teachers' / 'BaseTeacher'/ 'templates',
             BASE_DIR / 'teachers' / 'features' / 'TeacherHomePage' / 'templates',
             BASE_DIR / 'teachers' / 'features' / 'Create_Task' / 'templates',
+            """
             ], 
         'APP_DIRS': True, # This allows Django to find students/features/Calender/templates
         'OPTIONS': {
@@ -98,7 +117,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 #Added by Sam: MongoDB conFiguration code takes uri from the env file
 # --- DATABASE SECTION ---
 
-AUTH_USER_MODEL = 'users.CustomUser'
+AUTH_USER_MODEL = 'users.CustomUser' ####
 
 DATABASES = {
     'default': {
@@ -176,10 +195,10 @@ USE_I18N = True
 USE_TZ = True
 
 # Where to go after a successful manual login if no 'next' parameter is present
-LOGIN_REDIRECT_URL = 'teacher_home' 
+###LOGIN_REDIRECT_URL = 'teacher_home' 
 
 # Where the login page lives
-LOGIN_URL = 'signin_page_view'
+##LOGIN_URL = 'signin_page_view'
 
 
 

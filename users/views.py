@@ -209,6 +209,7 @@ def teacher_register_view(request):
 
     return render(request, 'TeacherRegistration.html')
 
+"""Added By Mark: For redirecs """
 
 class CustomLoginView(LoginView):
     template_name = 'StudentHomePage.html'
@@ -224,7 +225,7 @@ class CustomLoginView(LoginView):
         #  this check for the teacher profile
         elif hasattr(user, 'teachers_teacher_profile'):
             # The user has a teacher profile, redirect them
-            return reverse_lazy('teacher_home') # Note: Replace with 'teacher-dashboard' when ready
+            return reverse_lazy('teacher_home') 
         
         # Fallback for other users (like superusers without profiles)
         else:

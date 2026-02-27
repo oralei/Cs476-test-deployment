@@ -4,15 +4,14 @@ from django_mongodb_backend.fields import ObjectIdAutoField
 
 class Teacher(MentoraBaseUser):
     id = ObjectIdAutoField(primary_key=True)
-    student_id = models.CharField(max_length=50)
+    license_number = models.CharField(max_length=50)
+    specialization = models.CharField(max_length=100)
     
-    # This MUST be indented exactly like the fields above
     class Meta:
-        db_table = 'users_teacher'
-        indexes = [
-            models.Index(fields=['student_id']),
-            models.Index(fields=['user']),
-        ]
+        db_table = 'users_teacher'  # Custom collection name
+    
+    def __str__(self):
+        return f"{self.full_name} (Teacher)"
 """class Teacher(models.Model):
 
     user = models.OneToOneField(
