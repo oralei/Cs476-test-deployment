@@ -38,9 +38,9 @@ Name Function: Create_Task
 type: Function 
 Purpose: Connects to the Task creation feature
 """
-def Create_Task(request):  
+def Create_Courses(request):  
     # Looks in teachers/features/Create_Task/templates/Create_Task/Create_Task.html
-    return render(request, 'Create_Task/Create_Task.html')
+    return render(request, 'Create_Courses/templates/Create_Courses.html')
 
 """
 Name Function: Meeting
