@@ -15,8 +15,8 @@ type: Function
 Purpose:It is used connect django with Calender html file through an http request
 
 """
-def Calender(request):  
-    return render(request, '\Home\templates\Calender.html')
+def Calendar(request):  
+    return render(request, 'Calendar/templates/Calendar.html')
 
 """
 Name Function: Mentor
@@ -25,7 +25,7 @@ Purpose:It is used connect django with Calender Mentor file through an http requ
 
 """
 def Mentor(request):  
-    return render(request, '\Mentors\templates\Mentor.html')
+    return render(request, 'Mentors/templates/Mentor.html')
 
 
 """
@@ -35,7 +35,7 @@ Purpose:It is used connect django with Calender Skills file through an http requ
 
 """
 def Progress(request):  
-    return render(request, '\Progess\templates\Progess.html')
+    return render(request, 'Progess/templates/Progess.html')
 
 
 """
