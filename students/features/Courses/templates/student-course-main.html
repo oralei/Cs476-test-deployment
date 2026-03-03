@@ -1,0 +1,34 @@
+{% extends 'BaseStudent.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/StudentHomePage.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="main-content">
+  <h1>{{ course.title }}</h1>
+  <h4 class="text-muted">Teacher: {{ course.teacher.full_name }}</h4>
+  
+  <div class="card mt-4 p-4">
+      <h3>Course Description</h3>
+      <p>{{ course.description }}</p>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="mt-4 d-flex justify-content-between align-items-center">
+      <!-- Back Button -->
+      <a href="{% url 'my-courses' %}" class="btn btn-secondary">Back to My Courses</a>
+      
+      <!-- Leave Course Button Form -->
+      <form method="POST" action="{% url 'leave-course' course.id %}" onsubmit="return confirm('Are you sure you want to leave {{ course.title|escapejs }}?');">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Leave Course</button>
+      </form>
+  </div>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

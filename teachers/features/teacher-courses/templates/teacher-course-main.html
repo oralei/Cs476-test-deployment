@@ -2,7 +2,8 @@
 {% load static %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/TeacherHomePage.css' %}">
+    <title>Mentora - Course Name Here</title>
+    <link rel="stylesheet" href="{% static 'css/TeacherHomePage.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -14,6 +15,16 @@
       <h3>Course Details</h3>
       <p><strong>Description:</strong> {{ course.description }}</p>
       <p><strong>Max Students Allowed:</strong> {{ course.max_students }}</p>
+  </div>
+  <div class="card mt-4 p-4">
+      <h3>Enrolled Students ({{ course.students.count }} / {{ course.max_students }})</h3>
+      <ul class="list-group">
+          {% for student in course.students.all %}
+              <li class="list-group-item">{{ student.full_name }}</li>
+          {% empty %}
+              <li class="list-group-item text-muted">No students enrolled yet.</li>
+          {% endfor %}
+      </ul>
   </div>
 
   <div class="mt-4">
