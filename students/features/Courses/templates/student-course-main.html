@@ -17,10 +17,12 @@
 
   <!-- Action Buttons -->
   <div class="mt-4 d-flex justify-content-between align-items-center">
-      <!-- Back Button -->
+      <!-- Retrun to My Courses page Button -->
       <a href="{% url 'my-courses' %}" class="btn btn-secondary">Back to My Courses</a>
       
-      <!-- Leave Course Button Form -->
+      <!-- Leave Course Button Form 
+       Note from Mark: I'd suggest adding a "Are you sure?" part if you click the button in the future.
+      -->
       <form method="POST" action="{% url 'leave-course' course.id %}" onsubmit="return confirm('Are you sure you want to leave {{ course.title|escapejs }}?');">
           {% csrf_token %}
           <button type="submit" class="btn btn-danger">Leave Course</button>

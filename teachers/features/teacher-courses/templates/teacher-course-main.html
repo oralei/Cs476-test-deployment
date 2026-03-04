@@ -10,7 +10,6 @@
 <main class="main-content">
   <!-- Display Course Data -->
   <h1>{{ course.title }}</h1>
-  
   <div class="card mt-4 p-4">
       <h3>Course Details</h3>
       <p><strong>Description:</strong> {{ course.description }}</p>
@@ -50,23 +49,12 @@
   </div>
 
   <div class="mt-4">
-      <!-- Back Button -->
+      <!-- Back Button to go to Course List page -->
       <a href="{% url 'teacher-course-list' %}" class="btn btn-secondary">Back to Courses</a>
   </div>
 </main>
 {% endblock %} 
 
 {% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    let currentSlide = 0;
-    function moveSlide(direction) {
-        const wrapper = document.getElementById('feedbackWrapper');
-        if (wrapper) {
-            const totalSlides = wrapper.children.length;
-            currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
-            wrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
-        }
-    }
-</script>
+
 {% endblock %}

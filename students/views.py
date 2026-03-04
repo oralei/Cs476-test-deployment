@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from courses.models import Course, Task, TaskSubmission
+from functools import wraps
 import cloudinary.uploader  # For task submission
 
 # Create your views here.
@@ -31,25 +32,25 @@ def Progress(request):
 """ ------------------------------ Student Courses Views/Functions ------------------------------ """
 # Note: Below are all the Course related functionality on the student's side.
 
-# Helper function to check auth and get the student profile. This is reused throughout the views.
-def get_student_profile(user):
-    if not getattr(user, 'is_student', False):
-        return None
-    try:
-        # Assuming this is your related name based on previous examples
-        return user.students_student_profile 
-    except AttributeError:
-        return None
+# Added by Mark: Helper function to check the student profile. 
+# This is reused throughout all the views by adding @student_required just like @login_required
+def student_required(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_student:
+            return HttpResponseForbidden("You must be logged in as a student.")
+        request.student_profile = request.user.students_student_profile
+        return view_func(request, *args, **kwargs)
+    return wrapper
 
 """
 Added by Mark: Course Browser Page
 Notes: A page for seeing all available courses and allows a student to enroll into it.
 """
 @login_required
+@student_required
 def courseBrowser(request):
-    student = get_student_profile(request.user)
-    if not student:
-        return HttpResponseForbidden("You must be logged in as a student.")
+    student = request.student_profile
 
     courses = Course.objects.all()
     context = {
@@ -62,17 +63,16 @@ def courseBrowser(request):
 Added by Mark: A function to link the current student to the course they clicked enroll onto.
 """
 @login_required
+@student_required
 def joinCourse(request, course_id):
-    student = get_student_profile(request.user)
-    if not student:
-        return HttpResponseForbidden("You must be logged in as a student.")
+    student = request.student_profile
 
     if request.method == "POST":
         course = get_object_or_404(Course, id=course_id)
         
-        # Check if course is not full
+        # Check if course is not full using simple if
         if course.students.count() < course.max_students:
-            course.students.add(student) # Adds the student to the ManyToMany field!
+            course.students.add(student) # Adds the student to the ManyToMany field in Course model (object)
         
         return redirect('my-courses')
     
@@ -83,13 +83,12 @@ Added by Mark: Student Course List Page
 Notes: Shows all currently enrolled courses for the logged in student. Can lead to a specific Course Main page.
 """
 @login_required
+@student_required
 def myCourses(request):
-    student = get_student_profile(request.user)
-    if not student:
-        return HttpResponseForbidden("You must be logged in as a student.")
+    student = request.student_profile
 
-    # Only get courses where THIS student is in the 'students' ManyToMany list
-    courses = student.enrolled_courses.all()
+    # Only get courses where Tthe current student is in the 'students' ManyToMany list
+    courses = student.enrolled_courses.all() # Note: enrolled_courses is a related_name in the Courses model, see courses/models.py
     
     context = {'courses': courses}
     return render(request, 'Courses/templates/my-courses.html', context)
@@ -99,12 +98,13 @@ Added by Mark: Course Page
 Notes: Student mirror of a Course Details page. 
 """
 @login_required
+@student_required
 def studentCourseMain(request, course_id):
-    student = get_student_profile(request.user)
-    if not student:
-        return HttpResponseForbidden("You must be logged in as a student.")
+    student = request.student_profile
 
-    # get_object_or_404 ensures the student is actually enrolled in this specific course!
+    # "get_object_or_404" is a Django function that retrieves a single object from a database 
+    # and if the object does not exist, raises an Http404 exception. 
+    # It's used everytime we need to load a page using a specific id (course, task, ubmission, feedback)
     course = get_object_or_404(Course, id=course_id, students=student)
     
     context = {'course': course}
@@ -114,10 +114,9 @@ def studentCourseMain(request, course_id):
 Added by Mark: Function that removes currently logged in student from a specific course
 """
 @login_required
+@student_required
 def leaveCourse(request, course_id):
-    student = get_student_profile(request.user)
-    if not student:
-        return HttpResponseForbidden("You must be logged in as a student.")
+    student = request.student_profile
 
     if request.method == "POST":
         # get_object_or_404 with students=student ensures they can only leave a course they are actually in
@@ -138,15 +137,14 @@ Added by Mark: Tasks Page
 Notes: Page that displays all the tasks a student has. Can lead to Task Submission page.
 """
 @login_required
+@student_required
 def studentTasks(request):
-    student = get_student_profile(request.user)
-    if not student:
-        return HttpResponseForbidden("You must be logged in as a student.")
+    student = request.student_profile
 
-    # 1. Get all tasks specifically assigned to this student
+    # Get all tasks specifically assigned to this student
     tasks = Task.objects.filter(assigned_students=student).order_by('due_date')
 
-    # 2. Package the tasks with their submission status so the HTML can display "Pending" vs "Submitted"
+    # Package the tasks with their submission status so the HTML can display "Pending" vs "Submitted"
     task_data = []
     for t in tasks:
         # Check if a submission already exists for this task + student combination
@@ -165,10 +163,9 @@ Added by Mark: Task Submission Page
 Notes: Page for adding a submission for a specific task. Uses a POST form to upload fields to the database.
 """
 @login_required
+@student_required
 def studentTaskSubmit(request, task_id):
-    student = get_student_profile(request.user)
-    if not student:
-        return HttpResponseForbidden("You must be logged in as a student.")
+    student = request.student_profile
 
     task = get_object_or_404(Task, id=task_id, assigned_students=student)
     submission = TaskSubmission.objects.filter(task=task, student=student).first()

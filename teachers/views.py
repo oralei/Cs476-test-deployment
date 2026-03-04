@@ -3,12 +3,22 @@ from courses.models import Course, Task, TaskSubmission, TaskFeedback
 from teachers.models import Teacher # Import the Teacher model
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
+from functools import wraps
 #from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
-#@login_required
-
+# Added by Mark: Helper function to check teacher profile. 
+# It checks both if the user accessing is a user of type teacher 
+# This is reused throughout most if not all the views.
+def teacher_required(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_teacher:
+            return HttpResponseForbidden("You must be logged in as a teacher.")
+        request.teacher_profile = request.user.teachers_teacher_profile 
+        return view_func(request, *args, **kwargs)
+    return wrapper
 
 """
 Name Function: Home
@@ -20,25 +30,21 @@ def teacherHome(request):
     return render(request, 'TeacherHomePage/templates/TeacherHomePage.html')
 
 
+""" -------------------------- Course Views/Functions ------------------------------"""
 """
 Added by Mark: Course List page
 Notes: Queries the database to obtain all courses under the logged in teacher.
        It passes the queried Courses as an object called "context" to the rendered page.
 """
 @login_required
+@teacher_required
 def teacherCourseList(request):  
-    if not getattr(request.user, 'is_teacher', False):
-        return HttpResponseForbidden("You are not authorized. Please log in with a teacher account.")
-
-    try:
-        current_teacher = request.user.teachers_teacher_profile
-    except AttributeError:
-        return HttpResponseForbidden("Teacher profile not found.")
-
-    # 1. Grab all courses created by this specific teacher
+    current_teacher = request.teacher_profile
+    
+    # Grab all courses created by the specific teacher
     courses = Course.objects.filter(teacher=current_teacher)
 
-    # 2. Pass those courses to the HTML template in a context dictionary
+    # Pass those courses to the HTML template in a context dictionary
     context = {
         'courses': courses
     }
@@ -51,21 +57,11 @@ Notes: Uses form fields from create-course.html to create a new Course object in
        You likely won't need to change anything here if working on front-end.
 """
 @login_required
+@teacher_required
 def teacherCreateCourse(request):  
-    # 1. Make sure the user is actually a teacher (matching your student example)
-    if not getattr(request.user, 'is_teacher', False):
-        return HttpResponseForbidden("You are not authorized to create courses. Please log in with a teacher account.")
+    current_teacher = request.teacher_profile
 
-    # 2. Get the teacher profile using the same pattern as your student view
-    try:
-        # NOTE: If your users/models.py uses a different related name (like 'teacher_profile'), change it here!
-        # I am guessing it is 'teachers_teacher_profile' based on your student example.
-        current_teacher = request.user.teachers_teacher_profile 
-    except AttributeError:
-        # If the profile doesn't exist, stop them safely instead of crashing
-        return HttpResponseForbidden("Teacher profile not found for this user. Please contact support.")
-
-    # 3. Handle the form submission
+    # Handle the form submission
     if request.method == "POST":
         course_title = request.POST.get('title')
         course_description = request.POST.get('description')
@@ -82,7 +78,7 @@ def teacherCreateCourse(request):
         # Redirect back to the course list
         return redirect('teacher-course-list')
 
-    # 4. If it's just a GET request, render the empty form
+    # If it's just a GET request, render the empty form
     return render(request, 'teacher-courses/templates/create-course.html')
 
 """
@@ -91,17 +87,12 @@ Notes: This view is for obtaining a specific Course object under the current log
        It passes the queried Courses as an object called "context" to the rendered page.
 """
 @login_required
+@teacher_required
 def teacherCourseMain(request, course_id):
-    if not getattr(request.user, 'is_teacher', False):
-        return HttpResponseForbidden("You are not authorized.")
+    current_teacher = request.teacher_profile
 
-    try:
-        current_teacher = request.user.teachers_teacher_profile
-    except AttributeError:
-        return HttpResponseForbidden("Teacher profile not found.")
-
-    # 1. Get the specific course by ID. 
-    # We also pass teacher=current_teacher to ensure they can't view another teacher's course!
+    # Get the specific course by ID. 
+    # Security: We also pass teacher=current_teacher to ensure they can't view another teacher's course!
     course = get_object_or_404(Course, id=course_id, teacher=current_teacher)
 
     # 2. Pass the single course to the HTML template
@@ -129,7 +120,7 @@ def Meeting(request):
     # Looks in teachers/features/Meeting/templates/Meeting/Meeting.html
     return render(request, 'Meeting/templates/Meeting.html')
 
-""" -------------------------- Task Functions ------------------------------"""
+""" -------------------------- Task Views/Functions ------------------------------"""
 
 """
 Added by Mark: Create Task
@@ -137,14 +128,9 @@ Notes: This view uses the data from the POST form in create-task.html to create 
        To note, a single task can be given to multiple students at once which is why it uses a list of student ids.
 """
 @login_required
+@teacher_required
 def Create_Task(request):  
-    if not getattr(request.user, 'is_teacher', False):
-        return HttpResponseForbidden("You are not authorized.")
-    
-    try:
-        current_teacher = request.user.teachers_teacher_profile
-    except AttributeError:
-        return HttpResponseForbidden("Teacher profile not found.")
+    current_teacher = request.teacher_profile
 
     if request.method == "POST":
         course_id = request.POST.get('course')
@@ -185,17 +171,13 @@ def Create_Task(request):
     return render(request, 'tasks/templates/create-task.html', context)
 
 """
-Added by Mark: View Submissions Page
+Added by Mark: View All Submissions Page
 Notes: A page for seeing all the submissions attached to a specific task. Can lead to a Give Feedback Page
 """
 @login_required
+@teacher_required
 def teacherTaskSubmissions(request, task_id):
-    if not getattr(request.user, 'is_teacher', False):
-        return HttpResponseForbidden("You are not authorized.")
-    try:
-        current_teacher = request.user.teachers_teacher_profile
-    except AttributeError:
-        return HttpResponseForbidden("Teacher profile not found.")
+    current_teacher = request.teacher_profile
 
     # Get the task, ensure it belongs to this teacher
     task = get_object_or_404(Task, id=task_id, course__teacher=current_teacher)
@@ -220,13 +202,9 @@ Added by Mark: Give Feedback Page
 Notes: A page for giving feedback on a specific task.
 """
 @login_required
+@teacher_required
 def teacherFeedback(request, submission_id):
-    if not getattr(request.user, 'is_teacher', False):
-        return HttpResponseForbidden("You are not authorized.")
-    try:
-        current_teacher = request.user.teachers_teacher_profile
-    except AttributeError:
-        return HttpResponseForbidden("Teacher profile not found.")
+    current_teacher = request.teacher_profile
 
     # Get the specific submission
     submission = get_object_or_404(TaskSubmission, id=submission_id, task__course__teacher=current_teacher)

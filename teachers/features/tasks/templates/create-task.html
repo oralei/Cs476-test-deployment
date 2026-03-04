@@ -39,7 +39,10 @@
       <div class="row mb-3">
           <div class="col">
               <label class="form-label">Start Date & Time</label>
-              <!-- type="datetime-local" generates a nice calendar/clock popup -->
+              <!-- 
+                type="datetime-local" generates a calendar popup 
+                Note from Mark: This calendar does not work the best in Firefox or Safari.
+              -->
               <input type="datetime-local" name="start_date" class="form-control">
           </div>
           <div class="col">
@@ -48,7 +51,7 @@
           </div>
       </div>
 
-      <!-- Select Students (Populated dynamically by JavaScript) -->
+      <!-- Select Students (dynamic programming from JavaScript) -->
       <div class="mb-4">
           <label for="studentSelect" class="form-label">Assign to Students (Hold CTRL/CMD to select multiple)</label>
           <select name="students" id="studentSelect" class="form-select" multiple style="height: 150px;">
@@ -63,12 +66,13 @@
 {% endblock %} 
 
 {% block extra_js %}
-
-<!-- 1. Django safely translates the Python dictionary into JSON right here -->
+<!-- Note from Mark: This is one of the largest uses of dynamic programming so far. Good example to refer to. 
+                     This can also be moved to it's own static file at some point as well. -->
+<!-- Django translates the Python dictionary into readable JSON -->
 {{ course_students_map|json_script:"course-data" }}
 
 <script>
-    // 2. JavaScript grabs that safely rendered JSON data
+    // JavaScript grabs that safely rendered JSON data
     const courseDataElement = document.getElementById('course-data');
     const courseMap = JSON.parse(courseDataElement.textContent);
     
@@ -91,4 +95,8 @@
         }
     });
 </script>
+{% endblock %}
+
+{% block extra_js %}
+
 {% endblock %}
