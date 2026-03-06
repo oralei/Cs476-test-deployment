@@ -1,0 +1,280 @@
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Layout Component
+ * Last Modified:   2026-02-27
+ * Purpose:         css for hidden invisble elements class
+ *-------------------------------------------------------------------------*/
+
+.hidden-content1{
+  display: none;
+}
+
+.hidden-content1{
+  visibility: hidden;
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Layout Component
+ * Last Modified:   2026-02-27
+ * Purpose:         this section deals with task map nodes and roadmap logic like connector or backgrpund container color
+ *-------------------------------------------------------------------------*/
+#node-display-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+}
+
+
+.skill-node {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    transition: 0.2s ease;
+}
+
+.skill-node:hover {
+    transform: scale(1.1);
+}
+
+.weight-popup {
+    position: absolute;
+    background: white;
+    color: black;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    display: none;
+    z-index: 999;
+    white-space: nowrap;
+    pointer-events: none; /* prevents flicker */
+}
+
+
+.roadmap-node {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    z-index: 2;
+    position: relative; /* moved here instead of repeating */
+}
+
+.roadmap-node.right { 
+    justify-content: flex-end; 
+    padding-right: 15%; 
+}
+
+.roadmap-node.left { 
+    justify-content: flex-start; 
+    padding-left: 15%; 
+}
+
+
+.connector {
+    width: 120px;
+    height: 40px;
+    border-top: 5px dashed rgb(110, 110, 110);
+    margin: -10px auto; 
+    position: relative;
+    z-index: 1;
+}
+
+.start-Node-Connector{
+    transform: rotate(-45deg); 
+    transform-origin: top;
+}
+
+
+.roadmap-node.right + .connector {
+    transform: rotate(-45deg); 
+    transform-origin: top;
+}
+
+.roadmap-node.left + .connector {
+    transform: rotate(45deg);
+    transform-origin: top;
+}
+
+.roadmap-node-container{
+    background-color: rgb(229, 250, 255);
+}
+
+.roadmap-node:hover .weight-popup {
+    display: block;
+    top: -45px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.start-end-node{
+    justify-content: center;
+    margin-left: 90px;
+}
+
+#start-node + .connector,
+#roadmap-body-div + .connector {
+    width: 5px;
+    height: 60px;
+    background: rgb(110, 110, 110);
+    border: dashed none;
+    transform: none;
+    margin: 0 auto; 
+    display: block;
+}
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Layout Component
+ * Last Modified:   2026-02-27
+ * Purpose:     Main course creation card container  hold content for both overview and existing courses css style
+ *-------------------------------------------------------------------------*/
+.course-creation-detail-card {
+    background: white;
+    border-radius: 20px;
+    border: 1px solid #e9ecef;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    overflow: hidden;
+}
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Layout Component
+ * Last Modified:   2026-02-27
+ * Purpose:         (Existing Course Container) this section contains code dealing with existing 
+ *-------------------------------------------------------------------------*/
+.existing-container {
+    background-color: rgb(250, 250, 250);
+}
+
+.existing-container-card {
+    background-color: white;
+    box-shadow: 0 .125rem .25rem rgba(14, 99, 155, 0.075);
+    transition: 0.3s ease;
+}
+
+.existing-container-card:hover {
+    background-color: rgb(247, 251, 253); 
+    box-shadow: 0 1rem 3rem rgba(2, 28, 53, 0.175); 
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Layout Component
+ * Last Modified:   2026-02-27
+ * Purpose:         (Existing Course Container) Main course creation card container css style
+ *-------------------------------------------------------------------------*/
+.tab-scroll-area {
+    overflow-y: auto;
+    padding: 1.5rem;
+    flex-grow: 1;
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Layout Component
+ * Last Modified:   2026-02-27
+ * Purpose:     style gfor the course card
+ *-------------------------------------------------------------------------*/
+.course-card {
+    font-family: Arial, sans-serif;
+    max-width: 550px;
+    padding: 15px;
+}
+
+.checkbox-item {
+    margin-bottom: 10px;
+}
+
+label {
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Layout Component
+ * Last Modified:   2026-02-27
+ * Purpose:         css style code for description input and container diplaying the task
+ *-------------------------------------------------------------------------*/
+.description {
+    margin-top: 15px;
+    color: #333;
+    line-height: 1.4;
+}
+
+#course-description-display {
+    white-space: normal;       
+    word-wrap: break-word;    
+    overflow-wrap: break-word; 
+    max-width: 100%;          
+    line-height: 1.5;         
+}
+/*-------------------------------------------------------------------------*/
+
+
+.submit-btn {
+    width: 100%;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Layout Component
+ * Last Modified:   2026-02-27
+ * Purpose:     this is for scroll bar and container that shows existing courses and tasks
+ *-------------------------------------------------------------------------*/
+
+/*
+
+
+.task-inventory-scroll::-webkit-scrollbar,
+.tab-scroll-area::-webkit-scrollbar {
+    width: 5px;
+}
+
+.task-inventory-scroll::-webkit-scrollbar-thumb,
+.tab-scroll-area::-webkit-scrollbar-thumb {
+    background: #dee2e6;
+    border-radius: 10px;
+}
+
+
+@media (max-width: 991.98px) {
+    .sidebar-container {
+        display: none;
+    }
+    .main-content {
+        margin-left: 0;
+        padding: 100px 20px 40px 20px; 
+
+    .navbar {
+        height: 70px;
+    }
+    .floating-chat { display: none !important; }
+}
+
+@media (min-width: 1200px) {
+    .main-content {
+        padding: 50px 80px;
+    }
+}
+}
