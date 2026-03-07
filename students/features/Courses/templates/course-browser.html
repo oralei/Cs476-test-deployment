@@ -1,0 +1,42 @@
+{% extends 'BaseStudent.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/StudentHomePage.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="main-content">
+  <h1>Browse Available Courses</h1>
+  <div class="row mt-4">
+      {% for course in courses %}
+      <div class="col-md-4 mb-4">
+          <div class="card p-3">
+              <h4>{{ course.title }}</h4>
+              <p class="text-muted">Teacher: {{ course.teacher.full_name }}</p>
+              <p>{{ course.description|truncatewords:15 }}</p>
+              <p><strong>Capacity:</strong> {{ course.students.count }} / {{ course.max_students }}</p>
+
+              <!-- Join Logic -->
+              {% if student in course.students.all %}
+                  <button class="btn btn-secondary" disabled>Already Enrolled</button>
+              {% elif course.students.count >= course.max_students %}
+                  <button class="btn btn-danger" disabled>Course Full</button>
+              {% else %}
+                  <form method="POST" action="{% url 'join-course' course.id %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-success">Join Course</button>
+                  </form>
+              {% endif %}
+          </div>
+      </div>
+      {% empty %}
+          <p>No courses available right now.</p>
+      {% endfor %}
+  </div>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

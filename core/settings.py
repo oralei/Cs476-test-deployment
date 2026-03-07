@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'users', 
     'teachers',
     'students',
+    'courses',
 ]
 
 MIDDLEWARE = [
@@ -115,15 +116,17 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 #Added by Sam: MongoDB conFiguration code takes uri from the env file
+# Edited by Mark: changed order because of race condition?
 # --- DATABASE SECTION ---
 
-AUTH_USER_MODEL = 'users.CustomUser' ####
+# Added by Mark: Testing login sessions and user permissions
+AUTH_USER_MODEL = 'users.CustomUser'
 
 DATABASES = {
     'default': {
         'ENGINE': 'django_mongodb_backend',
-        'HOST': os.getenv('MONGO_URL'),
         'NAME': 'MentoringAppDB',
+        'HOST': os.getenv('MONGO_URL'),
         # DO NOT put DEFAULT_AUTO_FIELD here!
     }
 }
@@ -237,10 +240,10 @@ STATICFILES_DIRS =[
     #Added By Saim Munshi: This is to connect the main base folder to the Teacher Application features in static directory. 
     os.path.join(BASE_DIR, 'teachers/BaseTeacher/static'),
     os.path.join(BASE_DIR, 'teachers/features/Calendar/static'), 
+    os.path.join(BASE_DIR, 'teachers/features/teacher-courses/static'), 
     os.path.join(BASE_DIR, 'teachers/features/TeacherHomePage/static'),
-    os.path.join(BASE_DIR, 'teachers/features/Create_Task/static'), 
+    os.path.join(BASE_DIR, 'teachers/features/tasks/static'), 
     os.path.join(BASE_DIR, 'teachers/features/My_Student/static'), 
-    os.path.join(BASE_DIR, 'teachers/features/Meeting/static'),
     os.path.join(BASE_DIR, 'teachers/features/Setting/static'),
     os.path.join(BASE_DIR, 'teachers/BaseTeacher/static'),
 

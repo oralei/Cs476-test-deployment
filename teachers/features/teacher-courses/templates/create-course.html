@@ -1,0 +1,35 @@
+{% extends 'BaseTeacher.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <title>Mentora - Create a Course</title>
+    <link rel="stylesheet" href="{% static 'css/TeacherHomePage.css' %}">
+{% endblock %}
+
+
+{% block content %}
+<main class="main-content">
+  <h1>Create a Course</h1>
+  <!-- POST form that will be used in teacherCreateCourse() -->
+  <form method="POST" action="{% url 'create-course' %}">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="course-name-input" >Course Name</label>
+      <input type="text" class="form-control" id="course-name-input" name="title" placeholder="My Course" required>
+    </div>
+    <div class="form-group">
+      <label for="course-description-input">Course Description</label>
+      <textarea name="description" class="form-control" id="course-description-input" placeholder="This is my course!" required></textarea>
+    </div>
+    <div class="max-students">
+      <label for="max-students">Max Students</label>
+      <input type="number" name="max_students" id="max-students-input" min="1" max="100" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+</main>
+{% endblock %} 
+
+{% block extra_js %}
+
+{% endblock %}

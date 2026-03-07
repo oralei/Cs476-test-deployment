@@ -5,4 +5,17 @@ urlpatterns = [
     # If you have teacherHome in teachers/views.py:
     path('home/', views.teacherHome, name='teacher_home'),
     path('calendar/', views.Calendar, name='calendar'),
+    path('courses/', views.teacherCourseList, name='teacher-course-list'),
+    path('create-task/', views.Create_Task, name='create-task'),
+    path('courses/create-course', views.teacherCreateCourse, name='create-course'),
+    
+    # Note: This is required for specific course pages
+    path('courses/<str:course_id>/', views.teacherCourseMain, name='teacher-course-main'),
+    
+    # Note: This is required for specific task pages
+    path('tasks/<str:task_id>/submissions/', views.teacherTaskSubmissions, name='teacher-task-submissions'),
+    
+    # Note: This is required for specific feedback pages
+    path('submissions/<str:submission_id>/feedback/', views.teacherFeedback, name='teacher-feedback'),
+    path('calendar/', views.Calendar, name='calendar'),
 ]
