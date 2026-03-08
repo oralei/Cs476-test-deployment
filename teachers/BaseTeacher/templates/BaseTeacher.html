@@ -35,7 +35,7 @@
         </div>
         <div class="offcanvas-body p-3">
             <nav class="nav flex-column nav-pills">
-                <a href="#" class="nav-link active"><i class="bi bi-grid-fill me-3"></i>Dashboard</a>
+                <a href="{% url 'teacher_home' %}"  class="nav-link {% if request.resolver_match.url_name == 'teacher_home' %}active{% endif %}"><i class="bi bi-grid-fill me-3"></i>Dashboard</a>
                 <a href="#" class="nav-link"><i class="bi bi-people me-3"></i>My Students</a>
                 <a href="#" class="nav-link"><i class="bi bi-list-task me-3"></i>Create Tasks</a>
                 <a href="{% url 'calendar' %}" class="nav-link {% if request.resolver_match.url_name == 'calendar' %}active{% endif %}"><i class="bi bi-calendar3 me-3"></i>Calendar</a>
@@ -54,7 +54,7 @@
             </div>
 
             <nav class="nav flex-column nav-pills mb-auto">
-                <a href="{% url 'teacher_home' %}" class="nav-link active">
+                <a href="{% url 'teacher_home' %}" class="nav-link {% if request.resolver_match.url_name == 'teacher_home' %}active{% endif %}">
                     <i class="bi bi-grid-fill"></i> Dashboard
                 </a>
                 <a href="{% url 'teacher-course-list' %}" class="nav-link">
