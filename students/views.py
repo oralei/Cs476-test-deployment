@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from courses.models import Course, Task, TaskSubmission
+from courses.observers import SubmissionSubject, TeacherObserver, StudentObserver
 from functools import wraps
 import cloudinary.uploader  # For task submission
 
@@ -200,13 +201,19 @@ def studentTaskSubmit(request, task_id):
             submission.save()
         else:
             # Create a brand new submission
-            TaskSubmission.objects.create(
+            submission = TaskSubmission.objects.create(
                 task=task,
                 student=student,
                 submission_text=submission_text,
                 file_url=uploaded_file_url,  # Save the secure_url string!
                 status='pending'
             )
+            
+        # Observer Pattern Implementation
+        subject = SubmissionSubject(submission)
+        teacher_observer = TeacherObserver() # Create observer
+        subject.attach(teacher_observer)     # Attach
+        subject.set_state('pending')         # Changes state and notifies
         
         return redirect('student-tasks')
 
@@ -216,4 +223,5 @@ def studentTaskSubmit(request, task_id):
         'task': task,
         'submission': submission
     }
+    
     return render(request, 'tasks/templates/student-task-submit.html', context)

@@ -16,4 +16,7 @@ urlpatterns = [
     
     # Note: This is required for specific feedback pages
     path('submissions/<str:submission_id>/feedback/', views.teacherFeedback, name='teacher-feedback'),
+    
+    # Note: for marking a notification as read
+    path('notifications/read/<str:notification_id>/', views.markNotificationAsRead, name='mark-notification-read'),
 ]

@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from courses.models import Course, Task, TaskSubmission, TaskFeedback
 from teachers.models import Teacher # Import the Teacher model
 from django.contrib.auth.decorators import login_required
+from courses.observers import SubmissionSubject, TeacherObserver, StudentObserver
+from courses.models import Notification
 from django.http import HttpResponseForbidden
 from functools import wraps
 #from django.contrib.auth.decorators import login_required
@@ -25,9 +27,35 @@ Name Function: Home
 type: Function 
 Purpose: Connects to the Teacher Home dashboard
 """
+@teacher_required
 def teacherHome(request):  
-    # Looks in teachers/features/Home/templates/Home/Home.html
-    return render(request, 'TeacherHomePage/templates/TeacherHomePage.html')
+    user = request.user 
+    
+    # 2. Fetch their unread notifications from the database
+    unread_notifications = Notification.objects.filter(user=user, is_read=False).order_by('-created_at')
+    
+    # 3. Pass them to the HTML
+    context = {
+        'notifications': unread_notifications,
+        'notification_count': unread_notifications.count()
+    }
+    return render(request, 'TeacherHomePage/templates/TeacherHomePage.html', context)
+
+@login_required
+@teacher_required
+def markNotificationAsRead(request, notification_id):
+    if request.method == "POST":
+        # 1. Fetch the notification (ensure it actually belongs to the logged-in user for security!)
+        notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+        
+        # 2. Change the status to read
+        notification.is_read = True
+        notification.save()
+        
+    # 3. Redirect the user right back to the page they were just on
+    # HTTP_REFERER gets the URL of the page the user clicked the button from
+    previous_page = request.META.get('HTTP_REFERER', '/') 
+    return redirect(previous_page)
 
 
 """ -------------------------- Course Views/Functions ------------------------------"""
@@ -229,9 +257,12 @@ def teacherFeedback(request, submission_id):
                 comments=comments
             )
         
-        # Mark the submission as reviewed!
-        submission.status = 'reviewed'
-        submission.save()
+        # Observer Pattern
+        subject = SubmissionSubject(submission)
+        student_observer = StudentObserver() # Create observer
+        subject.attach(student_observer)     # Attach
+        subject.set_state('reviewed')        # Changes state and notifies
+        # ==========================================
 
         # Redirect back to the list of submissions for this task
         return redirect('teacher-task-submissions', task_id=submission.task.id)
