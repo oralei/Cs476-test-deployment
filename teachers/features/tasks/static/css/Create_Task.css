@@ -77,7 +77,6 @@
     padding-left: 15%; 
 }
 
-
 .connector {
     width: 120px;
     height: 40px;
@@ -144,6 +143,26 @@
     height: 100%;
 
     overflow: hidden;
+}
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Layout Component
+ * Last Modified:   2026-02-27
+ * Purpose:         (Existing Course Container) this section contains code dealing with existing 
+ *-------------------------------------------------------------------------*/
+.existing-container {
+    background-color: rgb(250, 250, 250);
+}
+
+.existing-container-card {
+    background-color: white;
+    box-shadow: 0 .125rem .25rem rgba(14, 99, 155, 0.075);
+    transition: 0.3s ease;
+}
+
+.existing-container-card:hover {
+    background-color: rgb(247, 251, 253); 
+    box-shadow: 0 1rem 3rem rgba(2, 28, 53, 0.175); 
 }
 
 /*-------------------------------------------------------------------------
@@ -225,6 +244,17 @@ label {
 
 /*
 
+
+.task-inventory-scroll::-webkit-scrollbar,
+.tab-scroll-area::-webkit-scrollbar {
+    width: 5px;
+}
+
+.task-inventory-scroll::-webkit-scrollbar-thumb,
+.tab-scroll-area::-webkit-scrollbar-thumb {
+    background: #dee2e6;
+    border-radius: 10px;
+}
 
 
 @media (max-width: 991.98px) {

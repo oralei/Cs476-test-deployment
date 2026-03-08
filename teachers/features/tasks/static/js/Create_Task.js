@@ -78,21 +78,21 @@ courseTitle.addEventListener('change', function () {
 
 });
 
-  addButton.addEventListener('click', e => {
-        e.preventDefault();
+addButton.addEventListener('click', e => {
+    e.preventDefault();
 
-        /*Added by Saim Munshi: Retreiev taskValue from */
-        const taskValue = courseTask.value.trim();
+    /*Added by Saim Munshi: Retreiev taskValue from */
+    const taskValue = courseTask.value.trim();
 
-         /*Added by Saim Munshi: if taskvalue does not exist*/
-        if (!taskValue) return;
-         /* Added By Saim Munshi: this code deal with creating and adding task check box list  */
+    /*Added by Saim Munshi: if taskvalue does not exist*/
+    if (!taskValue) return;
+    /* Added By Saim Munshi: this code deal with creating and adding task check box list  */
 
-        const taskIdCheckBox = `task-${counter}`;
-        counter++;
-        const checkboxDiv = document.createElement("div");
-        /* Added By Saim Munshi: creating input checkbox with id equal taskIdCheckBox */
-        checkboxDiv.innerHTML = `
+    const taskIdCheckBox = `task-${counter}`;
+ 
+    const checkboxDiv = document.createElement("div");
+    /* Added By Saim Munshi: creating input checkbox with id equal taskIdCheckBox */
+    checkboxDiv.innerHTML = `
             <input class="form-check-input me-2"
                 type="checkbox"
                 id="${taskIdCheckBox}"
@@ -113,14 +113,14 @@ courseTitle.addEventListener('change', function () {
                 Due: ${duetaskDateInput.value ? duetaskDateInput.value : "No date"}
             </div>
         `;
-        /* ---------------------------------------------------------------------*/
+    /* ---------------------------------------------------------------------*/
 
-        /* Added By Saim Munshi:  this logic to set the status for the tasks*/
-       const checkboxElement = checkboxDiv.querySelector("input");
-       const statusBadge = checkboxDiv.querySelector(".status-badge");
+    /* Added By Saim Munshi:  this logic to set the status for the tasks*/
+    const checkboxElement = checkboxDiv.querySelector("input");
+    const statusBadge = checkboxDiv.querySelector(".status-badge");
 
-        /* Added By Saim Munshi:  this logic to set the status for the tasks*/
-        checkboxElement.addEventListener("change", function () {
+    /* Added By Saim Munshi:  this logic to set the status for the tasks*/
+    checkboxElement.addEventListener("change", function () {
         let currentStatus = this.getAttribute("data-status");
 
         if (currentStatus === "not_started") {
@@ -128,7 +128,7 @@ courseTitle.addEventListener('change', function () {
             checkboxDiv.className = "form-check mb-2 text-warning";
             statusBadge.className = "badge bg-warning ms-2 status-badge";
             statusBadge.textContent = "In Progress";
-            this.checked = false; 
+            this.checked = false;
         }
         else if (currentStatus === "in_progress") {
             this.setAttribute("data-status", "completed");
@@ -145,31 +145,92 @@ courseTitle.addEventListener('change', function () {
             this.checked = false;
         }
     });
-        /*--------------------------------------------------------------------------*/
+    /*--------------------------------------------------------------------------*/
 
-        /* Added By Saim Munshi: this code stores the date when the course was created */
-        courseDescriptionDisplay.parentNode.appendChild(checkboxDiv);
-        const taskType = taskTypeSelect.value;
-        const dueDate = duetaskDateInput.value;
-        const startDate = starttaskDateInput.value;
-        /*------------------------------------------------------------------------------*/
+    /* Added By Saim Munshi: this code stores the date when the course was created */
+    courseDescriptionDisplay.parentNode.appendChild(checkboxDiv);
+    const taskType = taskTypeSelect.value;
+    const dueDate = duetaskDateInput.value;
+    const startDate = starttaskDateInput.value;
+    /*------------------------------------------------------------------------------*/
+    courseTask.value = ""; //Clear task input after adding
 
-        /*  Added By Saim Munshi: Bases on the type this determines the icon type based on type when type is selected appropriate bootstrap class  is added*/
-        /* This is Bootstrap Icon Logic */
-        let iconClass = "bi-lock-fill";
-        let nodeColor = "bg-primary";
-        if ((taskType === "Quiz")) {
-            iconClass = "bi-question-circle-fill";
-            nodeColor = "bg-warning";
-        }
-        if (taskType === "Project") {
-            iconClass = "bi-clipboard-check-fill";
-            nodeColor = "bg-danger";
-        }
-        if (taskType === "Assignment") {
-            iconClass = "bi-journal-text";
-            nodeColor = "bg-info";
-        }
-        /*-----------------------------------------------------------------------------------------------------------*/
-         courseTask.value = "";
-  })
+    /*  Added By Saim Munshi: Bases on the type this determines the icon type based on type when type is selected appropriate bootstrap class  is added*/
+    /* This is Bootstrap Icon Logic */
+    let iconClass = "bi-lock-fill";
+    let nodeColor = "bg-primary";
+    if ((taskType === "Quiz")) {
+        iconClass = "bi-question-circle-fill";
+        nodeColor = "bg-warning";
+    }
+    if (taskType === "Project") {
+        iconClass = "bi-clipboard-check-fill";
+        nodeColor = "bg-danger";
+    }
+    if (taskType === "Assignment") {
+        iconClass = "bi-journal-text";
+        nodeColor = "bg-info";
+    }
+    /*-----------------------------------------------------------------------------------------------------------*/
+    /*  Added By Saim Munshi: Node section: sets uio*/
+
+
+    var taskIdNode = "task-node-" + counter; // aAdded by saim this is a temp variable to set id based on the counter.
+
+    /*  Added By Saim Munshi: Node section: creates and sets node class left or right alternated to create a roadmap*/
+    var newNodeDiv = document.createElement("div"); // 
+    newNodeDiv.id = taskIdNode;
+    newNodeDiv.setAttribute("data-type", taskType);
+    newNodeDiv.className = "roadmap-node";
+
+    //Added by Saim Munshi: the left and right css for icon alternating logic     
+
+    if (counter % 2 === 0) {
+        newNodeDiv.classList.add("left");
+    } else {
+        newNodeDiv.classList.add("right");
+    }
+
+    /// Added By Saim Munshi: Node section: creates and sets node class left or right alternated to create a road map*/
+
+    var dateText = "";
+    if (dueDate) {
+        dateText = " • " + dueDate;
+    }
+
+    newNodeDiv.innerHTML =
+        '<div class="skill-node ' + nodeColor + '">' +
+        '<i class="bi ' + iconClass + ' text-white"></i>' +
+        '</div>' +
+
+        '<div class="weight-popup">' +
+        '<div><strong>' + taskValue + '</strong></div>' +
+        '<div>Type: ' + taskType + '</div>' +
+        '<div>Start Date: ' + (startDate ? startDate : "No date") + '</div>' +
+        '<div>Due: ' + (dueDate ? dueDate : "No date") + '</div>' +
+        '<div class="popup-weight">Weight: --%</div>' +
+        '</div>';
+
+    /*---------------------------------------------------------------------------------------------------------*/
+    var connector = document.createElement("div");
+    connector.className = "connector";
+    descriptionNodeDisplay.appendChild(connector);
+    descriptionNodeDisplay.appendChild(newNodeDiv);
+    counter++;
+    const taskData = {
+        name: taskValue,
+        type: taskType,
+        startDate: startDate,
+        due_date: dueDate,
+
+    };
+
+    taskArray.push(taskData);
+    document.getElementById('tasks_data').value = JSON.stringify(taskArray);
+    courseWeightCal();
+    courseTask.value = "";
+
+     //counter for both node and checkbox
+
+     
+});
