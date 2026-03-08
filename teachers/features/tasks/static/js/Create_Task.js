@@ -212,19 +212,23 @@ addButton.addEventListener('click', e => {
     /* Added By Saim Munshi:  this logic to set the status for the tasks*/
     checkboxElement.addEventListener("change", function () {
         let currentStatus = this.getAttribute("data-status");
-
+        const popupStatus = document.querySelector("#" + taskIdNode + " .popup-status");
         if (currentStatus === "not_started") {
             this.setAttribute("data-status", "in_progress");
             checkboxDiv.className = "form-check mb-2 text-warning";
             statusBadge.className = "badge bg-warning ms-2 status-badge";
             statusBadge.textContent = "In Progress";
-            this.checked = false;
+            if (popupStatus) popupStatus.textContent = "Status: In Progress";
+
+            this.checked = false
         }
         else if (currentStatus === "in_progress") {
             this.setAttribute("data-status", "completed");
             checkboxDiv.className = "form-check mb-2 text-success";
             statusBadge.className = "badge bg-success ms-2 status-badge";
             statusBadge.textContent = "Completed";
+            if (popupStatus) popupStatus.textContent = "Status: Completed";
+
             this.checked = true;
         }
         else {
@@ -232,6 +236,8 @@ addButton.addEventListener('click', e => {
             checkboxDiv.className = "form-check mb-2 text-secondary";
             statusBadge.className = "badge bg-secondary ms-2 status-badge";
             statusBadge.textContent = "Not Started";
+            if (popupStatus) popupStatus.textContent = "Status: Not Started";
+
             this.checked = false;
         }
     });
@@ -298,6 +304,7 @@ addButton.addEventListener('click', e => {
         '<div>Type: ' + taskType + '</div>' +
         '<div>Start Date: ' + (startDate ? startDate : "No date") + '</div>' +
         '<div>Due: ' + (dueDate ? dueDate : "No date") + '</div>' +
+        '<div class="popup-status">Status: ' + checkboxElement.getAttribute("data-status") + '</div>'
         '<div class="popup-weight">Weight: --%</div>' +
         '</div>';
 
@@ -310,6 +317,7 @@ addButton.addEventListener('click', e => {
     const taskData = {
         name: taskValue,
         type: taskType,
+        status: checkboxElement.getAttribute("data-status"), 
         startDate: startDate,
         due_date: dueDate,
 
@@ -326,6 +334,17 @@ addButton.addEventListener('click', e => {
 });
 
 /*  Added By Saim Munshi: reo*/
+function reMapRoadNode() {
+    var taskInputElement = document.getElementById('tasks_data'); 
+    
+    var jsonString = taskInputElement.value;
+
+    if (jsonString !== "") {
+        var retrievedTasks = JSON.parse(jsonString);
+    }
+
+
+}
 
 
 /*  Added By Saim Munshi: Remove tasks button logic */
@@ -366,5 +385,6 @@ deleteButton.addEventListener('click', function (e) {
     parentDiv.remove();
 
     document.getElementById('tasks_data').value = JSON.stringify(taskArray);
+    reMapRoadNode();
 });
 
