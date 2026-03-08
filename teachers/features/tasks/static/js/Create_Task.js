@@ -78,6 +78,96 @@ courseTitle.addEventListener('change', function () {
 
 });
 
+/** Added by Saim Munshi: Calculate task weight and assined to each task**/
+
+ /*Added by Saim Munshi: Calculation weight of task based on type assignment 25% quiz 25%  project 50% */
+    const poolWeights = {
+        "Assignment": 25,
+        "Quiz": 25,
+        "Project": 50
+    };
+
+/*Added by Saim Munshi: Helper function calculate and assign weight to tasks  */
+    function courseWeightCal() {
+
+        const nodes = document.querySelectorAll(".roadmap-node[data-type]"); // List of nodes created in roadmap nodes for task
+
+        //Added By Saim: Counter variable for each task type
+        let assignmentCount = 0;
+        let quizCount = 0;
+        let projectCount = 0;
+
+        //Added By Saim Munshi: loop through each roadmap noad and determine it task type:
+        for (let i = 0; i < nodes.length; i++) {
+            //Added Saim Munshi: get attribute with Data type to read task type Note this was added to each task in the add button function
+            const type = nodes[i].getAttribute("data-type");
+
+            //Added counter incrementation 
+            if (type === "Assignment") assignmentCount++;
+            else if (type === "Quiz") quizCount++;
+            else if (type === "Project") projectCount++;
+        }
+
+        // Added By Saim: intial grade pool for each task type. If the category exists assign ot default precemtage otherwise 0%
+        let assignmentPool = assignmentCount ? 25 : 0; //Assignment default pool is 25%
+        let quizPool = quizCount ? 25 : 0;      //quiz default pool is 25%
+        let projectPool = projectCount ? 50 : 0;  //Projects  default pool is 25%
+
+        // Add Saim Munshi: total used assignment and quiz and project total used precentage to determine left over precentage.
+
+        let totalUsed = assignmentPool + quizPool + projectPool;
+        let leftover = 100 - totalUsed;
+
+        // Add Saim Munshi: If left over is greater than zero redistribute weight
+        if (leftover > 0) {
+            // Add Saim Munshi: project gets weightage first as it is the most important
+            if (projectCount > 0) {
+                projectPool += leftover;
+            // Add Saim Munshi: project gets weightage first as it is the most important
+            } else if (assignmentCount > 0) {
+                assignmentPool += leftover;
+            } else if (quizCount > 0) {
+                quizPool += leftover;
+            }
+        }
+        // Add Saim Munshi: loop through each roadmap node to recalculate each weight with the new pool distrbution
+        for (let i = 0; i < nodes.length; i++) {
+            // Add Saim Munshi:  Store reference to the current node
+            const node = nodes[i];
+
+            //Add Saim Munshi:  Variable to hold the calculated weight for this specific task
+            const type = node.getAttribute("data-type");
+            let weight = 0;
+            
+             // Add Saim Munshi: If the node is an Assignment, divide the assignment pool by total assignments
+            if (type === "Assignment" && assignmentCount > 0) {
+                weight = assignmentPool / assignmentCount;
+            }
+
+            // Add Saim Munshi: If the node is a Quiz, divide the quiz pool by total quizzes
+            if (type === "Quiz" && quizCount > 0) {
+                weight = quizPool / quizCount;
+            }
+            // Add Saim Munshi: If the node is a Quiz, divide the quiz pool by total quizzes
+            if (type === "Project" && projectCount > 0) {
+                weight = projectPool / projectCount;
+            }
+
+            //Add Saim Munshi: formate weight 
+            let finalWeight = weight ? weight.toFixed(1) + "%" : "0%";
+
+             // Added Saim Munshi popup update the finalWeight in popup div in finalweigh div  creates in the add button event listener
+            const popup = node.querySelector(".popup-weight");
+            if (popup) {
+                popup.innerText = "Weight: " + finalWeight;
+            }
+        }
+    }
+
+
+
+/** Added by Saim Munshi: Added button logic for task**/
+
 addButton.addEventListener('click', e => {
     e.preventDefault();
 
