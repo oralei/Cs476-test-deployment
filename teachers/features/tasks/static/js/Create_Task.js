@@ -24,10 +24,10 @@ const starttaskDateInput = document.getElementById("start_date");
 const addButton = document.getElementById("Add-Task");
 const courseTask = document.getElementById("title");
 /*___________________________________________________________________________________________________________________________________*/
-const updateButton = document.getElementById("Update-Course");
+
 
 const deleteButton = document.getElementById("Delete-Task");
-
+const updateButton = document.getElementById("Update-Course");
 
 const courseDescription = document.getElementById("Course-Description");
 
@@ -324,3 +324,39 @@ addButton.addEventListener('click', e => {
 
      
 });
+
+
+
+  /*  Added By Saim Munshi: Remove button logic */
+ deleteButton.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        // Added By Saim MUnshi: Find the checked task
+        const selectedCheckbox = document.querySelector(".form-check-input:checked");
+        if (!selectedCheckbox) {
+            alert("Please select a task to remove.");
+            return;
+        }
+
+        // Added By Saim MUnshi: Remove the checkbox item
+        let childrenTasks = parentDiv.parentNode.children;
+        
+        //Added by Saim Munshi: list to hold all the children task
+        let taskList = [];
+
+        //Added by Saim Munshi: list to hold all the children task
+        for(let i = 0; i<childrenTasks.length; i++){
+            if(childrenTasks[i].classList.contains("form-check")){
+                taskList.push(childrenTasks[i]);
+            }
+        }
+        
+        //Added by Saim Munshi: list to hold all the children task
+        let taskIndex = taskList.indexOf(parentDiv);
+        if (taskIndex !== -1) { 
+            taskArray.splice(taskIndex, 1); }
+        
+        parentDiv.remove();
+        document.getElementById('tasks_data').value = JSON.stringify(taskArray);
+        
+    });
