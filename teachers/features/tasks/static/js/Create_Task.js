@@ -305,7 +305,7 @@ addButton.addEventListener('click', e => {
         '<div>Start Date: ' + (startDate ? startDate : "No date") + '</div>' +
         '<div>Due: ' + (dueDate ? dueDate : "No date") + '</div>' +
         '<div class="popup-status">Status: ' + checkboxElement.getAttribute("data-status") + '</div>'
-        '<div class="popup-weight">Weight: --%</div>' +
+    '<div class="popup-weight">Weight: --%</div>' +
         '</div>';
 
     /*---------------------------------------------------------------------------------------------------------*/
@@ -317,7 +317,7 @@ addButton.addEventListener('click', e => {
     const taskData = {
         name: taskValue,
         type: taskType,
-        status: checkboxElement.getAttribute("data-status"), 
+        status: checkboxElement.getAttribute("data-status"),
         startDate: startDate,
         due_date: dueDate,
 
@@ -335,17 +335,63 @@ addButton.addEventListener('click', e => {
 
 /*  Added By Saim Munshi: reo*/
 function reMapRoadNode() {
-    var taskInputElement = document.getElementById('tasks_data'); 
-    
-    var jsonString = taskInputElement.value;
+    const taskInputElement = document.getElementById('tasks_data');
+    const jsonString = taskInputElement.value;
 
-    if (jsonString !== "") {
-        var retrievedTasks = JSON.parse(jsonString);
-    }
+    if (!jsonString || jsonString.trim() === "") return;
 
+    const retrievedTasks = JSON.parse(jsonString);
 
+    // Clear roadmap display
+    descriptionNodeDisplay.innerHTML = "";
+
+    retrievedTasks.forEach((task, i) => {
+        let iconClass = "bi-lock-fill";
+        let nodeColor = "bg-primary";
+
+        if (task.type === "Quiz") {
+            iconClass = "bi-question-circle-fill";
+            nodeColor = "bg-warning";
+        } else if (task.type === "Project") {
+            iconClass = "bi-clipboard-check-fill";
+            nodeColor = "bg-danger";
+        } else if (task.type === "Assignment") {
+            iconClass = "bi-journal-text";
+            nodeColor = "bg-info";
+        }
+
+        const taskIdNode = "task-node-" + i;
+
+        const newNodeDiv = document.createElement("div");
+        newNodeDiv.id = taskIdNode;
+        newNodeDiv.setAttribute("data-type", task.type);
+        newNodeDiv.className = "roadmap-node";
+
+        // Alternate left/right
+        if (i % 2 === 0) newNodeDiv.classList.add("left");
+        else newNodeDiv.classList.add("right");
+
+        // Build inner HTML
+        newNodeDiv.innerHTML =
+            '<div class="skill-node ' + nodeColor + '">' +
+            '<i class="bi ' + iconClass + ' text-white"></i>' +
+            '</div>' +
+            '<div class="weight-popup">' +
+            '<div><strong>' + task.name + '</strong></div>' +
+            '<div>Type: ' + task.type + '</div>' +
+            '<div>Start Date: ' + (task.startDate || "No date") + '</div>' +
+            '<div>Due: ' + (task.due_date || "No date") + '</div>' +
+            '<div class="popup-status">Status: ' + task.status + '</div>' +
+            '<div class="popup-weight">Weight: --%</div>' +
+            '</div>';
+
+        const connector = document.createElement("div");
+        connector.className = "connector";
+
+        descriptionNodeDisplay.appendChild(connector);
+        descriptionNodeDisplay.appendChild(newNodeDiv);
+    });
 }
-
 
 /*  Added By Saim Munshi: Remove tasks button logic */
 deleteButton.addEventListener('click', function (e) {
