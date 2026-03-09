@@ -434,3 +434,25 @@ deleteButton.addEventListener('click', function (e) {
     reMapRoadNode();
 });
 
+// Added by Mark: JavaScript grabs that safely rendered JSON data
+const courseDataElement = document.getElementById('course-data');
+const courseMap = JSON.parse(courseDataElement.textContent);
+
+const courseSelect = document.getElementById('courseSelect');
+const studentSelect = document.getElementById('studentSelect');
+
+courseSelect.addEventListener('change', function() {
+    const selectedCourseId = this.value;
+    
+    studentSelect.innerHTML = '';
+
+    if (selectedCourseId && courseMap[selectedCourseId]) {
+        courseMap[selectedCourseId].forEach(student => {
+            const option = document.createElement('option');
+            option.value = student.id;
+            option.textContent = student.name;
+            option.selected = true; 
+            studentSelect.appendChild(option);
+        });
+    }
+});
