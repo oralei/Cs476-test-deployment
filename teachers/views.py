@@ -108,7 +108,7 @@ Purpose: Connects to the Teacher Calendar feature
 """
 def Calendar(request):  
     # Looks in teachers/features/Calendar/templates/Calendar/Calendar.html
-    return render(request, 'Calendar/Calendar.html')
+    return render(request, 'Calendar/templates/teacherCalendar.html')
 
 
 def My_Student(request):  

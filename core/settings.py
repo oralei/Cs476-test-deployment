@@ -229,7 +229,7 @@ STATICFILES_DIRS =[
     ###### Student App Connection#########
     #Added By Saim Munshi: This is to connect the main base folder to the Student Application features in static directory.  
     os.path.join(BASE_DIR, 'students/BaseStudent/static'),
-    os.path.join(BASE_DIR, 'students/features/calendar/static'), # Updated spelling
+    os.path.join(BASE_DIR, 'students/features/Calendar/static'), # Updated spelling
     os.path.join(BASE_DIR, 'students/features/StudentHomePage/static'),
     os.path.join(BASE_DIR, 'students/features/Mentors/static'),
     os.path.join(BASE_DIR, 'students/features/Setting/static'),

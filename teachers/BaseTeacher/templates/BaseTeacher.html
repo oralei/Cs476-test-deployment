@@ -27,7 +27,7 @@
             </button>
         </div>
     </nav>
-
+<!--Mobile view side bar -->
     <div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="mobileSidebar">
         <div class="offcanvas-header border-bottom">
             <h5 class="offcanvas-title fw-bold">Menu</h5>
@@ -35,7 +35,7 @@
         </div>
         <div class="offcanvas-body p-3">
             <nav class="nav flex-column nav-pills">
-                <div class="mb-3" id="nav-mobile-div-links">
+<div class="mb-3" id="nav-mobile-div-links">
                 <a href="{% url 'teacher_home' %}" class="nav-link {% if request.resolver_match.url_name == 'teacher_home' %}active{% endif %}"><i class="bi bi-grid-fill me-3"></i>Dashboard</a>
                 <a href="{% url 'My_Student' %}"
                     class="nav-link  {% if request.resolver_match.url_name == 'My_Student' %}active{% endif %}"><i
@@ -52,17 +52,16 @@
                 <a href="{% url 'create-task' %}" class="nav-link {% if request.resolver_match.url_name == 'create-task' %}active{% endif %}">
                     <i class="bi bi-list-task"></i> Create Tasks
                 </a>
-                 <a href="#" class="nav-link">
-                    <i class="bi bi-calendar3"></i> Calendar
+                <a href="{% url 'calendar' %}" class="nav-link {% if request.resolver_match.url_name == 'calendar' %}active{% endif %}">
+                    <i class="bi bi-calendar3 me-3"></i>Calendar
                 </a>
-                </div>
                 <hr>
                 <a href="#" class="nav-link text-secondary"><i class="bi bi-gear me-3"></i>Settings</a>
                 <a href="/" class="nav-link text-danger"><i class="bi bi-box-arrow-right me-3"></i>Log out</a>
             </nav>
         </div>
     </div>
-
+<!--Desktop view side bar -->
     <div class="sidebar-container d-none d-lg-block">
         <div class="sidebar-pill shadow-sm">
             <div class="d-flex align-items-center mb-5 px-3">
@@ -87,7 +86,7 @@
                 <a href="{% url 'create-task' %}" class="nav-link {% if request.resolver_match.url_name == 'create-task' %}active{% endif %}">
                     <i class="bi bi-list-task"></i> Create Tasks
                 </a>
-                <a href="#" class="nav-link">
+                <a href="{% url 'calendar' %}"   class="nav-link {% if request.resolver_match.url_name == 'calendar' %}active{% endif %}">
                     <i class="bi bi-calendar3"></i> Calendar
                 </a>
             </nav>

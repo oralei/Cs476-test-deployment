@@ -1,0 +1,63 @@
+{% extends 'BaseTeacher.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/Calendar.css' %}">
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+
+  <div class="container">
+
+    <!-- Header card -->
+    <div class="card page-head">
+      <h1>Mentor Calendar</h1>
+      <p>View student tasks and assignments</p>
+    </div>
+
+    <!-- Filters card -->
+    <div class="card filters">
+      <div class="field">
+        <label for="courseSelect">Course</label>
+        <select id="courseSelect">
+          <option value="">Select a course</option>
+          <option value="Course 1">Course 1</option>
+          <option value="Course 2">Course 2</option>
+          <option value="Course 3">Course 3</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="studentSelect">Student</label>
+        <select id="studentSelect">
+          <option value="">Select a student</option>
+          <option value="Mark 1">Mark 1</option>
+          <option value="Mark 2">Mark 2</option>
+          <option value="Mark 3">Mark 3</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Calendar card -->
+    <div class="card calendar-card">
+      <div id="calendar"></div>
+
+      <!-- Legend -->
+      <div class="legend">
+        <div class="legend-item"><span class="dot" style="background: var(--assignment)"></span> Assignment</div>
+        <div class="legend-item"><span class="dot" style="background: var(--quiz)"></span> Quiz</div>
+        <div class="legend-item"><span class="dot" style="background: var(--project)"></span> Project</div>
+        <div class="legend-item"><span class="dot" style="background: var(--meeting)"></span> Meeting</div>
+      </div>
+    </div>
+
+  </div>
+
+{% endblock %} 
+{% block extra_js %}
+  <script> const EVENTS_URL = "{% static 'js/data.json' %}";</script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+  <script src="{% static 'js/TeacherCalendar.js' %}"></script>
+{% endblock %}
+    
