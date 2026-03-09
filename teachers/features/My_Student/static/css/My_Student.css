@@ -1,0 +1,81 @@
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Layout Component
+ * Last Modified:   2026-02-27
+ * Purpose:         Defines the main white container for the feedback form, including soft shadows and rounded corners.
+ *-------------------------------------------------------------------------*/
+.feedback-card {
+    background: white;
+    border-radius: 20px;
+    border: 1px solid #e9ecef;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Layout Component
+ * Last Modified:   2026-02-27
+ * Purpose:         Customizes the appearance of inputs 
+ *-------------------------------------------------------------------------*/
+.form-control, .form-select {
+    border-radius: 12px;
+    padding: 12px 15px;
+    border: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+}
+
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Layout Component
+ * Last Modified:   2026-02-27
+ * Purpose:          user clicks into a field makes the border in blue
+ *-------------------------------------------------------------------------*/
+.form-control:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+    border-color: #0d6efd;
+}
+
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Layout Component
+ * Last Modified:   2026-02-27
+ * Purpose:         ubmission button with a specific blue color  transitions.
+ *-------------------------------------------------------------------------*/
+.btn-submit-feedback {
+    background-color: #0d6efd; 
+    color: white;
+    border-radius: 10px;
+    padding: 10px 25px;
+    font-weight: 500;
+    transition: 0.3s;
+    border: none;
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Layout Component
+ * Last Modified:   2026-02-27
+ * Purpose:         Changes the button color to a darker shade when hovered
+ *-------------------------------------------------------------------------*/
+.btn-submit-feedback:hover {
+    background-color: #0b5ed7; 
+    color: white;
+}
+
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Layout Component
+ * Last Modified:   2026-02-27
+ * Purpose:         Purpose: Creates a clean horizontal divider 
+ *-------------------------------------------------------------------------*/
+.feedback-history-item {
+    border-bottom: 1px solid #eee;
+    padding: 20px 0;
+}
+

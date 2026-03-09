@@ -240,7 +240,7 @@ STATICFILES_DIRS =[
     #Added By Saim Munshi: This is to connect the main base folder to the Teacher Application features in static directory. 
     os.path.join(BASE_DIR, 'teachers/BaseTeacher/static'),
     os.path.join(BASE_DIR, 'teachers/features/Calendar/static'), 
-    os.path.join(BASE_DIR, 'teachers/features/teacher-courses/static'), 
+    os.path.join(BASE_DIR, 'teachers/features/teacher-courses/static'),
     os.path.join(BASE_DIR, 'teachers/features/TeacherHomePage/static'),
     os.path.join(BASE_DIR, 'teachers/features/tasks/static'), 
     os.path.join(BASE_DIR, 'teachers/features/My_Student/static'), 

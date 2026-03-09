@@ -241,3 +241,39 @@ def teacherFeedback(request, submission_id):
         'feedback': feedback
     }
     return render(request, 'tasks/templates/teacher-feedback.html', context)
+
+
+
+#Added By Saim: Edit course take edit course using create course form an
+@login_required
+@teacher_required
+def editCourse(request, course_id):
+    #Added By Saim Munshi: get course by course id
+    course = Course.objects.get(id=course_id)
+     #Added By Saim Munshi: request post retreieve and save course title and description save
+    if request.method == "POST":
+        course.title = request.POST.get("title")
+        course.description = request.POST.get("description")
+        course.save()
+        #Added By Saim Munshi: if not redirect to teacher course list page
+        return redirect("teacher-course-list")
+    #Added By Saim Munshi: course context dictonary 
+    context = {
+        "course": course
+    }
+
+    return render(request, "teacher-courses/templates/create-course.html", context)
+
+# Added By Saim Munshi: Delete course logic
+@login_required
+@teacher_required
+def deleteCourse(request, course_id):
+    # Retrieve the course specifically for the logged-in teacher
+    course = get_object_or_404(Course, id=course_id, teacher=request.teacher_profile)
+    
+    if request.method == "POST":
+        course.delete()
+        # Redirect back to the course list page
+        return redirect('teacher-course-list')
+    
+    return redirect('teacher-course-list')
