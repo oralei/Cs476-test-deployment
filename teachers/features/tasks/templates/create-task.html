@@ -31,7 +31,7 @@
                         <li class="nav-item">
                             <button class="nav-link active fw-bold px-4" id="overview-button">Overview</button>
                         </li>
-        
+
                     </ul>
 
                     <div class="tab-content tab-scroll-area " id="course-creation-form">
@@ -75,9 +75,10 @@
                                     <option value="Assignment">Assignment</option>
                                     <option value="Quiz">Quiz</option>
                                     <option value="Project">Project</option>
+                                    <option value="Meeting">Meeting</option>
                                 </select>
                                 <!-- -------------------------------------- -->
-                   
+
                                 <!-- Added by Mark -->
                                 <div class="row mb-3">
                                     <div class="col">
@@ -86,11 +87,12 @@
                                         type="datetime-local" generates a calendar popup 
                                         Note from Mark: This calendar does not work the best in Firefox or Safari.
                                     -->
-                                        <input type="datetime-local" name="start_date" id="start_date" class="form-control">
+                                        <input type="datetime-local" name="start_date" id="start_date"
+                                            class="form-control">
                                     </div>
                                     <div class="col">
                                         <label class="form-label">Due Date & Time</label>
-                                        <input type="datetime-local" name="due_date"  id="due_date" class="form-control">
+                                        <input type="datetime-local" name="due_date" id="due_date" class="form-control">
                                     </div>
                                 </div>
                                 <!-- -------------------------------------------------------------------------------->
@@ -124,8 +126,7 @@
                                     <!-- Options will be added here automatically by JS when a course is chosen -->
                                 </select>
                                 <small class="text-muted">By default, all enrolled students will be selected when you
-                                    choose a
-                                    course.</small>
+                                    choose a course.</small>
                             </div>
                             <!-------------------------------------------------------------------------------------------->
                             <!--Added By Saim  Select Students (dynamic programming from JavaScript) -->
@@ -136,7 +137,7 @@
                         </form>
 
                     </div>
-                    
+
 
                 </div>
 
@@ -164,14 +165,15 @@
                         </div>
 
                         <hr class="my-4">
-                         <!--Added By Saim this container course title and description diplay container-->
+                        <!--Added By Saim this container course title and description diplay container-->
                         <form class="mb-4 fw-bold mb-4" method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
                             <div class="tab-content tab-scroll-area ">
                                 <div class="course-card">
                                     <h4 id="course-title-container">Select A Course: </h4>
                                     <hr>
-                                    <p class="description" id="course-description-display">Select a course and view description here</p>
+                                    <p class="description" id="course-description-display">Select a course and view
+                                        description here</p>
                                 </div>
 
                             </div>
@@ -227,5 +229,6 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <script src="{% static 'js/Create_Task.js' %}"></script>
 {% endblock %}
