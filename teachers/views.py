@@ -257,7 +257,7 @@ def editCourse(request, course_id):
         course.save()
         #Added By Saim Munshi: if not redirect to teacher course list page
         return redirect("teacher-course-list")
-    #Added By Saim Munshi: course context 
+    #Added By Saim Munshi: course context dictonary 
     context = {
         "course": course
     }
