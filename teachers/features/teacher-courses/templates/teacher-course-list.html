@@ -60,22 +60,22 @@
             <div class="existing-container p-4">
                 <div class="existing-container-card p-5 mb-3">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
                             <h6 class="fw-bold mb-0 text-primary">{{ course.title }}</h6>
-                            <form method="POST" action="/teachers/delete-course/{{ course.id }}/">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-sm btn-outline-primary"
-                                    onclick="return confirm('Delete this course?');">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </form>
-                            <form method="POST" action="">
-                                {% csrf_token %}
-                                <a href="{% url 'edit-course' course.id %}" class="btn btn-primary btn-sm">
-                                    <i class="bi bi-pencil icon-blue"></i>
-                                </a>
-                            </form>
 
+                            <div class="d-flex gap-2">
+                                <form method="POST" action="{% url 'delete-course' course.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-primary"
+                                        onclick="return confirm('Delete this course?');">
+                                        <i class="bi bi-trash"><strong>Delete </strong></i>
+                                    </button>
+                                </form>
+
+                                <a href="{% url 'edit-course' course.id %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-pencil icon-blue"><strong>Edit</strong></i>
+                                </a>
+                            </div>
                         </div>
                         <p class="small text-muted mb-2">Instructor: {{ mentor_detected.full_name }}</p>
                         <p class="small text-dark mb-3">{{ course.description|truncatewords:20 }}</p>
