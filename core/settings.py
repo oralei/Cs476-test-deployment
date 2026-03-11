@@ -106,6 +106,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'teachers.context_processors.notifications_processor', #Added By Saim Munshi: this is proccessor to show notification for all views in for teacher
             ],
         },
     },
