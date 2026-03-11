@@ -346,7 +346,7 @@ function reMapRoadNode() {
     descriptionNodeDisplay.innerHTML = "";
 
     retrievedTasks.forEach((task, i) => {
-        let iconClass = "bi-lock-fill";
+        let iconClass = "bi-camera-fill";
         let nodeColor = "bg-primary";
 
         if (task.type === "Quiz") {

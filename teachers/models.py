@@ -1,6 +1,8 @@
 from django.db import models
 from users.models import MentoraBaseUser
 from django_mongodb_backend.fields import ObjectIdAutoField
+from django.conf import settings
+
 import random
 import string
 
@@ -28,3 +30,20 @@ class Teacher(MentoraBaseUser):
     
     def __str__(self):
         return f"{self.full_name} (Teacher)"
+
+
+
+#Added By Saim Munshi: Notfication mongodb object
+class Notification(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    notification_type = models.CharField(max_length=50)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+    class Meta:
+        db_table = "teacher_notifications" 
+    
+
+    def __str__(self):
+        return self.message
+    
