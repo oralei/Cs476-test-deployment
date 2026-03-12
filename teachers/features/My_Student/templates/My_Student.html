@@ -1,0 +1,39 @@
+{% extends 'BaseTeacher.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/My_Student.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="container-fluid py-4">
+        
+        <div class="feedback-card">
+            <h3 class="fw-bold mb-4">Student Management</h3>
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label class="form-label">Select Student</label>
+                    <select class="form-select" name="student_id">
+                        <option selected>Open this select menu</option>
+                        <option value="1">Maya Singh</option>
+                        <option value="2">Jordan Park</option>
+                    </select>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" name="action" value="feedback" class="btn btn-submit-feedback">
+                        Give Feedback
+                    </button>
+                    <button type="submit" name="action" value="progress" class="btn btn-submit-feedback">
+                        View Progress
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

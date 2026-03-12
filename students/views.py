@@ -21,8 +21,8 @@ Name Function: Calender
 type: Function 
 Purpose:It is used connect django with Calender html file through an http request
 """
-def Calender(request):  
-    return render(request, '/Home/templates/Calender.html')
+def Calendar(request):  
+    return render(request, 'Calendar/templates/Calendar.html')
 
 def Mentor(request):  
     return render(request, '/Mentors/templates/Mentor.html')

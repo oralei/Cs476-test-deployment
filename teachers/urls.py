@@ -4,6 +4,7 @@ from . import views  # This only imports from the teachers app
 urlpatterns = [
     # If you have teacherHome in teachers/views.py:
     path('home/', views.teacherHome, name='teacher_home'),
+    path('calendar/', views.Calendar, name='calendar'),
     path('courses/', views.teacherCourseList, name='teacher-course-list'),
     path('create-task/', views.Create_Task, name='create-task'),
     path('courses/create-course', views.teacherCreateCourse, name='create-course'),
@@ -19,4 +20,13 @@ urlpatterns = [
     
     # Note: for marking a notification as read
     path('notifications/read/<str:notification_id>/', views.markNotificationAsRead, name='mark-notification-read'),
+    
+    path('my-students/', views.My_Student, name='My_Student'), #Added by Saim Connection to my student page
+    path('courses/edit-course/<str:course_id>/', views.editCourse, name='edit-course'), # Added By Saim Connect to create course with course id of exisiting course to allow user
+    path('delete-course/<str:course_id>/', views.deleteCourse, name='delete-course'),  # Added By Saim Connect to delete course
+
+    # Added By Saim: Notfication and message logic.
+    
+    path('calendar/', views.Calendar, name='calendar'),
+    
 ]

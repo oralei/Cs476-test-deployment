@@ -2,33 +2,79 @@
 {% load static %}
 
 {% block extra_css %}
-    <title>Mentora - Create a Course</title>
-    <link rel="stylesheet" href="{% static 'css/TeacherHomePage.css' %}">
+<title>Mentora - Create a Course</title>
+<link rel="stylesheet" href="{% static 'css/Courses.css' %}">
 {% endblock %}
 
 
 {% block content %}
 <main class="main-content">
-  <h1>Create a Course</h1>
-  <!-- POST form that will be used in teacherCreateCourse() -->
-  <form method="POST" action="{% url 'create-course' %}">
-    {% csrf_token %}
-    <div class="form-group">
-      <label for="course-name-input" >Course Name</label>
-      <input type="text" class="form-control" id="course-name-input" name="title" placeholder="My Course" required>
+  <!--  Added By Saim:-->
+  <div class="col-lg-12 h-100">
+    <div class="course-creation-detail-card shadow-sm" style="background-color: white;">
+
+      <ul class="nav nav-tabs px-4 pt-3 bg-light border-bottom-0" id="taskTabs">
+        <li class="nav-item">
+          <tag class="nav-link active fw-bold px-4" id="overview-button">Overview</tag>
+        </li>
+
+      </ul>
+
+      <div class="p-4" id="course-creation-form">
+
+        <div class="mb-3">
+          <h6 class="fw-bold text-uppercase small text-muted mb-2">Course Creation Form Panel</h6>
+          <p class="text-secondary leading-relaxed">Please Create course</p>
+        </div>
+
+        <hr class="my-4">
+        <form method="POST">
+          <!--  ----------------------------------------------------------------->
+          {% csrf_token %}
+
+          <!--  Added By Mark:-->
+          <div class="form-group mb-4">
+            <label for="course-name-input">Course Name</label>
+            <input type="text" class="form-control" id="course-name-input" name="title" placeholder="My Course"
+              required value="{{ course.title }}">
+          </div>
+          <!--  ----------------------------------------------------------------->
+
+          <!-- -------------------------------------------------------------------- -->
+          <div class="form-group mb-4">
+            <!-- Added by Mark Task Details -->
+            <div class="form-group mb-4">
+              <label for="course-description-input">Course Description</label>
+              <textarea name="description" class="form-control" id="course-description-input"
+                placeholder="This is my course!" required>{{ course.description }}</textarea>
+            </div>
+
+            <!-- Added by Mark -->
+            <div class="max-students mb-4">
+              <label for="max-students">Max Students</label>
+              <input type="number" name="max_students" id="max-students-input" min="1" max="100" required>
+            </div>
+            <!-------------------------------------------------------------------------------------------->
+            <!--Added By Saim  Select Students (dynamic programming from JavaScript) -->
+            <button type="submit" class="btn btn-primary btn-lg w-100 mb-3" id="Update-Course">
+              Create Course
+            </button>
+            <!----------------------------------------------------------------------------->
+        </form>
+
+      </div>
+
+
     </div>
-    <div class="form-group">
-      <label for="course-description-input">Course Description</label>
-      <textarea name="description" class="form-control" id="course-description-input" placeholder="This is my course!" required></textarea>
-    </div>
-    <div class="max-students">
-      <label for="max-students">Max Students</label>
-      <input type="number" name="max_students" id="max-students-input" min="1" max="100" required>
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+
+  </div>
+
+
 </main>
-{% endblock %} 
+
+
+
+{% endblock %}
 
 {% block extra_js %}
 
