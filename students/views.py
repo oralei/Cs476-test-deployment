@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from courses.models import Course, Task, TaskSubmission
-from courses.observers import SubmissionSubject, TeacherObserver, StudentObserver
+from courses.observers import SubmissionSubject, SubmissionObserver
 from functools import wraps
 import cloudinary.uploader  # For task submission
 
@@ -210,8 +210,9 @@ def studentTaskSubmit(request, task_id):
             )
             
         # Observer Pattern Implementation
+        # -------------------------------------------------------------------
         subject = SubmissionSubject(submission)
-        teacher_observer = TeacherObserver() # Create observer
+        teacher_observer = SubmissionObserver() # Create observer
         subject.attach(teacher_observer)     # Attach
         subject.set_state('pending')         # Changes state and notifies
         

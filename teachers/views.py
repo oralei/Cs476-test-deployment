@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from courses.models import Course, Task, TaskSubmission, TaskFeedback
 from teachers.models import Teacher # Import the Teacher model
 from django.contrib.auth.decorators import login_required
-from courses.observers import SubmissionSubject, TeacherObserver, StudentObserver
+from courses.observers import SubmissionSubject, FeedbackObserver
 from courses.models import Notification
 from django.http import HttpResponseForbidden
 from functools import wraps
@@ -259,7 +259,7 @@ def teacherFeedback(request, submission_id):
         
         # Observer Pattern
         subject = SubmissionSubject(submission)
-        student_observer = StudentObserver() # Create observer
+        student_observer = FeedbackObserver() # Create observer
         subject.attach(student_observer)     # Attach
         subject.set_state('reviewed')        # Changes state and notifies
         # ==========================================
