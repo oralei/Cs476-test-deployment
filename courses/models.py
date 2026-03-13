@@ -1,5 +1,6 @@
 # courses/models.py
 from django.db import models
+from django.conf import settings
 from django_mongodb_backend.fields import ObjectIdAutoField
 
 # Added by Mark: This creates the blueprint for the entire Course and Task system backend.
@@ -120,3 +121,19 @@ class TaskFeedback(models.Model):
 
   def __str__(self):
     return f"Feedback for {self.submission}"
+  
+# Class: Notification (MongoDB collection = courses_notification)
+# Used in the Observer Pattern
+#
+#
+class Notification(models.Model):
+  id = ObjectIdAutoField(primary_key=True) 
+  # Link it to the user receiving the notification (Teacher or Student)
+  user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications')
+  notification_type = models.CharField(max_length=50)
+  message = models.CharField(max_length=255)
+  is_read = models.BooleanField(default=False)
+  created_at = models.DateTimeField(auto_now_add=True)
+
+  def __str__(self):
+      return f"Notification for {self.user}: {self.message}"

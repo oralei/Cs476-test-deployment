@@ -20,4 +20,7 @@ urlpatterns = [
     # Task URLs
     path('tasks/', views.studentTasks, name='student-tasks'),
     path('tasks/<str:task_id>/', views.studentTaskSubmit, name='student-task-submit'),
+    
+    # Note: for marking a notification as read
+    path('notifications/read/<str:notification_id>/', views.markNotificationAsRead, name='student-notif-read'),
 ]

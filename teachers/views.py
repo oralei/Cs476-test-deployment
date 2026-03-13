@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from courses.models import Course, Task, TaskSubmission, TaskFeedback
 from teachers.models import Teacher # Import the Teacher model
 from django.contrib.auth.decorators import login_required
+from courses.observers import SubmissionSubject, FeedbackObserver
+from courses.models import Notification
 from django.http import HttpResponseForbidden
-from teachers.models import Notification
 from functools import wraps
 #from django.contrib.auth.decorators import login_required
 
@@ -26,16 +27,35 @@ Name Function: Home
 type: Function 
 Purpose: Connects to the Teacher Home dashboard
 """
-# Example for your teacherHome view
-def teacherHome(request): 
-    # Added By Saim Munshi: Reterive notfication
-    user_notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
+@teacher_required
+def teacherHome(request):  
+    user = request.user 
     
-    #Added By Saim Munshi: Pass them into the render function inside a dictionary
+    # Fetch user's unread notifications from the database
+    unread_notifications = Notification.objects.filter(user=user, is_read=False).order_by('-created_at')
+    
+    # Pass to html through context object
     context = {
-        'notifications': user_notifications
+        'notifications': unread_notifications,
+        'notification_count': unread_notifications.count()
     }
     return render(request, 'TeacherHomePage/templates/TeacherHomePage.html', context)
+
+@login_required
+@teacher_required
+def markNotificationAsRead(request, notification_id):
+    if request.method == "POST":
+        # 1. Fetch the notification (ensure it actually belongs to the logged-in user for security!)
+        notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+        
+        # 2. Change the status to read
+        notification.is_read = True
+        notification.save()
+        
+    # 3. Redirect the user right back to the page they were just on
+    # HTTP_REFERER gets the URL of the page the user clicked the button from
+    previous_page = request.META.get('HTTP_REFERER', '/') 
+    return redirect(previous_page)
 
 
 """ -------------------------- Course Views/Functions ------------------------------"""
@@ -48,8 +68,8 @@ Notes: Queries the database to obtain all courses under the logged in teacher.
 @teacher_required
 def teacherCourseList(request):  
     current_teacher = request.teacher_profile
-    # Added By Saim Munshi: Reterive notfication
-    user_notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
+    # Fetch user's unread notifications from the database (same as dashboard)
+    unread_notifications = Notification.objects.filter(user=request.user, is_read=False).order_by('-created_at')
     
     # Grab all courses created by the specific teacher
     courses = Course.objects.filter(teacher=current_teacher)
@@ -57,7 +77,7 @@ def teacherCourseList(request):
     # Pass those courses to the HTML template in a context dictionary
     context = {
         'courses': courses,
-        'notifications': user_notifications
+        'notifications': unread_notifications
     }
     return render(request, 'teacher-courses/templates/teacher-course-list.html', context)
 
@@ -71,8 +91,6 @@ Notes: Uses form fields from create-course.html to create a new Course object in
 @teacher_required
 def teacherCreateCourse(request):  
     current_teacher = request.teacher_profile
-    # Added By Saim Munshi: Reterive notfication
-    user_notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
     
     # Handle the form submission
     if request.method == "POST":
@@ -90,7 +108,7 @@ def teacherCreateCourse(request):
         # Added By Saim Munshi: Create Course Notification:
         Notification.objects.create(
             user=request.user,
-            notification_type=f"Create {course_title}",
+            notification_type=f"create_course",
             message=f"Course '{course_title}' has been successfully created!"
         )
         
@@ -109,8 +127,8 @@ Notes: This view is for obtaining a specific Course object under the current log
 @teacher_required
 def teacherCourseMain(request, course_id):
     current_teacher = request.teacher_profile
-    # Added By Saim Munshi: Reterive notfication
-    user_notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
+    # Fetch user's unread notifications from the database (same as dashboard)
+    unread_notifications = Notification.objects.filter(user=request.user, is_read=False).order_by('-created_at')
     # Get the specific course by ID. 
     # Security: We also pass teacher=current_teacher to ensure they can't view another teacher's course!
     course = get_object_or_404(Course, id=course_id, teacher=current_teacher)
@@ -118,7 +136,7 @@ def teacherCourseMain(request, course_id):
     # 2. Pass the single course to the HTML template
     context = {
         'course': course,
-        'notifications': user_notifications
+        'notifications': unread_notifications
     }
     return render(request, 'teacher-courses/templates/teacher-course-main.html', context)
 
@@ -173,7 +191,7 @@ def Create_Task(request):
         # Added By Saim Munshi: Create Tasks Notification:
         Notification.objects.create(
             user=request.user,
-            nnotification_type=f"Create Task For {course.title}",
+            notification_type=f"create_task",
             message=f"Task '{title}' has been successfully created!"
         )
         if student_ids:
@@ -255,9 +273,12 @@ def teacherFeedback(request, submission_id):
                 comments=comments
             )
         
-        # Mark the submission as reviewed!
-        submission.status = 'reviewed'
-        submission.save()
+        # Observer Pattern
+        subject = SubmissionSubject(submission)
+        student_observer = FeedbackObserver() # Create observer
+        subject.attach(student_observer)     # Attach
+        subject.set_state('reviewed')        # Changes state and notifies
+        # ==========================================
 
         # Redirect back to the list of submissions for this task
         return redirect('teacher-task-submissions', task_id=submission.task.id)
@@ -284,7 +305,7 @@ def editCourse(request, course_id):
          # Added By Saim Munshi: Create Edit Notification:
         Notification.objects.create(
             user=request.user,
-            notification_type=f"Edit Course {course.title}",
+            notification_type=f"edit_course",
             message=f"Course '{course.title}' has been successfully created!"
         )
         #Added By Saim Munshi: if not redirect to teacher course list page
@@ -308,7 +329,7 @@ def deleteCourse(request, course_id):
          # Added By Saim Munshi: Create Delete Notification:
         Notification.objects.create(
             user=request.user,
-            notification_type=f"Delete {course.title}",
+            notification_type=f"delete_course",
             message=f"Course '{course.title}' has been successfully Deleted!"
         )
         # Redirect back to the course list page

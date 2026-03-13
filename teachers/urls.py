@@ -17,12 +17,14 @@ urlpatterns = [
     
     # Note: This is required for specific feedback pages
     path('submissions/<str:submission_id>/feedback/', views.teacherFeedback, name='teacher-feedback'),
+    
+    # Note: for marking a notification as read
+    path('notifications/read/<str:notification_id>/', views.markNotificationAsRead, name='teacher-notif-read'),
+    
     path('my-students/', views.My_Student, name='My_Student'), #Added by Saim Connection to my student page
     path('courses/edit-course/<str:course_id>/', views.editCourse, name='edit-course'), # Added By Saim Connect to create course with course id of exisiting course to allow user
     path('delete-course/<str:course_id>/', views.deleteCourse, name='delete-course'),  # Added By Saim Connect to delete course
 
-    # Added By Saim: Notfication and message logic.
-    
     path('calendar/', views.Calendar, name='calendar'),
     
 ]
