@@ -108,7 +108,7 @@ def teacherCreateCourse(request):
         # Added By Saim Munshi: Create Course Notification:
         Notification.objects.create(
             user=request.user,
-            notification_type=f"create",
+            notification_type=f"create_course",
             message=f"Course '{course_title}' has been successfully created!"
         )
         
