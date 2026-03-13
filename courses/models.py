@@ -130,6 +130,7 @@ class Notification(models.Model):
   id = ObjectIdAutoField(primary_key=True) 
   # Link it to the user receiving the notification (Teacher or Student)
   user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications')
+  notification_type = models.CharField(max_length=50)
   message = models.CharField(max_length=255)
   is_read = models.BooleanField(default=False)
   created_at = models.DateTimeField(auto_now_add=True)
