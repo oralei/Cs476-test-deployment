@@ -54,19 +54,19 @@
             </div>
 
             <nav class="nav flex-column nav-pills mb-auto">
-                <a href="{% url 'teacher_home' %}" class="nav-link active">
+                <a href="{% url 'teacher_home' %}" class="nav-link {% if request.resolver_match.url_name == 'teacher_home' %}active{% endif %}">
                     <i class="bi bi-grid-fill"></i> Dashboard
                 </a>
-                <a href="{% url 'teacher-course-list' %}" class="nav-link">
+                <a href="{% url 'teacher-course-list' %}" class="nav-link {% if request.resolver_match.url_name == 'teacher-course-list' %}active{% endif %}">
                     <i class="bi bi-journals"></i> My Courses
                 </a>
-                <a href="{% url 'create-course' %}" class="nav-link">
+                <a href="{% url 'create-course' %}" class="nav-link {% if request.resolver_match.url_name == 'create-course' %}active{% endif %}">
                     <i class="bi bi-plus-square"></i> Create Course
                 </a>
                 <a href="#" class="nav-link">
                     <i class="bi bi-people"></i> My Students
                 </a>
-                <a href="{% url 'create-task' %}" class="nav-link">
+                <a href="{% url 'create-task' %}" class="nav-link {% if request.resolver_match.url_name == 'create-task' %}active{% endif %}">
                     <i class="bi bi-list-task"></i> Create Tasks
                 </a>
                 <a href="{% url 'calendar' %}"   class="nav-link {% if request.resolver_match.url_name == 'calendar' %}active{% endif %}">
