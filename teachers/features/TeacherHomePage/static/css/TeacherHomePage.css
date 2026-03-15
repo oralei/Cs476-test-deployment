@@ -1,39 +1,132 @@
-
-
-
-.feedback-window {
-    overflow: hidden;
-    width: 100%;
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Progression Component
+ * Last Modified:   2026-03-05
+ * Purpose:         Main card containers for grouping form elements.
+ *-------------------------------------------------------------------------*/
+.feedback-card {
+    background: white;
+    border-radius: 20px;
+    border: 1px solid #e9ecef;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
-.feedback-wrapper {
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Progression Component
+ * Last Modified:   2026-03-05
+ * Purpose:         Styling for input fields and dropdown menus.
+ *-------------------------------------------------------------------------*/
+.form-control, .form-select {
+    border-radius: 12px;
+    padding: 12px 15px;
+    border: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Progression Component
+ * Last Modified:   2026-03-05
+ * Purpose:         Visual feedback for active form fields.
+ *-------------------------------------------------------------------------*/
+.form-control:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+    border-color: #0d6efd;
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Progression Component
+ * Last Modified:   2026-03-05
+ * Purpose:         Primary action button styled with brand blue.
+ *-------------------------------------------------------------------------*/
+.btn-submit-feedback {
+    background-color: #0d6efd;
+    color: white;
+    border-radius: 10px;
+    padding: 10px 25px;
+    font-weight: 500;
+    transition: 0.3s;
+    border: none;
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Progression Component
+ * Last Modified:   2026-03-05
+ * Purpose:          hover state for primary buttons.
+ *-------------------------------------------------------------------------*/
+.btn-submit-feedback:hover {
+    background-color: #0b5ed7;
+    color: white;
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Progression Component
+ * Last Modified:   2026-03-05
+ * Purpose:         Layout for individual history list items.
+ *-------------------------------------------------------------------------*/
+.feedback-history-item {
+    border-bottom: 1px solid #eee;
+    padding: 20px 0;
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Progression Component
+ * Last Modified:   2026-03-05
+ * Purpose:         Removes border from the final history item.
+ *-------------------------------------------------------------------------*/
+.feedback-history-item:last-child {
+    border-bottom: none;
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Progression Component
+ * Last Modified:   2026-03-05
+ * Purpose:         Alert styling for unread feedback labels.
+ *-------------------------------------------------------------------------*/
+.status-unread {
+    color: #dc3545;
+    font-weight: 600;
     display: flex;
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    align-items: center;
 }
 
-.feedback-slide {
-    min-width: 100%;
-    flex-shrink: 0;
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Progression Component
+ * Last Modified:   2026-03-05
+ * Purpose:         Icon spacing for unread status indicators.
+ *-------------------------------------------------------------------------*/
+.status-unread i {
+    font-size: 1.2rem;
+    margin-left: 5px;
 }
 
-
-/* Responsive Breakpoints */
-@media (max-width: 991.98px) {
-    .sidebar-container {
-        display: none;
-    }
-    .main-content {
-        margin-left: 0;
-        padding: 100px 20px 40px 20px; /* Space for fixed mobile nav */
-    }
-    .navbar {
-        height: 70px;
-    }
-    .floating-chat { display: none !important; }
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Progression Component
+ * Last Modified:   2026-03-05
+ * Purpose:         Action buttons for managing history entries.
+ *-------------------------------------------------------------------------*/
+.feedback-history-item .btn-dark {
+    background-color: #0d6efd;
+    border: none;
+    transition: 0.3s;
 }
 
-@media (min-width: 1200px) {
-    .main-content {
-        padding: 50px 80px;
-    }
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Progression Component
+ * Last Modified:   2026-03-05
+ * Purpose:         Hover state for history management buttons.
+ *-------------------------------------------------------------------------*/
+.feedback-history-item .btn-dark:hover {
+    background-color: #0b5ed7;
 }

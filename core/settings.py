@@ -106,6 +106,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'teachers.context_processors.notifications_processor', #Added By Saim Munshi: this is proccessor to show notification for all views in for teacher
             ],
         },
     },
@@ -240,7 +241,7 @@ STATICFILES_DIRS =[
     #Added By Saim Munshi: This is to connect the main base folder to the Teacher Application features in static directory. 
     os.path.join(BASE_DIR, 'teachers/BaseTeacher/static'),
     os.path.join(BASE_DIR, 'teachers/features/Calendar/static'), 
-    os.path.join(BASE_DIR, 'teachers/features/teacher-courses/static'), 
+    os.path.join(BASE_DIR, 'teachers/features/teacher-courses/static'),
     os.path.join(BASE_DIR, 'teachers/features/TeacherHomePage/static'),
     os.path.join(BASE_DIR, 'teachers/features/tasks/static'), 
     os.path.join(BASE_DIR, 'teachers/features/My_Student/static'), 
