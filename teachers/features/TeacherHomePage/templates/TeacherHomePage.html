@@ -27,32 +27,38 @@
                 <div class="col-12 col-xl-4">
                     <div class="bg-white p-4 rounded-4 shadow-sm border h-100">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h2 class="h5 fw-bold mb-0">Student Question</h2>
-                            <div class="btn-group shadow-sm">
-                                <button class="btn btn-outline-secondary btn-sm px-3" onclick="moveSlide(-1)">←</button>
-                                <button class="btn btn-outline-secondary btn-sm px-3" onclick="moveSlide(1)">→</button>
-                            </div>
+                            <h2 class="h5 fw-bold mb-0">Notifications ({{ notification_count }})</h2>
                         </div>
-
                         <div class="feedback-window">
                             <div class="feedback-wrapper" id="feedbackWrapper">
-                                <div class="feedback-slide">
-                                    <div class="d-flex justify-content-between border-start border-primary border-4 ps-3">
-                                        <span class="fw-bold">Dr. Sarah Johnson</span>
-                                        <span class="text-muted small">Feb 12</span>
-                                         <p class="fst-italic mt-3 mb-0 ps-3 text-secondary">"Your latest UI wireframes show a great understanding of user flow. Focus on color contrast next."</p>
+                            {% for notif in notifications %}
+                                    <!-- A simple box for each notification -->
+                                    <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; background-color: #f9f9f9;">
+                                        
+                                        <!-- Left side: The message and time -->
+                                        <div>
+                                            <strong>{{ notif.message }}</strong><br>
+                                            <small style="color: gray;">{{ notif.created_at|timesince }} ago</small>
+                                        </div>
+
+                                        <!-- Right side: The 'Make it go away' button -->
+                                        <form action="{% url 'teacher-notif-read' notif.id %}" method="POST" style="margin: 0;">
+                                            {% csrf_token %}
+                                            <button type="submit" style="background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                                                Mark as Read ✓
+                                            </button>
+                                        </form>
+
                                     </div>
-                                   
-                                </div>
-                                <div class="feedback-slide">
-                                    <div class="d-flex justify-content-between border-start border-success border-4 ps-3">
-                                        <span class="fw-bold">Prof. Mike Ross</span>
-                                        <span class="text-muted small">Feb 08</span>
-                                    </div>
-                                    <p class="fst-italic mt-3 mb-0 ps-3 text-secondary">"Excellent work on the database schema! Please finalize the relations before our next sync."</p>
-                                </div>
+                                {% empty %}
+                                    <p>You're all caught up! No new notifications.</p>
+                                {% endfor %}
                             </div>
                         </div>
+                            <!-- Link to the future History page -->
+                            <div style="text-align: right; margin-top: 10px;">
+                                <a href="#">View Notification History</a>
+                            </div>
                     </div>
                 </div>
 

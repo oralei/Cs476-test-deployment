@@ -1,0 +1,60 @@
+{% extends 'BaseStudent.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/StudentHomePage.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="main-content">
+  <h1>{{ task.title }}</h1>
+  <h5 class="text-muted">{{ task.course.title }}</h5>
+
+  <!-- Show Task Details Card -->
+  <div class="card mt-4 p-4 bg-light">
+      <h4>Instructions</h4>
+      <p>{{ task.description }}</p>
+      <hr>
+      <div class="d-flex justify-content-between">
+          <span><strong>Start Date:</strong> {{ task.start_date|default:"N/A" }}</span>
+          <span><strong>Due Date:</strong> <span class="text-danger">{{ task.due_date|default:"N/A" }}</span></span>
+      </div>
+  </div>
+
+  <!-- Submission Form -->
+  <div class="card mt-4 p-4">
+      <h3>Your Submission</h3>
+      
+      <form method="POST" action="{% url 'student-task-submit' task.id %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          
+          <div class="mb-3 mt-3">
+              <label class="form-label">Text Submission</label>
+              <textarea name="submission_text" class="form-control" rows="5" placeholder="Type your answer or comments here...">{{ submission.submission_text|default:'' }}</textarea>
+          </div>
+
+          <div class="mb-3">
+              <label class="form-label">Upload Media (Images & Video only)</label>
+              <!-- accept="image/*,video/*" restricts the file picker -->
+              <input type="file" name="attached_file" class="form-control" accept="image/*,video/*">
+              
+              <!-- Check if a file_url string exists in the database (from passed context?)-->
+              {% if submission.file_url %}
+                  <small class="text-success d-block mt-2">
+                      Currently uploaded: <a href="{{ submission.file_url }}" target="_blank">View Attached Media</a>
+                  </small>
+              {% endif %}
+          </div>
+
+          <button type="submit" class="btn btn-success mt-2">
+              {% if submission %}Update Submission{% else %}Submit Task{% endif %}
+          </button>
+          <a href="{% url 'student-tasks' %}" class="btn btn-secondary mt-2 ms-2">Cancel</a>
+      </form>
+  </div>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

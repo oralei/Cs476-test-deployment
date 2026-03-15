@@ -1,0 +1,46 @@
+[
+  {
+    "id": "a1",
+    "title": "Assignment 1 due",
+    "start": "2026-03-17",
+    "allDay": true,
+    "extendedProps": {
+      "type": "assignment",
+      "course": "Course 3",
+      "student": "Mark 3"
+    }
+  },
+  {
+    "id": "q1",
+    "title": "Quiz (CS101)",
+    "start": "2026-02-18T10:00:00",
+    "end": "2026-02-18T10:30:00",
+    "extendedProps": {
+      "type": "quiz",
+      "course": "Course 1",
+      "student": "Mark 1"
+    }
+  },
+  {
+    "id": "p1",
+    "title": "Project milestone",
+    "start": "2026-03-20",
+    "allDay": true,
+    "extendedProps": {
+      "type": "project",
+      "course": "Course 2",
+      "student": "Mark 2"
+    }
+  },
+  {
+    "id": "m1",
+    "title": "Meeting: ok",
+    "start": "2026-03-19T14:00:00",
+    "end": "2026-02-19T14:30:00",
+    "extendedProps": {
+      "type": "meeting",
+      "course": "Course 3",
+      "student": "Mark 3"
+    }
+  }
+]

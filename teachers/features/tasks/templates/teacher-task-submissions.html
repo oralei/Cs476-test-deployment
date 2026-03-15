@@ -1,0 +1,62 @@
+{% extends 'BaseTeacher.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/TeacherHomePage.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- This page is for seeing all the available task submissions for a specific task -->
+<main class="main-content">
+  <h1>{{ task.title }} - Submissions</h1>
+  <p class="text-muted">Course: {{ task.course.title }}</p>
+
+  <div class="card mt-4 p-4">
+      <table class="table">
+          <thead>
+              <tr>
+                  <th>Student Name</th>
+                  <th>Status</th>
+                  <th>Action</th>
+              </tr>
+          </thead>
+          <tbody>
+            <!-- Python dynamic programming using for loop on each student within the student_data object -->
+              {% for item in student_data %}
+              <tr>
+                  <td>{{ item.student.full_name }}</td>
+                  <td>
+                      {% if not item.submission %}
+                          <span class="badge bg-secondary">Not Submitted</span>
+                      {% elif item.submission.status == 'pending' %}
+                          <span class="badge bg-warning text-dark">Needs Review</span>
+                      {% else %}
+                          <span class="badge bg-success">Reviewed</span>
+                      {% endif %}
+                  </td>
+                  <td>
+                      {% if item.submission %}
+                          <a href="{% url 'teacher-feedback' item.submission.id %}" class="btn btn-sm btn-primary">
+                              {% if item.submission.status == 'reviewed' %}Edit Feedback{% else %}View & Give Feedback{% endif %}
+                          </a>
+                      {% else %}
+                          <button class="btn btn-sm btn-light" disabled>Waiting...</button>
+                      {% endif %}
+                  </td>
+              </tr>
+              {% empty %}
+              <tr>
+                  <td colspan="3">No students assigned to this task.</td>
+              </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+  </div>
+  
+  <a href="{% url 'teacher-course-main' task.course.id %}" class="btn btn-secondary mt-4">Back to Course</a>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+
+{% endblock %}

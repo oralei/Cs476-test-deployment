@@ -1,5 +1,6 @@
 # courses/models.py
 from django.db import models
+from django.conf import settings
 from django_mongodb_backend.fields import ObjectIdAutoField
 
 # Added by Mark: This creates the blueprint for the entire Course and Task system backend.
@@ -12,6 +13,7 @@ class Course(models.Model):
   id = ObjectIdAutoField(primary_key=True)
   title = models.CharField(max_length=200)
   description = models.TextField()
+  max_students = models.PositiveIntegerField()
 
   # RELATIONS
   teacher = models.ForeignKey(
@@ -47,6 +49,11 @@ class Task(models.Model):
   start_date = models.DateTimeField(null=True, blank=True)
   due_date = models.DateTimeField(null=True, blank=True)
   points_possible = models.IntegerField(default=100) # Might be removed, don't need grading.
+  assigned_students = models.ManyToManyField(
+      'students.Student',
+      related_name='assigned_tasks',
+      blank=True
+  )
   
   created_at = models.DateTimeField(auto_now_add=True)
 
@@ -114,3 +121,19 @@ class TaskFeedback(models.Model):
 
   def __str__(self):
     return f"Feedback for {self.submission}"
+  
+# Class: Notification (MongoDB collection = courses_notification)
+# Used in the Observer Pattern
+#
+#
+class Notification(models.Model):
+  id = ObjectIdAutoField(primary_key=True) 
+  # Link it to the user receiving the notification (Teacher or Student)
+  user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications')
+  notification_type = models.CharField(max_length=50)
+  message = models.CharField(max_length=255)
+  is_read = models.BooleanField(default=False)
+  created_at = models.DateTimeField(auto_now_add=True)
+
+  def __str__(self):
+      return f"Notification for {self.user}: {self.message}"

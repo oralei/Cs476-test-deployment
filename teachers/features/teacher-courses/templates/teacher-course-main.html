@@ -1,0 +1,60 @@
+{% extends 'BaseTeacher.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <title>Mentora - Course Name Here</title>
+    <link rel="stylesheet" href="{% static 'css/TeacherHomePage.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="main-content">
+  <!-- Display Course Data -->
+  <h1>{{ course.title }}</h1>
+  <div class="card mt-4 p-4">
+      <h3>Course Details</h3>
+      <p><strong>Description:</strong> {{ course.description }}</p>
+      <p><strong>Max Students Allowed:</strong> {{ course.max_students }}</p>
+  </div>
+  <div class="card mt-4 p-4">
+      <h3>Enrolled Students ({{ course.students.count }} / {{ course.max_students }})</h3>
+      <ul class="list-group">
+          {% for student in course.students.all %}
+              <li class="list-group-item">{{ student.full_name }}</li>
+          {% empty %}
+              <li class="list-group-item text-muted">No students enrolled yet.</li>
+          {% endfor %}
+      </ul>
+  </div>
+
+  <!-- Course Tasks -->
+  <div class="card mt-4 p-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+          <h3>Course Tasks</h3>
+          <a href="{% url 'create-task' %}" class="btn btn-sm btn-primary">+ New Task</a>
+      </div>
+      <div class="list-group">
+          <!-- .tasks.all works because of the related_name='tasks' in your Course model! -->
+          {% for task in course.tasks.all %}
+              <a href="{% url 'teacher-task-submissions' task.id %}" class="list-group-item list-group-item-action">
+                  <div class="d-flex w-100 justify-content-between">
+                      <h5 class="mb-1">{{ task.title }}</h5>
+                      <small>Due: {{ task.due_date|default:"No due date" }}</small>
+                  </div>
+                  <small class="text-muted">Assigned to {{ task.assigned_students.count }} students</small>
+              </a>
+          {% empty %}
+              <p class="text-muted">No tasks created for this course yet.</p>
+          {% endfor %}
+      </div>
+  </div>
+
+  <div class="mt-4">
+      <!-- Back Button to go to Course List page -->
+      <a href="{% url 'teacher-course-list' %}" class="btn btn-secondary">Back to Courses</a>
+  </div>
+</main>
+{% endblock %} 
+
+{% block extra_js %}
+
+{% endblock %}

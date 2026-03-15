@@ -1,16 +1,18 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard - Mentora</title>
+    <title>Mentor View - Mentora</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{% static 'css/BaseTeacher.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
+
 <body>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-white d-lg-none shadow-sm px-3 fixed-top">
@@ -19,7 +21,7 @@
                 <div class="avatar-circle-sm me-2">M</div>
                 <span class="fw-bold">Mentora</span>
             </div>
-            <button class="btn border-0 justify-content-end" type="button" >
+            <button class="btn border-0 justify-content-end" type="button">
                 <i class="bi bi-chat-dots-fill"></i>
             </button>
             <button class="btn border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
@@ -28,6 +30,7 @@
         </div>
     </nav>
 
+    <!-- Mobile view side bar -->
     <div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="mobileSidebar">
         <div class="offcanvas-header border-bottom">
             <h5 class="offcanvas-title fw-bold">Menu</h5>
@@ -35,19 +38,45 @@
         </div>
         <div class="offcanvas-body p-3">
             <nav class="nav flex-column nav-pills">
-                <a href="#" class="nav-link active"><i class="bi bi-grid-fill me-3"></i>Dashboard</a>
-                <a href="#" class="nav-link"><i class="bi bi-people me-3"></i>My Students</a>
-                <a href="#" class="nav-link"><i class="bi bi-list-task me-3"></i>Create Tasks</a>
-                <!-- Added by win516 -->
-                <a href="{% url 'teacher_progress' %}" class="nav-link"><i class="bi bi-graph-up-arrow me-3"></i>Progress</a>
-                <a href="#" class="nav-link"><i class="bi bi-calendar3 me-3"></i>Calendar</a>
-                <hr>
-                <a href="#" class="nav-link text-secondary"><i class="bi bi-gear me-3"></i>Settings</a>
-                <a href="/" class="nav-link text-danger"><i class="bi bi-box-arrow-right me-3"></i>Log out</a>
+                <div class="mb-3" id="nav-mobile-div-links">
+                    <a href="{% url 'teacher_home' %}"
+                        class="nav-link {% if request.resolver_match.url_name == 'teacher_home' %}active{% endif %}">
+                        <i class="bi bi-grid-fill me-3"></i>Dashboard
+                    </a>
+                    <a href="{% url 'My_Student' %}"
+                        class="nav-link {% if request.resolver_match.url_name == 'My_Student' %}active{% endif %}">
+                        <i class="bi bi-people me-3"></i>My Students
+                    </a>
+                    <a href="{% url 'teacher-course-list' %}"
+                        class="nav-link {% if request.resolver_match.url_name == 'teacher-course-list' %}active{% endif %}">
+                        <i class="bi bi-journals"></i> My Courses
+                    </a>
+                    <a href="{% url 'create-course' %}"
+                        class="nav-link {% if request.resolver_match.url_name == 'create-course' %}active{% endif %}">
+                        <i class="bi bi-plus-square"></i> Create Course
+                    </a>
+                    <a href="{% url 'create-task' %}"
+                        class="nav-link {% if request.resolver_match.url_name == 'create-task' %}active{% endif %}">
+                        <i class="bi bi-list-task"></i> Create Tasks
+                    </a>
+                    <!-- Added by win516 -->
+                    <a href="{% url 'teacher_progress' %}"
+                        class="nav-link {% if request.resolver_match.url_name == 'teacher_progress' %}active{% endif %}">
+                        <i class="bi bi-graph-up-arrow me-3"></i>Progress
+                    </a>
+                    <a href="{% url 'calendar' %}"
+                        class="nav-link {% if request.resolver_match.url_name == 'calendar' %}active{% endif %}">
+                        <i class="bi bi-calendar3 me-3"></i>Calendar
+                    </a>
+                    <hr>
+                    <a href="#" class="nav-link text-secondary"><i class="bi bi-gear me-3"></i>Settings</a>
+                    <a href="/" class="nav-link text-danger"><i class="bi bi-box-arrow-right me-3"></i>Log out</a>
+                </div>
             </nav>
         </div>
     </div>
 
+    <!-- Desktop view side bar -->
     <div class="sidebar-container d-none d-lg-block">
         <div class="sidebar-pill shadow-sm">
             <div class="d-flex align-items-center mb-5 px-3">
@@ -56,26 +85,39 @@
             </div>
 
             <nav class="nav flex-column nav-pills mb-auto">
-                <a href="{% url 'teacher_home' %}" class="nav-link active">
+                <a href="{% url 'teacher_home' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'teacher_home' %}active{% endif %}">
                     <i class="bi bi-grid-fill"></i> Dashboard
                 </a>
-                <a href="#" class="nav-link">
+                <a href="{% url 'teacher-course-list' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'teacher-course-list' %}active{% endif %}">
+                    <i class="bi bi-journals"></i> My Courses
+                </a>
+                <a href="{% url 'create-course' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'create-course' %}active{% endif %}">
+                    <i class="bi bi-plus-square"></i> Create Course
+                </a>
+                <a href="{% url 'My_Student' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'My_Student' %}active{% endif %}">
                     <i class="bi bi-people"></i> My Students
                 </a>
-                <a href="#" class="nav-link">
+                <a href="{% url 'create-task' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'create-task' %}active{% endif %}">
                     <i class="bi bi-list-task"></i> Create Tasks
                 </a>
                 <!-- Added by win516 -->
-                <a href="{% url 'teacher_progress' %}" class="nav-link">
+                <a href="{% url 'teacher_progress' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'teacher_progress' %}active{% endif %}">
                     <i class="bi bi-graph-up-arrow"></i> Progress
                 </a>
-                <a href="#" class="nav-link">
+                <a href="{% url 'calendar' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'calendar' %}active{% endif %}">
                     <i class="bi bi-calendar3"></i> Calendar
                 </a>
             </nav>
 
             <div class="border-top pt-3">
-                <a href="#" class="nav-link">
+                <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#settingsModal">
                     <i class="bi bi-gear"></i> Settings
                 </a>
                 <a href="/" class="nav-link text-danger">
@@ -87,11 +129,106 @@
 
     {% block content %}{% endblock %}
 
-    <a href="#" class="floating-chat d-none d-lg-flex">
+    <a class="floating-chat d-none d-lg-flex" data-bs-toggle="offcanvas" href="#chatWindow" role="button"
+        aria-controls="offcanvasExample">
         <i class="bi bi-chat-dots-fill"></i>
     </a>
+
+    <!-- Chat Window (Added by Saim) -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="chatWindow" aria-labelledby="chatWindow">
+        <div class="offcanvas-header border-bottom">
+            <div class="d-flex align-items-center">
+                <div class="avatar-circle-sm me-2">M</div>
+                <span class="fw-bold">Mentora Chat</span>
+            </div>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <!-- Added By Saim Munshi: Message Container -->
+        <div class="offcanvas-body">
+            <div class="chat-message-container">
+                {% for notification in notifications %}
+                <div class="chat-message card shadow-sm mb-3 p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <div>
+                            <span class="fw-bold text-primary">{{notification.notification_type}}</span>
+                        </div>
+                        <small class="text-muted">{{ notification.created_at|date:"M d, Y H:i" }}</small>
+                    </div>
+                    <div class="message-text mb-2">
+                        {{ notification.message }}
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-secondary">Sent by System</small>
+                        <div class="form-check">
+                            <button class="btn btn-primary btn-sm remove-btn"
+                                data-id="{{ notification.id }}">Remove</button>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center text-muted mt-3">
+                    No new messages.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal (Added by Saim) -->
+    <div class="modal fade" id="settingsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-gear-fill me-2"></i>Account Settings
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="fw-bold mb-2">
+                            <i class="bi bi-palette2 me-2"></i>Appearance Mode
+                        </label><br>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" name="theme-opts" id="lightMode" class="form-check-input">
+                            <label class="form-check-label" for="lightMode">
+                                <i class="bi bi-sun me-1"></i>Light
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" name="theme-opts" id="darkMode" class="form-check-input">
+                            <label class="form-check-label" for="darkMode">
+                                <i class="bi bi-moon-stars me-1"></i>Dark
+                            </label>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <label class="fw-bold mb-2">
+                            <i class="bi bi-translate me-2"></i>Display Language
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-globe"></i></span>
+                            <select id="langSelect" class="form-select">
+                                <option value="en">English</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                                <option value="ar">Arabic</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-submit-feedback w-100" data-bs-dismiss="modal">
+                        <i class="bi bi-check me-2"></i>Save & Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     {% block extra_js %}{% endblock %}
 </body>
+
 </html>

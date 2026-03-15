@@ -1,4 +1,4 @@
-{% extends 'BaseStudent.html' %}
+{% extends 'BaseTeacher.html' %}
 {% load static %}
 
 {% block extra_css %}
@@ -12,8 +12,8 @@
 
     <!-- Header card -->
     <div class="card page-head">
-      <h1>Student Calendar</h1>
-      <p>View my tasks and assignments</p>
+      <h1>Mentor Calendar</h1>
+      <p>View student tasks and assignments</p>
     </div>
 
     <!-- Filters card -->
@@ -21,13 +21,21 @@
       <div class="field">
         <label for="courseSelect" class="form-label">Select Course</label>
           <select name="course" id="courseSelect" class="form-select" required>
-              <option value="" selected>-- All Courses --</option>
+              <option value="" disabled selected>-- Choose a Course --</option>
               {% for course in courses %}
                   <option value="{{ course.id }}">{{ course.title }}</option>
               {% endfor %}
           </select>
       </div>
-</div>
+
+      <div class="field">
+        <label for="studentSelect">Student</label>
+        <select id="studentSelect">
+        <option value="" disabled selected>-- Select a course first --</option>
+        </select>
+      </div>
+    </div>
+
     <!-- Calendar card -->
     <div class="card calendar-card">
       <div id="calendar"></div>
@@ -40,30 +48,33 @@
         <div class="legend-item"><span class="dot" style="background: var(--meeting)"></span> Meeting</div>
       </div>
     </div>
+
   </div>
+{{ course_students_map|json_script:"course-data" }}
 {{ events_data|json_script:"events-data" }}
 {% endblock %} 
 {% block extra_js %}
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
-  <script src="{% static 'js/StudentCalendar.js' %}"></script>
+  <script src="{% static 'js/TeacherCalendar.js' %}"></script>
   
 
 <script>
-    // grabs rendered JSON data
+    // JS grabs JSON data
     const courseDataElement = document.getElementById('course-data');
     const courseMap = JSON.parse(courseDataElement.textContent);
-
+    
     const courseSelect = document.getElementById('courseSelect');
     const studentSelect = document.getElementById('studentSelect');
     courseSelect.addEventListener('change', function() 
     {
         // Get the selected course ID
         const selectedCourseId = this.value;
-        // Get the list of students for this course from map
+        // Get the list of students
         const students = courseMap[selectedCourseId] ||[];
         // Clear out the current options in the student dropdown
         studentSelect.innerHTML = '';
-        // Check if there are students in the selected course
+
+        // If there are students in the selected course
         if (students.length > 0) 
         {
             // Add a default placeholder option
@@ -74,17 +85,16 @@
             defaultOption.selected = true;
             studentSelect.appendChild(defaultOption);
 
-            // Loop through the students array and create an option for each
-            students.forEach(function(student) {
+            // Loop through the students array & create option for each
+            students.forEach(function(student)
+            {
                 const option = document.createElement('option');
                 option.value = student.id;
                 option.textContent = student.name;
                 studentSelect.appendChild(option);
             });
-        } 
-        else 
-        {
-            // If no students are in the course, show a relevant message
+        } else {
+            // If no students are in  course, show a relevant message
             const emptyOption = document.createElement('option');
             emptyOption.value = "";
             emptyOption.textContent = "-- No students in this course --";
@@ -92,7 +102,7 @@
             emptyOption.selected = true;
             studentSelect.appendChild(emptyOption);
         }
-        // This triggers calendar filter to update when new course is selected
+        // Triggers calendar filter to update when new course is selected
         studentSelect.dispatchEvent(new Event('change'));
     });
 </script>
