@@ -54,6 +54,10 @@
               <label for="max-students">Max Students</label>
               <input type="number" name="max_students" id="max-students-input" min="1" max="100" required>
             </div>
+            <div class="private-check mb-4">
+              <label for="max-students">Private Course</label>
+              <input type="checkbox" name="private-box" id="private-input" {% if course.private %}checked{% endif %}>
+            </div>
             <!-------------------------------------------------------------------------------------------->
             <!--Added By Saim  Select Students (dynamic programming from JavaScript) -->
             <button type="submit" class="btn btn-primary btn-lg w-100 mb-3" id="Update-Course">
