@@ -304,43 +304,75 @@ def deleteCourse(request, course_id):
 @teacher_required
 def Progress(request):
     current_teacher = request.teacher_profile
-
-    # Get all courses by this teacher
     courses = Course.objects.filter(teacher=current_teacher)
 
-    # Get all students enrolled in teacher's courses with their task stats
-    student_data = []
+    student_map = {}
+    course_names = []
+
     for course in courses:
+        if course.title:
+            course_names.append(course.title)
         for student in course.students.all():
+            sid = str(student.id)
+
             total_tasks = Task.objects.filter(course=course, assigned_students=student).count()
             completed_tasks = TaskSubmission.objects.filter(
-                task__course=course,
-                student=student,
-                status='reviewed'
+                task__course=course, student=student, status='reviewed'
             ).count()
             pending_tasks = TaskSubmission.objects.filter(
-                task__course=course,
-                student=student,
-                status='pending'
+                task__course=course, student=student, status='pending'
             ).count()
+            overdue = max(0, total_tasks - completed_tasks - pending_tasks)
             progress = int((completed_tasks / total_tasks) * 100) if total_tasks > 0 else 0
 
-            student_data.append({
-                "name": student.full_name,
+            if sid not in student_map:
+                student_map[sid] = {
+                    "name": student.full_name or "Unknown",
+                    "courses": [],
+                    "total_completed": 0,
+                    "total_pending": 0,
+                    "total_overdue": 0,
+                    "total_tasks": 0,
+                }
+
+            student_map[sid]["courses"].append({
+                "course": course.title or "Untitled",
                 "progress": progress,
                 "completed": completed_tasks,
                 "pending": pending_tasks,
-                "overdue": total_tasks - completed_tasks - pending_tasks,
-                "last_activity": "N/A"
+                "overdue": overdue,
             })
+            student_map[sid]["total_completed"] += completed_tasks
+            student_map[sid]["total_pending"] += pending_tasks
+            student_map[sid]["total_overdue"] += overdue
+            student_map[sid]["total_tasks"] += total_tasks
+
+    student_data = []
+    for sid, s in student_map.items():
+        total = s["total_tasks"]
+        progress = int((s["total_completed"] / total) * 100) if total > 0 else 0
+        status = 'behind' if progress < 40 or s["total_overdue"] > 0 else 'ontrack'
+
+        student_data.append({
+            "name": s["name"],
+            "courses": s["courses"],
+            "progress": progress,
+            "completed": s["total_completed"],
+            "pending": s["total_pending"],
+            "overdue": s["total_overdue"],
+            "status": status,
+        })
+
+    needs_attention = sum(1 for s in student_data if s['status'] == 'behind')
 
     stats = {
         "active_students": len(student_data),
-        "overdue": sum(s["overdue"] for s in student_data),
+        "needs_attention": needs_attention,
         "avg_completion": int(sum(s["progress"] for s in student_data) / len(student_data)) if student_data else 0
     }
 
     return render(request, "Progress/templates/Progress.html", {
         "students": student_data,
+        "courses": course_names,
         "stats": stats,
     })
