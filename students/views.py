@@ -55,11 +55,49 @@ def markNotificationAsRead(request, notification_id):
 
 """
 Name Function: Calender
+Added by: Ariel
 type: Function 
 Purpose:It is used connect django with Calender html file through an http request
 """
+@login_required
+@student_required
 def Calendar(request):  
-    return render(request, 'Calendar/templates/Calendar.html')
+    current_student = request.student_profile
+    # Get courses this specific student is enrolled in
+    courses = current_student.enrolled_courses.all()
+
+    # Get tasks assigned to this student
+    tasks = Task.objects.filter(assigned_students=current_student)
+    events_data = []
+    
+    for task in tasks:
+        start_str = task.start_date.isoformat() if task.start_date else None
+        end_str = task.due_date.isoformat() if task.due_date else None
+
+        # If the task doesn't have a start date, use the due date so the event still appears on the calendar.
+        if not start_str and end_str:
+            start_str = end_str
+            
+        if not start_str:
+            continue # Skip tasks without dates
+            
+        events_data.append({
+            'id': str(task.id),
+            'title': task.title,
+            'start': start_str,
+            'end': end_str,
+            'extendedProps': {
+                'type': 'assignment',
+                'course': str(task.course_id),
+            }
+        })
+
+    context = {
+        'courses': courses,
+        'events_data': events_data,
+    }
+    
+    return render(request, 'Calendar/templates/Calendar.html', context)
 
 def Mentor(request):  
     return render(request, '/Mentors/templates/Mentor.html')
@@ -69,6 +107,17 @@ def Progress(request):
 
 """ ------------------------------ Student Courses Views/Functions ------------------------------ """
 # Note: Below are all the Course related functionality on the student's side.
+
+# Added by Mark: Helper function to check the student profile. 
+# This is reused throughout all the views by adding @student_required just like @login_required
+def student_required(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_student:
+            return HttpResponseForbidden("You must be logged in as a student.")
+        request.student_profile = request.user.students_student_profile
+        return view_func(request, *args, **kwargs)
+    return wrapper
 
 """
 Added by Mark: Course Browser Page

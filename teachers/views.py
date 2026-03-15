@@ -142,12 +142,47 @@ def teacherCourseMain(request, course_id):
 
 """
 Name Function: Calendar
+Added by Ariel:
 type: Function 
 Purpose: Connects to the Teacher Calendar feature
 """
+@login_required
+@teacher_required
 def Calendar(request):  
-    # Looks in teachers/features/Calendar/templates/Calendar/Calendar.html
-    return render(request, 'Calendar/templates/teacherCalendar.html')
+    current_teacher = request.teacher_profile
+
+    # Get courses for this teacher
+    courses = Course.objects.filter(teacher=current_teacher)
+    course_students_map = {}
+    for c in courses:
+        course_students_map[str(c.id)] =[
+            {'id': str(s.id), 'name': s.full_name} for s in c.students.all()
+        ]
+
+    tasks = Task.objects.filter(course__teacher=current_teacher)
+    events_data = []
+    
+    for task in tasks:
+        events_data.append({
+            'id': str(task.id),
+            'title': task.title,
+            # FullCalendar expects YYYY-MM-DD strings for dates
+            'start': task.start_date.isoformat() if task.start_date else None,
+            'end': task.due_date.isoformat() if task.due_date else None,
+            'extendedProps': {
+                'type': 'assignment',
+                'course': str(task.course.id),
+                # Task can have multiple students, so we need to get ids
+                'students': [str(student.id) for student in task.assigned_students.all()]
+            }
+        })
+
+    context = {
+        'courses': courses,
+        'course_students_map': course_students_map,
+        'events_data': events_data,
+    }
+    return render(request, 'Calendar/templates/teacherCalendar.html', context)
 
 
 def My_Student(request):  
