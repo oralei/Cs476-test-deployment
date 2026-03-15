@@ -6,6 +6,7 @@ from courses.observers import SubmissionSubject, FeedbackObserver
 from courses.models import Notification
 from django.http import HttpResponseForbidden
 from functools import wraps
+from django.utils import timezone #added by win516
 
 # Create your views here.
 
@@ -322,7 +323,20 @@ def Progress(request):
             pending_tasks = TaskSubmission.objects.filter(
                 task__course=course, student=student, status='pending'
             ).count()
-            overdue = max(0, total_tasks - completed_tasks - pending_tasks)
+
+            overdue = Task.objects.filter(
+                course=course,
+                assigned_students=student,
+                due_date__lt=timezone.now()
+            ).exclude(
+                id__in=TaskSubmission.objects.filter(
+                    student=student,
+                    status='reviewed'
+                ).values_list('task_id', flat=True)
+            ).count()
+
+
+
             progress = int((completed_tasks / total_tasks) * 100) if total_tasks > 0 else 0
 
             if sid not in student_map:
