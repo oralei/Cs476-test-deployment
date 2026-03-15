@@ -21,8 +21,13 @@
               
               <div class="text-end">
                   {% if item.is_submitted %}
+                    {% if item.t.status == 'pending' %}
                       <span class="badge bg-success mb-2">Submitted</span><br>
                       <a href="{% url 'student-task-submit' item.task.id %}" class="btn btn-sm btn-outline-primary">Edit Submission</a>
+                    {% else %}
+                      <span class="badge bg-success mb-2">Has Feedback</span><br>
+                      <a href="{% url 'student-task-submit' item.task.id %}" class="btn btn-sm btn-outline-primary">View Feedback</a>
+                    {% endif %}
                   {% else %}
                       <span class="badge bg-warning text-dark mb-2">Not Submitted</span><br>
                       <a href="{% url 'student-task-submit' item.task.id %}" class="btn btn-sm btn-primary">Start Task</a>
