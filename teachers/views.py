@@ -26,6 +26,7 @@ Name Function: Home
 type: Function
 Purpose: Connects to the Teacher Home dashboard
 """
+@login_required
 @teacher_required
 def teacherHome(request):
     user = request.user
