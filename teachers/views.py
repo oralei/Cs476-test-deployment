@@ -6,6 +6,7 @@ from courses.observers import SubmissionSubject, FeedbackObserver
 from courses.models import Notification
 from django.http import HttpResponseForbidden
 from functools import wraps
+from datetime import date
 #from django.contrib.auth.decorators import login_required
 
 # Create your views here.
@@ -31,18 +32,23 @@ Purpose: Connects to the Teacher Home dashboard
 @teacher_required
 def teacherHome(request):  
     user = request.user 
-    
-    print(f"Logged in User Email: {user.email} - Teacher Profile Name: {repr(request.teacher_profile.full_name)}")
+    teacher = request.teacher_profile
+    print(f"Logged in User Email: {user.email} - Teacher Profile Name: {repr(teacher.full_name)}")
     
     # Fetch user's unread notifications from the database
     unread_notifications = Notification.objects.filter(user=user, is_read=False).order_by('-created_at')
-    
-    # Pass to html through context object
+
+    #Added By Saim Munshi:Fetch 5upcoming task from database based on today data and ordered by due date
+
+    upcoming_tasks = Task.objects.filter( course__teacher = teacher,due_date__gte= date.today()).order_by("due_date")[:5]
+
     context = {
-        'teacher': request.teacher_profile,
+        'teacher': teacher,
         'notifications': unread_notifications,
-        'notification_count': unread_notifications.count()
+        'notification_count': unread_notifications.count(),
+        'upcoming_tasks': upcoming_tasks
     }
+   
     return render(request, 'TeacherHomePage/templates/TeacherHomePage.html', context)
 
 @login_required
