@@ -1,50 +1,82 @@
 {% extends 'BaseTeacher.html' %}
+{% load static %}
+
+<!-- Added by Matthew/Spooky: Load file extras if you are using custom filters for attachments -->
+
+
+{% block extra_css %}
+<!-- Matthew: CSS file for styling -->
+<link rel="stylesheet" href="{% static 'courses/css/feedback.css' %}">
+{% endblock %}
 
 {% block content %}
 <main class="main-content">
-  <h2>Feedback for {{ submission.student.full_name }}</h2>
-  <h5 class="text-muted">{{ submission.task.title }}</h5>
 
-  <!-- Display Student's Submission details -->
-  <div class="card mt-4 p-4 bg-light border-primary">
-      <h4>Student's Submission</h4>
-      <p class="mt-3"><strong>Text Submitted:</strong></p>
-      <div class="p-3 bg-white border rounded">
-          {{ submission.submission_text|default:"<i>No text provided.</i>"|safe }}
-      </div>
+<div class="feedback-page">
 
-      {% if submission.file_url %}
-          <p class="mt-3"><strong>Attached Media:</strong></p>
-          <a href="{{ submission.file_url }}" target="_blank" class="btn btn-info btn-sm text-white">Open Media File in New Tab</a>
-      {% endif %}
-      
-      <small class="d-block mt-3 text-muted">Submitted on: {{ submission.submitted_at }}</small>
-  </div>
+    <!-- Feedback Page -->
+    <div class="feedback-card">
+        <h2>Feedback for {{ submission.student.full_name }}</h2>
+        <p style="color: #666; font-size: 1.1em; margin-bottom: 15px;">Task: {{ submission.task.title }}</p>
 
-  <!-- Feedback Form Section, sent to teacherFeedback() in views.py -->
-  <div class="card mt-4 p-4">
-      <h3>Feedback</h3>
-      <form method="POST" action="{% url 'teacher-feedback' submission.id %}">
-          {% csrf_token %}
-          
-          <div class="mb-3">
-              <label class="form-label">Grade (Out of {{ submission.task.points_possible }})</label>
-              <!-- Uses a number input. Steps by 0.5 allow decimal grades like 95.5 -->
-              <input type="number" step="0.5" name="grade" class="form-control" min=0 max=100 style="max-width: 150px;" required value="{{ feedback.grade|default:'' }}">
-          </div>
+        <div style="background: #f4f7f6; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
+            <strong>Student's Submission:</strong>
+            <div style="margin-top: 10px; background: white; padding: 15px; border: 1px solid #ccc; border-radius: 5px;">
+                {{ submission.submission_text|default:"<i>No text provided.</i>"|safe }}
+            </div>
 
-          <div class="mb-3">
-              <label class="form-label">Teacher Comments</label>
-              <textarea name="comments" class="form-control" rows="4" placeholder="Great job! Just be careful with...">{{ feedback.comments|default:'' }}</textarea>
-          </div>
+            {% if submission.file_url %}
+                <div style="margin-top: 15px;">
+                    <strong>Attached Media:</strong><br>
+                    <a href="{{ submission.file_url }}" target="_blank" style="display: inline-block; margin-top: 5px; padding: 8px 15px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;">
+                        Open Student's File
+                    </a>
+                </div>
+            {% endif %}
+            
+            <small style="display: block; margin-top: 15px; color: #888;">Submitted on: {{ submission.submitted_at }}</small>
+        </div>
+    </div>
 
-          <button type="submit" class="btn btn-success">Save Feedback & Mark Reviewed</button>
-          <a href="{% url 'teacher-task-submissions' submission.task.id %}" class="btn btn-secondary ms-2">Cancel</a>
-      </form>
-  </div>
+    <!--  -->
+    <div class="feedback-card">
+        <h2>{% if feedback %}Edit Feedback{% else %}Write Feedback{% endif %}</h2>
+
+        <!-- -->
+        <form class="feedback-form" method="POST" action="{% url 'teacher-feedback' submission.id %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- -->
+            <label style="font-weight: bold; display: block; margin-bottom: 5px;">Grade (Out of {{ submission.task.points_possible }})</label>
+            <input type="number" step="0.5" name="grade" min="0" max="{{ submission.task.points_possible }}" value="{{ feedback.grade|default:'' }}" required style="width: 150px; margin-bottom: 20px;">
+
+            <!-- Matthew: Attach File -->
+            <label style="font-weight: bold; display: block; margin-bottom: 5px;">Attach File (Optional)</label>
+            <input type="file" name="attachment" accept="image/*,.pdf,.doc,.docx" style="margin-bottom: 10px;">
+            
+            {% if feedback and feedback.attachment_url %}
+                <small style="display: block; margin-bottom: 20px; color: #555;">
+                    Current attachment: <a href="{{ feedback.attachment_url }}" target="_blank">View File</a>
+                </small>
+            {% else %}
+                <div style="margin-bottom: 20px;"></div>
+            {% endif %}
+
+            <!-- Matthew: Comments -->
+            <label style="font-weight: bold; display: block; margin-bottom: 5px;">Comments</label>
+            <textarea name="comments" placeholder="Write feedback here..." required>{{ feedback.comments|default:'' }}</textarea>
+
+            <!-- Matthew: Buttons -->
+            <div class="feedback-buttons" style="margin-top: 15px;">
+                <button type="submit" style="background-color: #28a745; color: white;">Save Feedback</button>
+                <a href="{% url 'teacher-task-submissions' submission.task.id %}">
+                    <button type="button" class="delete-btn">Cancel</button>
+                </a>
+            </div>
+        </form>
+    </div>
+
+</div>
+
 </main>
-{% endblock %}
-
-{% block extra_js %}
-
 {% endblock %}

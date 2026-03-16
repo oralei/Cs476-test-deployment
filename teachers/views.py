@@ -7,6 +7,7 @@ from courses.models import Notification
 from django.http import HttpResponseForbidden
 from functools import wraps
 from datetime import date
+import cloudinary.uploader
 #from django.contrib.auth.decorators import login_required
 
 # Create your views here.
@@ -304,18 +305,31 @@ def teacherFeedback(request, submission_id):
     if request.method == "POST":
         grade = request.POST.get('grade')
         comments = request.POST.get('comments', '')
+        attachment_url = feedback.attachment_url if feedback else None
+        file = request.FILES.get("attachment")
+        # Added by Matthew/Spooky: If a file exists upload it to Cloudinary.
+        if file:
+            try:
+                upload = cloudinary.uploader.upload(file, folder="Mentora_Feedback")
+                attachment_url = upload.get("secure_url")
+            except Exception as e:
+                # Added by Matthew/Spooky: Print upload error to server console.
+                print(f"Cloudinary Upload Error: {e}")
 
         if feedback:
             # Update existing feedback
             feedback.grade = grade
             feedback.comments = comments
+            if file: # Only overwrite if a new file is uploaded
+                feedback.attachment_url = attachment_url
             feedback.save()
         else:
             # Create new feedback
             TaskFeedback.objects.create(
                 submission=submission,
                 grade=grade,
-                comments=comments
+                comments=comments, 
+                attachment_url=attachment_url
             )
         
         # Observer Pattern

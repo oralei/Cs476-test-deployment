@@ -1,0 +1,96 @@
+{% extends "BaseStudent.html" %}
+{% load static %}
+{% load file_extras %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'courses/css/student_styles.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="main-content">
+
+    <form style="display:none;">
+        <!-- Added by Matthew/Spooky: Hidden CSRF token for JS AJAX requests. -->
+        {% csrf_token %}
+    </form>
+
+<!-- Added by Matthew/Spooky: Currently active feedback. -->
+<div class="feedback-card">
+<h2>My Feedback</h2>
+
+{% if unread_count > 0 %}
+<!-- Added by Matthew/Spooky: Show unread count. -->
+<p><strong>You have {{ unread_count }} unread feedback message{{ unread_count|pluralize }}</strong></p> 
+{% endif %}
+
+<div id="activeFeedbackList">
+{% for fb in feedback_list %}
+    {% if not fb.is_archived_for_receiver %}
+    <div class="feedback-item" id="feedback-{{ fb.id }}">
+        <div class="feedback-meta">
+            <strong>{{ fb.sender.username }}</strong> |
+            {% if fb.course %}{{ fb.course.title }}{% else %}No Course{% endif %} |
+            {% if fb.task %}{{ fb.task.title }}{% else %}General Feedback{% endif %} |
+            {{ fb.created_at|date:"M d, Y H:i" }}
+        </div>
+
+        <p>{{ fb.message }}</p>
+
+        {% if fb.attachment_url %}
+            {% if fb.attachment_url|is_image %}
+                <img src="{{ fb.attachment_url }}" alt="Attachment" style="max-width:200px; display:block; margin:5px 0;">
+            {% else %}
+                <p><a href="{{ fb.attachment_url }}" target="_blank">View Attachment</a></p>
+            {% endif %}
+        {% endif %}
+
+        <p class="feedback-status">Status: {% if fb.is_read %}Read ✔{% else %}Unread ❌{% endif %}</p> <!-- Added by Matthew/Spooky: Status icon -->
+    {% endif %}
+{% empty %}
+    <!-- Added by Matthew/Spooky: Message if no feedback. -->
+    <p>No active feedback.</p>
+{% endfor %}
+</div>
+</div>
+
+<!-- Added by Matthew/Spooky: Archive for feedback -->
+<div class="feedback-card">
+<h2>Archived Feedback</h2>
+<div id="archiveFeedbackList">
+{% for fb in feedback_list %}
+    {% if fb.is_archived_for_receiver %}
+    <div class="feedback-item" id="feedback-{{ fb.id }}">
+        <div class="feedback-meta">
+            <strong>{{ fb.sender.username }}</strong> |
+            {% if fb.course %}{{ fb.course.title }}{% else %}No Course{% endif %} |
+            {% if fb.task %}{{ fb.task.title }}{% else %}General Feedback{% endif %} |
+            {{ fb.created_at|date:"M d, Y H:i" }}
+        </div>
+
+        <p>{{ fb.message }}</p>
+
+        {% if fb.attachment_url %}
+            {% if fb.attachment_url|is_image %}
+                <img src="{{ fb.attachment_url }}" alt="Attachment" style="max-width:200px; display:block; margin:5px 0;">
+            {% else %}
+                <p><a href="{{ fb.attachment_url }}" target="_blank">View Attachment</a></p>
+            {% endif %}
+        {% endif %}
+        <!-- Added by Matthew/Spooky: Show read or unread in archive. -->
+        <p>Status: {% if fb.is_read %}Read ✔{% else %}Unread ❌{% endif %}</p>
+    </div>
+    {% endif %}
+{% empty %}
+    <!-- Added by Matthew/Spooky: Message if no archived feedback. -->
+    <p>No archived feedback.</p>
+{% endfor %}
+</div>
+</div>
+
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Added by Matthew/Spooky: Handle marking read and archiving. -->
+<script src="{% static 'courses/js/student_feedback.js' %}"></script>
+{% endblock %}
