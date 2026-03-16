@@ -25,7 +25,7 @@
 
 
 
-            <div class="col-lg-8 h-100">
+            <div class="col-lg-12 h-100">
                 <div class="course-creation-detail-card shadow-sm ">
 
                     <ul class="nav nav-tabs px-4 pt-3 bg-light border-bottom-0" id="taskTabs">
@@ -60,6 +60,7 @@
                                     {% endfor %}
                                 </select>
                             </div>
+                       
 
                             <!-- -------------------------------------------------------------------- -->
                             <div class="form-group mb-4">
@@ -98,9 +99,6 @@
                                 </div>
                                 <!-- -------------------------------------------------------------------------------->
 
-                                <button type="button" id="Add-Task" class="btn btn-outline-primary">Add Task</button>
-                                <button type="button" id="Delete-Task" class="btn btn-outline-primary">Remove
-                                    Task</button>
                             </div>
                             <!--Added By Mark Task Description -->
                             <div class="mb-3">
@@ -147,80 +145,7 @@
 
             <!--Added By Saim Description And Task Map Panel-->
 
-            <div class="col-lg-4 ">
-                <div class="course-creation-detail-card shadow-sm ">
-
-                    <ul class="nav nav-tabs px-4 pt-3 bg-light border-bottom-0">
-                        <li class="nav-item">
-                            <button class="nav-link active fw-bold px-4" id="summary-btn">Summary</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link active fw-bold px-4" id="taskmap-btn">Task Map</button>
-                        </li>
-                    </ul>
-
-                    <div id="summary-content-div" class="tab-content tab-scroll-area">
-                        <div class="mb-3">
-                            <h6 class="fw-bold text-uppercase small text-muted mb-2">Course Content View </h6>
-                            <p class="text-secondary leading-relaxed">Please Create course assign sub task</p>
-                        </div>
-
-                        <hr class="my-4">
-                        <!--Added By Saim this container course title and description diplay container-->
-                        <form class="mb-4 fw-bold mb-4" method="POST" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <div class="tab-content tab-scroll-area ">
-                                <div class="course-card">
-                                    <h4 id="course-title-container">Select A Course: </h4>
-                                    <hr>
-                                    <p class="description" id="course-description-display">Select a course and view
-                                        description here</p>
-                                </div>
-
-                            </div>
-
-                        </form>
-                        <!------------------------------------------------------------------------------------>
-                    </div>
-
-                    <div id="task-map-content-div" class="tab-content tab-scroll-area  hidden-content1">
-
-                        <div class="mb-3">
-                            <h6 class="fw-bold text-uppercase small text-muted mb-2">Task Map Content View </h6>
-                            <p class="text-secondary leading-relaxed">Please Create course assign sub task</p>
-                        </div>
-                        <hr class="my-4">
-
-                        <div class="roadmap-node-container" style="background-color: azure;">
-
-                            <div class="container py-5">
-                                <div id="node-display-container">
-                                    <div id="start-node" class="roadmap-node start-end-node">
-                                        <div class="skill-node bg-success">
-                                            <i class="bi bi-pin-map-fill text-white"></i>
-                                        </div>
-                                        <p>Start Node</p>
-                                    </div>
-                                    <div class="connector start-Node-Connector"></div>
-                                    <div id="roadmap-body-div"
-                                        style=" background-color: antiquewhite; width: 80%; border: solid rgb(110, 110, 110);">
-
-
-                                    </div>
-                                    <div class="connector"></div>
-                                    <div id="end-node" class="roadmap-node start-end-node">
-                                        <div class="skill-node bg-success">
-                                            <i class="bi bi-flag text-white"></i>
-                                        </div>
-                                        <p id="course-node-title">End Node</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+          
             <!---------------------------------------------------------------------------------------------------------------------------->
         </div>
 
