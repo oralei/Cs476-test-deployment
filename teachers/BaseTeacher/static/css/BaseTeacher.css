@@ -1,25 +1,39 @@
 /*-------------------------------------------------------------------------
  * Author:          Saim Munshi
  * Type:            Base Styles
- * Last Modified:   2026-02-16
+ * Last Modified:   2026-03-16
  * Purpose:         Sets the global background and typography. The linear 
- * gradient provides a modern, professional feel.
+ * gradient provides a modern, professional feel. (Black Theme)
  *-------------------------------------------------------------------------*/
 
+:root {
+    --bs-primary: #16234a;
+    --bs-primary-rgb: 0, 0, 0;
+}
 
 body {
-    background: linear-gradient(135deg, #fdfff1 0%, #fdfff7, #dfedff, #d2e7fd, #6dacf5, #0b79f0 100%);
+    background: linear-gradient(135deg, #fdfff1 0%, #fdfff7, #eff7ff, #dbebff, #8ebde9, #486fb9 100%);
+    color: #16234a;
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     background-size: cover;
     margin: 0;
     min-height: 100vh;
 }
 
+.bg-primary {
+    background-color: #16234a !important
+}
+
+h2 {
+    color: #030d2b;
+}
+
 /*-------------------------------------------------------------------------
  * Author:          Saim Munshi
  * Type:            Layout Component
  * Last Modified:   2026-02-16
- * Purpose:         Defines the main content area. On mobile, it takes up  full width. On desktops it gains a margin. Also transition 
+ * Purpose:         Defines the main content area. On mobile, it takes up full 
+ * width. On desktops it gains a margin. Also transition 
  *-------------------------------------------------------------------------*/
 .main-content {
     margin-left: 280px;
@@ -27,20 +41,12 @@ body {
     transition: margin 0.3s ease;
 }
 
-
-/*-------------------------------------------------------------------------
- * Author:          Saim Munshi
- * Type:            Layout Component
- * Last Modified:   2026-02-16
- * Purpose:         maincontent class @media to deal with main content when screen size is 992 px
- *-------------------------------------------------------------------------*/
-.main-content {
-    @media (min-width: 992px) {
-        .main-content {
-            margin-left: 280px;
-            /* Desktop indentation */
-            padding: 40px;
-        }
+/* @media to deal with main content when screen size is 992 px */
+@media (min-width: 992px) {
+    .main-content {
+        margin-left: 280px;
+        /* Desktop indentation */
+        padding: 40px;
     }
 }
 
@@ -69,7 +75,7 @@ body {
  *-------------------------------------------------------------------------*/
 .sidebar-pill {
     height: 100%;
-    background-color: white;
+    background-color: #ffffff;
     border-radius: 40px;
     display: flex;
     flex-direction: column;
@@ -80,14 +86,14 @@ body {
 /*-------------------------------------------------------------------------
  * Author:          Saim Munshi
  * Type:            UI Components (Avatars)
- * Last Modified:   2026-02-17
- * Purpose:         Circular profile for students and mentors. for both normal and when small
+ * Last Modified:   2026-03-16
+ * Purpose:         Circular profile for students and mentors. for both normal 
+ * and when small (Black Theme)
  *-------------------------------------------------------------------------*/
-/* Logos & Icons */
 .avatar-circle,
 .avatar-circle-sm {
-    background-color: #d1e7ff;
-    color: #0d6efd;
+    background-color: #cfe4ff;
+    color: #16234a;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -107,15 +113,15 @@ body {
     font-size: 0.9rem;
 }
 
-
 /*-------------------------------------------------------------------------
  * Author:          Saim Munshi
  * Type:            Navigation Styling
- * Last Modified:   2026-02-17
- * Purpose:         Styles the sidebar links, including hover effects and  the distinct active state indicator.
+ * Last Modified:   2026-03-16
+ * Purpose:         Styles the sidebar links, including hover effects and  
+ * the distinct active state indicator. (Black Theme)
  *-------------------------------------------------------------------------*/
 .nav-pills .nav-link {
-    color: #6c757d;
+    color: #5c6f80;
     font-weight: 500;
     padding: 12px 20px;
     border-radius: 15px;
@@ -131,36 +137,36 @@ body {
 }
 
 .nav-pills .nav-link.active {
-    background-color: #e7f1ff !important;
-    color: #0d6efd !important;
-    border-left: 5px solid #0d6efd;
+    background-color: #d9e9fd !important;
+    color: #16234a !important;
+    border-left: 5px solid #16234a;
     border-radius: 5px 15px 15px 5px;
 }
 
 .nav-pills .nav-link:hover:not(.active) {
-    background-color: #f1f3f5;
+    background-color: rgb(231, 241, 250);
     color: #333;
 }
 
 #nav-mobile-div-links{
     margin-bottom: 200px;
 }
+
 /*-------------------------------------------------------------------------
  * Author:          Saim Munshi
  * Type:            Floating Component
- * Last Modified:   2026-02-21
+ * Last Modified:   2026-03-16
  * Purpose:         Fixed chat button. Positioned to stay visible regardless 
  * of page scroll.
+ * - From Mark: Black theme for Mentors
  *-------------------------------------------------------------------------*/
-
-
 .floating-chat {
     position: fixed;
     bottom: 30px;
     right: 30px;
     width: 60px;
     height: 60px;
-    background-color: #0d6efd;
+    background-color: #02081a;
     color: white;
     border-radius: 50%;
     display: flex;
@@ -174,4 +180,92 @@ body {
 .floating-chat:hover {
     transform: scale(1.1);
     color: white;
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Cards & Containers
+ * Last Modified:   2026-03-16
+ * Purpose:         Overrides default container backgrounds for the black theme
+ *-------------------------------------------------------------------------*/
+.card,
+.calendar-card {
+    background-color: white;
+    border: none;
+}
+
+.navbar {
+    background: #ffffff;
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Buttons
+ * Last Modified:   2026-03-16
+ * Purpose:         Black/White theme modifications for interactive buttons
+ *-------------------------------------------------------------------------*/
+.btn {
+    color: rgb(255, 255, 255);
+}
+
+.btn-submit-feedback {
+    background-color: #16234a;
+    color: white;
+    border-radius: 10px;
+    padding: 10px 25px;
+    font-weight: 500;
+    transition: 0.3s;
+    border: 2px solid #16234a;
+}
+
+.btn-submit-feedback:hover {
+    background-color: #ffffff;
+    color: #16234a;
+    border: 2px solid #16234a;
+}
+
+.btn-primary {
+    --bs-btn-color: #ffffff;
+    --bs-btn-bg: #16234a;
+    --bs-btn-border-color: #16234a;
+    --bs-btn-hover-color: #16234a;
+    --bs-btn-hover-bg: #ffffff;
+    --bs-btn-hover-border-color: #16234a;
+    --bs-btn-focus-shadow-rgb: 0, 0, 0;
+    --bs-btn-active-color: #16234a;
+    --bs-btn-active-bg: #ffffff;
+    --bs-btn-active-border-color: #16234a;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #ffffff;
+    --bs-btn-disabled-bg: #16234a;
+    --bs-btn-disabled-border-color: #16234a;
+    border: 2px solid #16234a;
+}
+
+.btn-primary:hover {
+    background-color: #ffffff;
+    color: #16234a;
+    border: 2px solid #16234a;
+}
+
+.btn-outline-primary {
+    --bs-btn-color: #ffffff;
+    --bs-btn-bg: #16234a;
+    --bs-btn-border-color: #16234a;
+    --bs-btn-hover-color: #16234a;
+    --bs-btn-hover-bg: #ffffff;
+    --bs-btn-hover-border-color: #16234a;
+    --bs-btn-focus-shadow-rgb: 0, 0, 0;
+    --bs-btn-active-color: #16234a;
+    --bs-btn-active-bg: #ffffff;
+    --bs-btn-active-border-color: #16234a;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #ffffff;
+    --bs-btn-disabled-bg: #16234a;
+    --bs-btn-disabled-border-color: #16234a;
+}
+
+.text-dark {
+  --bs-text-opacity: 1;
+  color: #16234a !important;
 }
