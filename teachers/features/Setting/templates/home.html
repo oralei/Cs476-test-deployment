@@ -1,0 +1,38 @@
+{% extends "BaseTeacher.html" %}
+
+{% block content %}
+
+<div class="main-content">
+
+<h2>Teacher Settings</h2>
+
+<form method="POST" class="settings-form">
+    {% csrf_token %}
+
+    <div>
+        <label>Username</label><br>
+        <input type="text" name="username" value="{{ user.username }}" required>
+    </div>
+
+    <br>
+
+    <div>
+        <label>Email</label><br>
+        <input type="email" name="email" value="{{ user.email }}" required>
+    </div>
+
+    <br>
+
+    <div>
+        <a href="{% url 'password_change' %}">Change Password</a>
+    </div>
+
+    <br>
+
+    <button type="submit">Save Changes</button>
+
+</form>
+
+</div>
+
+{% endblock %}

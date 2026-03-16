@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
@@ -20,4 +21,16 @@ urlpatterns = [
     # Task URLs
     path('tasks/', views.studentTasks, name='student-tasks'),
     path('tasks/<str:task_id>/', views.studentTaskSubmit, name='student-task-submit'),
+    path('settings/', views.studentSettings, name='student-settings'),
+        path('password-change/',
+         auth_views.PasswordChangeView.as_view(
+             template_name='password_change.html'),
+         name='password_change'),
+
+    path('password-change-done/',
+         auth_views.PasswordChangeDoneView.as_view(
+             template_name='password_change_done.html'),
+         name='password_change_done'),
+
+   
 ]

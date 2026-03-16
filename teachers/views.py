@@ -8,7 +8,27 @@ from functools import wraps
 #from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.shortcuts import render, redirect
 
+@login_required
+def teacherSettings(request):
+    user = request.user
+
+    if request.method == "POST":
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+
+        user.username = username
+        user.email = email
+        user.save()
+
+        messages.success(request, "Settings updated successfully")
+
+        return redirect("teacher-settings")
+
+    return render(request, "Setting/templates/home.html", {"user": user})
 # Added by Mark: Helper function to check teacher profile. 
 # It checks both if the user accessing is a user of type teacher 
 # This is reused throughout most if not all the views.

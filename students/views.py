@@ -6,7 +6,26 @@ from functools import wraps
 import cloudinary.uploader  # For task submission
 
 # Create your views here.
+from django.contrib.auth.models import User
+from django.contrib import messages
 
+@login_required
+def studentSettings(request):
+    user = request.user
+
+    if request.method == "POST":
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+
+        user.username = username
+        user.email = email
+        user.save()
+
+        messages.success(request, "Settings updated successfully!")
+
+        return redirect("student-settings")
+
+    return render(request, "Setting/templates/Setting.html", {"user": user})
 """
 Name Function: Home
 type: Function 
