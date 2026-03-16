@@ -2,8 +2,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from courses.models import Course, Task, TaskSubmission, TaskFeedback
 from teachers.models import Teacher # Import the Teacher model
 from django.contrib.auth.decorators import login_required
+from courses.observers import SubmissionSubject, FeedbackObserver
+from courses.models import Notification
 from django.http import HttpResponseForbidden
 from functools import wraps
+from datetime import date
 #from django.contrib.auth.decorators import login_required
 
 # Create your views here.
@@ -25,9 +28,44 @@ Name Function: Home
 type: Function 
 Purpose: Connects to the Teacher Home dashboard
 """
+@login_required
+@teacher_required
 def teacherHome(request):  
-    # Looks in teachers/features/Home/templates/Home/Home.html
-    return render(request, 'TeacherHomePage/templates/TeacherHomePage.html')
+    user = request.user 
+    teacher = request.teacher_profile
+    print(f"Logged in User Email: {user.email} - Teacher Profile Name: {repr(teacher.full_name)}")
+    
+    # Fetch user's unread notifications from the database
+    unread_notifications = Notification.objects.filter(user=user, is_read=False).order_by('-created_at')
+
+    #Added By Saim Munshi:Fetch 5upcoming task from database based on today data and ordered by due date
+
+    upcoming_tasks = Task.objects.filter( course__teacher = teacher,due_date__gte= date.today()).order_by("due_date")[:5]
+
+    context = {
+        'teacher': teacher,
+        'notifications': unread_notifications,
+        'notification_count': unread_notifications.count(),
+        'upcoming_tasks': upcoming_tasks
+    }
+   
+    return render(request, 'TeacherHomePage/templates/TeacherHomePage.html', context)
+
+@login_required
+@teacher_required
+def markNotificationAsRead(request, notification_id):
+    if request.method == "POST":
+        # 1. Fetch the notification (ensure it actually belongs to the logged-in user for security!)
+        notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+        
+        # 2. Change the status to read
+        notification.is_read = True
+        notification.save()
+        
+    # 3. Redirect the user right back to the page they were just on
+    # HTTP_REFERER gets the URL of the page the user clicked the button from
+    previous_page = request.META.get('HTTP_REFERER', '/') 
+    return redirect(previous_page)
 
 
 """ -------------------------- Course Views/Functions ------------------------------"""
@@ -40,13 +78,16 @@ Notes: Queries the database to obtain all courses under the logged in teacher.
 @teacher_required
 def teacherCourseList(request):  
     current_teacher = request.teacher_profile
+    # Fetch user's unread notifications from the database (same as dashboard)
+    unread_notifications = Notification.objects.filter(user=request.user, is_read=False).order_by('-created_at')
     
     # Grab all courses created by the specific teacher
     courses = Course.objects.filter(teacher=current_teacher)
 
     # Pass those courses to the HTML template in a context dictionary
     context = {
-        'courses': courses
+        'courses': courses,
+        'notifications': unread_notifications
     }
     return render(request, 'teacher-courses/templates/teacher-course-list.html', context)
 
@@ -60,7 +101,7 @@ Notes: Uses form fields from create-course.html to create a new Course object in
 @teacher_required
 def teacherCreateCourse(request):  
     current_teacher = request.teacher_profile
-
+    
     # Handle the form submission
     if request.method == "POST":
         course_title = request.POST.get('title')
@@ -74,7 +115,13 @@ def teacherCreateCourse(request):
             max_students=max_students,
             teacher=current_teacher
         )
-
+        # Added By Saim Munshi: Create Course Notification:
+        Notification.objects.create(
+            user=request.user,
+            notification_type=f"create_course",
+            message=f"Course '{course_title}' has been successfully created!"
+        )
+        
         # Redirect back to the course list
         return redirect('teacher-course-list')
 
@@ -90,25 +137,62 @@ Notes: This view is for obtaining a specific Course object under the current log
 @teacher_required
 def teacherCourseMain(request, course_id):
     current_teacher = request.teacher_profile
-
+    # Fetch user's unread notifications from the database (same as dashboard)
+    unread_notifications = Notification.objects.filter(user=request.user, is_read=False).order_by('-created_at')
     # Get the specific course by ID. 
     # Security: We also pass teacher=current_teacher to ensure they can't view another teacher's course!
     course = get_object_or_404(Course, id=course_id, teacher=current_teacher)
 
     # 2. Pass the single course to the HTML template
     context = {
-        'course': course
+        'course': course,
+        'notifications': unread_notifications
     }
     return render(request, 'teacher-courses/templates/teacher-course-main.html', context)
 
 """
 Name Function: Calendar
+Added by Ariel:
 type: Function 
 Purpose: Connects to the Teacher Calendar feature
 """
+@login_required
+@teacher_required
 def Calendar(request):  
-    # Looks in teachers/features/Calendar/templates/Calendar/Calendar.html
-    return render(request, 'Calendar/templates/teacherCalendar.html')
+    current_teacher = request.teacher_profile
+
+    # Get courses for this teacher
+    courses = Course.objects.filter(teacher=current_teacher)
+    course_students_map = {}
+    for c in courses:
+        course_students_map[str(c.id)] =[
+            {'id': str(s.id), 'name': s.full_name} for s in c.students.all()
+        ]
+
+    tasks = Task.objects.filter(course__teacher=current_teacher)
+    events_data = []
+    
+    for task in tasks:
+        events_data.append({
+            'id': str(task.id),
+            'title': task.title,
+            # FullCalendar expects YYYY-MM-DD strings for dates
+            'start': task.start_date.isoformat() if task.start_date else None,
+            'end': task.due_date.isoformat() if task.due_date else None,
+            'extendedProps': {
+                'type': 'assignment',
+                'course': str(task.course.id),
+                # Task can have multiple students, so we need to get ids
+                'students': [str(student.id) for student in task.assigned_students.all()]
+            }
+        })
+
+    context = {
+        'courses': courses,
+        'course_students_map': course_students_map,
+        'events_data': events_data,
+    }
+    return render(request, 'Calendar/templates/teacherCalendar.html', context)
 
 
 def My_Student(request):  
@@ -149,7 +233,12 @@ def Create_Task(request):
             start_date=start_date,
             due_date=due_date
         )
-
+        # Added By Saim Munshi: Create Tasks Notification:
+        Notification.objects.create(
+            user=request.user,
+            notification_type=f"create_task",
+            message=f"Task '{title}' has been successfully created!"
+        )
         if student_ids:
             new_task.assigned_students.set(student_ids)
 
@@ -229,9 +318,12 @@ def teacherFeedback(request, submission_id):
                 comments=comments
             )
         
-        # Mark the submission as reviewed!
-        submission.status = 'reviewed'
-        submission.save()
+        # Observer Pattern
+        subject = SubmissionSubject(submission)
+        student_observer = FeedbackObserver() # Create observer
+        subject.attach(student_observer)     # Attach
+        subject.set_state('reviewed')        # Changes state and notifies
+        # ==========================================
 
         # Redirect back to the list of submissions for this task
         return redirect('teacher-task-submissions', task_id=submission.task.id)
@@ -241,3 +333,54 @@ def teacherFeedback(request, submission_id):
         'feedback': feedback
     }
     return render(request, 'tasks/templates/teacher-feedback.html', context)
+
+
+
+#Added By Saim: Edit course take edit course using create course form an
+@login_required
+@teacher_required
+def editCourse(request, course_id):
+    #Added By Saim Munshi: get course by course id
+    course = Course.objects.get(id=course_id)
+     #Added By Saim Munshi: request post retreieve and save course title and description save
+    if request.method == "POST":
+        course.title = request.POST.get("title")
+        course.description = request.POST.get("description")
+        course.save()
+         # Added By Saim Munshi: Create Edit Notification:
+        Notification.objects.create(
+            user=request.user,
+            notification_type=f"edit_course",
+            message=f"Course '{course.title}' has been successfully created!"
+        )
+        #Added By Saim Munshi: if not redirect to teacher course list page
+        return redirect("teacher-course-list")
+    #Added By Saim Munshi: course context dictonary 
+    context = {
+        "course": course
+    }
+
+    return render(request, "teacher-courses/templates/create-course.html", context)
+
+# Added By Saim Munshi: Delete course logic
+@login_required
+@teacher_required
+def deleteCourse(request, course_id):
+    # Retrieve the course specifically for the logged-in teacher
+    course = get_object_or_404(Course, id=course_id, teacher=request.teacher_profile)
+    
+    if request.method == "POST":
+        course.delete()
+         # Added By Saim Munshi: Create Delete Notification:
+        Notification.objects.create(
+            user=request.user,
+            notification_type=f"delete_course",
+            message=f"Course '{course.title}' has been successfully Deleted!"
+        )
+        # Redirect back to the course list page
+        return redirect('teacher-course-list')
+    
+    return redirect('teacher-course-list')
+
+
+

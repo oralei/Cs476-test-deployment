@@ -1,9 +1,21 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
-from courses.models import Course, Task, TaskSubmission
+from courses.models import Course, Task, TaskSubmission, Notification
+from courses.observers import SubmissionSubject, SubmissionObserver
 from functools import wraps
 import cloudinary.uploader  # For task submission
+
+# Added by Mark: Helper function to check the student profile. 
+# This is reused throughout all the views by adding @student_required just like @login_required
+def student_required(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_student:
+            return HttpResponseForbidden("You must be logged in as a student.")
+        request.student_profile = request.user.students_student_profile
+        return view_func(request, *args, **kwargs)
+    return wrapper
 
 # Create your views here.
 
@@ -12,16 +24,82 @@ Name Function: Home
 type: Function 
 Purpose:It is used connect django with home html file through an http request
 """
+@login_required
+@student_required
 def studentHome(request):  
-    return render(request, 'StudentHomePage/templates/StudentHomePage.html')
+    user = request.user 
+    
+    # Fetch user's unread notifications from the database
+    unread_notifications = Notification.objects.filter(user=user, is_read=False).order_by('-created_at')
+    
+    # Pass to html through context object
+    context = {
+        'notifications': unread_notifications,
+        'notification_count': unread_notifications.count()
+    }
+    return render(request, 'StudentHomePage/templates/StudentHomePage.html', context)
+
+@login_required
+@student_required
+def markNotificationAsRead(request, notification_id):
+    if request.method == "POST":
+        # 1. Fetch the notification (ensure it actually belongs to the logged-in user for security!)
+        notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+        
+        # 2. Change the status to read
+        notification.is_read = True
+        notification.save()
+        
+    # 3. Redirect the user right back to the page they were just on
+    # HTTP_REFERER gets the URL of the page the user clicked the button from
+    previous_page = request.META.get('HTTP_REFERER', '/') 
+    return redirect(previous_page)
 
 """
 Name Function: Calender
+Added by: Ariel
 type: Function 
 Purpose:It is used connect django with Calender html file through an http request
 """
+@login_required
+@student_required
 def Calendar(request):  
-    return render(request, 'Calendar/templates/Calendar.html')
+    current_student = request.student_profile
+    # Get courses this specific student is enrolled in
+    courses = current_student.enrolled_courses.all()
+
+    # Get tasks assigned to this student
+    tasks = Task.objects.filter(assigned_students=current_student)
+    events_data = []
+    
+    for task in tasks:
+        start_str = task.start_date.isoformat() if task.start_date else None
+        end_str = task.due_date.isoformat() if task.due_date else None
+
+        # If the task doesn't have a start date, use the due date so the event still appears on the calendar.
+        if not start_str and end_str:
+            start_str = end_str
+            
+        if not start_str:
+            continue # Skip tasks without dates
+            
+        events_data.append({
+            'id': str(task.id),
+            'title': task.title,
+            'start': start_str,
+            'end': end_str,
+            'extendedProps': {
+                'type': 'assignment',
+                'course': str(task.course_id),
+            }
+        })
+
+    context = {
+        'courses': courses,
+        'events_data': events_data,
+    }
+    
+    return render(request, 'Calendar/templates/Calendar.html', context)
 
 def Mentor(request):  
     return render(request, '/Mentors/templates/Mentor.html')
@@ -200,13 +278,20 @@ def studentTaskSubmit(request, task_id):
             submission.save()
         else:
             # Create a brand new submission
-            TaskSubmission.objects.create(
+            submission = TaskSubmission.objects.create(
                 task=task,
                 student=student,
                 submission_text=submission_text,
                 file_url=uploaded_file_url,  # Save the secure_url string!
                 status='pending'
             )
+            
+        # Observer Pattern Implementation
+        # -------------------------------------------------------------------
+        subject = SubmissionSubject(submission)
+        teacher_observer = SubmissionObserver() # Create observer
+        subject.attach(teacher_observer)     # Attach
+        subject.set_state('pending')         # Changes state and notifies
         
         return redirect('student-tasks')
 
@@ -216,4 +301,5 @@ def studentTaskSubmit(request, task_id):
         'task': task,
         'submission': submission
     }
+    
     return render(request, 'tasks/templates/student-task-submit.html', context)
