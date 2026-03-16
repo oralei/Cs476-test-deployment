@@ -7,13 +7,13 @@
  *-------------------------------------------------------------------------*/
 
 :root {
-    --bs-primary: #174a2c;
+    --bs-primary: #247e4c;
     --bs-primary-rgb: 0, 0, 0;
 }
 
 body {
-    background: linear-gradient(135deg, #fdfff1 0%, #fdfff7, #dbe7de, #cddacd, #afc5b2, #859e83 100%);
-    color: #174a2c;
+    background: linear-gradient(135deg, #fdfff1 0%, #fdfff7, #dbe7de, #cddacd, #afc5b5, #84ad90 100%);
+    color: #000000;
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     background-size: cover;
     margin: 0;
@@ -21,12 +21,14 @@ body {
 }
 
 .bg-primary {
-    background-color: #174a2c !important
+    background-color: #247e4c !important
 }
 
-h2, .fw-bold {
+h2, .fw-bold, .text-dark, span {
     color: black;
+    color: black !important;
 }
+
 
 /*-------------------------------------------------------------------------
  * Author:          Saim Munshi
@@ -93,7 +95,7 @@ h2, .fw-bold {
 .avatar-circle,
 .avatar-circle-sm {
     background-color: #c9e4d1;
-    color: #174a2c;
+    color: #247e4c;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -121,7 +123,7 @@ h2, .fw-bold {
  * the distinct active state indicator. (Black Theme)
  *-------------------------------------------------------------------------*/
 .nav-pills .nav-link {
-    color: #5c6f80;
+    color: #5c8064;
     font-weight: 500;
     padding: 12px 20px;
     border-radius: 15px;
@@ -137,14 +139,14 @@ h2, .fw-bold {
 }
 
 .nav-pills .nav-link.active {
-    background-color: #c9e4d1 !important;
-    color: #174a2c !important;
-    border-left: 5px solid #174a2c;
+    background-color: #d4f0e2 !important;
+    color: #247e4c !important;
+    border-left: 5px solid #247e4c;
     border-radius: 5px 15px 15px 5px;
 }
 
 .nav-pills .nav-link:hover:not(.active) {
-    background-color: #d9f1e0;
+    background-color: rgb(232, 255, 239);
     color: #333;
 }
 
@@ -209,63 +211,62 @@ h2, .fw-bold {
 }
 
 .btn-submit-feedback {
-    background-color: #174a2c;
+    background-color: #247e4c;
     color: white;
     border-radius: 10px;
     padding: 10px 25px;
     font-weight: 500;
     transition: 0.3s;
-    border: 2px solid #174a2c;
+    border: 2px solid #247e4c;
 }
 
 .btn-submit-feedback:hover {
     background-color: #ffffff;
-    color: #174a2c;
-    border: 2px solid #174a2c;
+    color: #247e4c;
+    border: 2px solid #247e4c;
 }
 
 .btn-primary {
     --bs-btn-color: #ffffff;
-    --bs-btn-bg: #174a2c;
-    --bs-btn-border-color: #174a2c;
-    --bs-btn-hover-color: #174a2c;
+    --bs-btn-bg: #247e4c;
+    --bs-btn-border-color: #247e4c;
+    --bs-btn-hover-color: #247e4c;
     --bs-btn-hover-bg: #ffffff;
-    --bs-btn-hover-border-color: #174a2c;
+    --bs-btn-hover-border-color: #247e4c;
     --bs-btn-focus-shadow-rgb: 0, 0, 0;
-    --bs-btn-active-color: #174a2c;
+    --bs-btn-active-color: #247e4c;
     --bs-btn-active-bg: #ffffff;
-    --bs-btn-active-border-color: #174a2c;
+    --bs-btn-active-border-color: #247e4c;
     --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
     --bs-btn-disabled-color: #ffffff;
-    --bs-btn-disabled-bg: #174a2c;
-    --bs-btn-disabled-border-color: #174a2c;
-    border: 2px solid #174a2c;
+    --bs-btn-disabled-bg: #247e4c;
+    --bs-btn-disabled-border-color: #247e4c;
+    border: 2px solid #247e4c;
 }
 
 .btn-primary:hover {
     background-color: #ffffff;
-    color: #174a2c;
-    border: 2px solid #174a2c;
+    color: #247e4c;
+    border: 2px solid #247e4c;
 }
 
 .btn-outline-primary {
     --bs-btn-color: #ffffff;
-    --bs-btn-bg: #174a2c;
-    --bs-btn-border-color: #174a2c;
-    --bs-btn-hover-color: #174a2c;
+    --bs-btn-bg: #247e4c;
+    --bs-btn-border-color: #247e4c;
+    --bs-btn-hover-color: #247e4c;
     --bs-btn-hover-bg: #ffffff;
-    --bs-btn-hover-border-color: #174a2c;
+    --bs-btn-hover-border-color: #247e4c;
     --bs-btn-focus-shadow-rgb: 0, 0, 0;
-    --bs-btn-active-color: #174a2c;
+    --bs-btn-active-color: #247e4c;
     --bs-btn-active-bg: #ffffff;
-    --bs-btn-active-border-color: #174a2c;
+    --bs-btn-active-border-color: #247e4c;
     --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
     --bs-btn-disabled-color: #ffffff;
-    --bs-btn-disabled-bg: #174a2c;
-    --bs-btn-disabled-border-color: #174a2c;
+    --bs-btn-disabled-bg: #247e4c;
+    --bs-btn-disabled-border-color: #247e4c;
 }
 
-.text-dark {
-  --bs-text-opacity: 1;
-  color: #174a2c !important;
+.logout {
+    font-weight: bold;
 }
