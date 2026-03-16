@@ -24,6 +24,8 @@ Name Function: Home
 type: Function 
 Purpose:It is used connect django with home html file through an http request
 """
+@login_required
+@student_required
 def studentHome(request):  
     user = request.user 
     

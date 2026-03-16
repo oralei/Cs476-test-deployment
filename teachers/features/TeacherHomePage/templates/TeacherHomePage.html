@@ -29,7 +29,7 @@
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h2 class="h5 fw-bold mb-0">Notifications ({{ notification_count }})</h2>
                         </div>
-                        <div class="feedback-window">
+                        <div class="feedback-window" style="max-height: 200px; overflow-y: auto;">
                             <div class="feedback-wrapper" id="feedbackWrapper">
                             {% for notif in notifications %}
                                     <!-- A simple box for each notification -->
@@ -55,10 +55,10 @@
                                 {% endfor %}
                             </div>
                         </div>
-                            <!-- Link to the future History page -->
+                            <!-- Link to the future History page 
                             <div style="text-align: right; margin-top: 10px;">
                                 <a href="#">View Notification History</a>
-                            </div>
+                            </div> -->
                     </div>
                 </div>
 

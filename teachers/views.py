@@ -27,15 +27,19 @@ Name Function: Home
 type: Function 
 Purpose: Connects to the Teacher Home dashboard
 """
+@login_required
 @teacher_required
 def teacherHome(request):  
     user = request.user 
+    
+    print(f"Logged in User Email: {user.email} - Teacher Profile Name: {repr(request.teacher_profile.full_name)}")
     
     # Fetch user's unread notifications from the database
     unread_notifications = Notification.objects.filter(user=user, is_read=False).order_by('-created_at')
     
     # Pass to html through context object
     context = {
+        'teacher': request.teacher_profile,
         'notifications': unread_notifications,
         'notification_count': unread_notifications.count()
     }

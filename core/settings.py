@@ -201,9 +201,9 @@ USE_TZ = True
 # Where to go after a successful manual login if no 'next' parameter is present
 ###LOGIN_REDIRECT_URL = 'teacher_home' 
 
-# Where the login page lives
-##LOGIN_URL = 'signin_page_view'
-
+# Added by Mark: This should fix any @login_required redirects and new logout
+LOGIN_URL = 'signin_page_view'
+LOGOUT_REDIRECT_URL = "/"
 
 
 # Static files (CSS, JavaScript, Images)
