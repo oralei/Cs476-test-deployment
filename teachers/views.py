@@ -108,12 +108,15 @@ def teacherCreateCourse(request):
         course_description = request.POST.get('description')
         max_students = request.POST.get('max_students')
 
+        is_private = request.POST.get('private-box') == 'on'
+
         # Save the course to MongoDB
         Course.objects.create(
             title=course_title,
             description=course_description,
             max_students=max_students,
-            teacher=current_teacher
+            teacher=current_teacher,
+            private=is_private
         )
         # Added By Saim Munshi: Create Course Notification:
         Notification.objects.create(
@@ -346,12 +349,13 @@ def editCourse(request, course_id):
     if request.method == "POST":
         course.title = request.POST.get("title")
         course.description = request.POST.get("description")
+        course.private = request.POST.get('private-box') == 'on'
         course.save()
          # Added By Saim Munshi: Create Edit Notification:
         Notification.objects.create(
             user=request.user,
             notification_type=f"edit_course",
-            message=f"Course '{course.title}' has been successfully created!"
+            message=f"Course '{course.title}' has been successfully edited!" # (Changed "created" to "edited"  for accuracy)
         )
         #Added By Saim Munshi: if not redirect to teacher course list page
         return redirect("teacher-course-list")

@@ -12,6 +12,9 @@
   <h1>{{ course.title }}</h1>
   <div class="card mt-4 p-4">
       <h3>Course Details</h3>
+        {% if course.private %}
+        <a>Private</a>
+        {% endif %}
       <p><strong>Description:</strong> {{ course.description }}</p>
       <p><strong>Max Students Allowed:</strong> {{ course.max_students }}</p>
   </div>

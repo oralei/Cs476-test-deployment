@@ -23,7 +23,7 @@ class Teacher(MentoraBaseUser):
     id = ObjectIdAutoField(primary_key=True)
     license_number = models.CharField(max_length=50)
     specialization = models.CharField(max_length=100)
-    course_code = models.CharField(max_length=20, unique=True, default = randomTeacherCodeGenerator) #Added by Saim CourseCode
+    teacher_code = models.CharField(max_length=20, unique=True, default = randomTeacherCodeGenerator)
     
     class Meta:
         db_table = 'users_teacher'  # Custom collection name
