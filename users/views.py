@@ -9,6 +9,7 @@ from .models import CustomUser
 from django.contrib.auth import get_user_model
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import authenticate, login, logout
+from .simple_factory import UserRegistrationFactory # Added By Ariel for simple factory pattern
 
 #from django.contrib.auth import get_user_model
 #from django.contrib.auth import authenticate, login
@@ -32,13 +33,31 @@ def main_page_view(request):
 
 
 
-
+"""
+Author: Ariel
+Function Name: upload_profile_picture
+Purpose: Helper Function for Cloudinary
+"""
+def upload_profile_picture(image_file):
+    """Helper to handle image uploads cleanly"""
+    if not image_file:
+        print("Register: No image file provided")
+        return None
+    try:
+        upload_result = cloudinary.uploader.upload(image_file, folder="Mentora_Profiles")
+        image_url = upload_result.get('secure_url')
+        print(f"Cloudinary Success: {image_url} ---")
+        return image_url
+    except Exception as e:
+        print(f"Cloudinary Error: {e} ---")
+        return None
 
 """
 Author: Saim Munshi
 Function Name: student_register_view
 Purpose: direct view.py django to the correct html file
 Update: Fixed Cloudinary-MongoDB picture upload - Mark
+Update: Updated to work with simple factory and separated Cloudinary upload
 """
 # Get the active User model (CustomUser)
 User = get_user_model() # make sure it uses the custom user configuration 
@@ -48,21 +67,8 @@ def student_register_view(request):
         # Print all data received - Used to debug and test if POST data is being sent.
         print(f"Data: {request.POST}")
         
-        # Check for file
-        image_url = None
-        image_file = request.FILES.get('UploadPFP')
-        if image_file:
-            try:
-                upload_result = cloudinary.uploader.upload(
-                    image_file, 
-                    folder="Mentora_Profiles"
-                )
-                image_url = upload_result.get('secure_url')
-                print(f"Student Register: Cloudinary Success: {image_url} ---")
-            except Exception as e:
-                print(f"Student Register: Cloudinary Error: {e} ---")
-        else:
-            print("Student Register: No image file provided")
+        # Updated by Ariel  Using Cloudinary helper function
+        image_url = upload_profile_picture(request.FILES.get('UploadPFP'))
 
         # Set user data with POST data
         email = request.POST.get('email')
@@ -97,21 +103,15 @@ def student_register_view(request):
             return render(request, "StudentRegistration.html")
         
         try:
-            # Create User
-            user = User.objects.create_user(
-                username=request.POST.get('name'),  # Changed from email to name
-                email=email, 
-                password=password
+            # Added by Ariel using simple factory registration function
+            user, student_profile = UserRegistrationFactory.register_user(
+                user_type='student',
+                email=email,
+                password=password,
+                name=name,
+                image_url=image_url,
+                student_id=request.POST.get('studentId')
             )
-
-   
-            student = Student.objects.create(
-                user=user,
-                full_name=request.POST.get('name'),
-                student_id=request.POST.get('studentId'),
-                profile_image_url=image_url
-            )
-            
 
             # Auto Login
             login(request, user)
@@ -133,20 +133,7 @@ def teacher_register_view(request):
         print(f"Data: {request.POST}")
         
         # Check for file
-        image_url = None
-        image_file = request.FILES.get('UploadPFP')
-        if image_file:
-            try:
-                upload_result = cloudinary.uploader.upload(
-                    image_file, 
-                    folder="Mentora_Profiles"
-                )
-                image_url = upload_result.get('secure_url')
-                print(f"Student Register: Cloudinary Success: {image_url} ---")
-            except Exception as e:
-                print(f"Student Register: Cloudinary Error: {e} ---")
-        else:
-            print("Student Register: No image file provided")
+        image_url = upload_profile_picture(request.FILES.get('UploadPFP'))
 
         # Set user data with POST data
         email = request.POST.get('email')
@@ -183,21 +170,15 @@ def teacher_register_view(request):
             return render(request, 'TeacherRegistration.html', {'error': 'Email already exists'})
 
         try:
-            # Create User
-            user = User.objects.create_user(
-                username=request.POST.get('name'),  # Changed from email to name
-                email=email, 
-                password=password
-            )
-
-            # Create Profile - Student or Teacher
-
-            teacher = Teacher.objects.create(
-                user=user,
-                full_name=request.POST.get('name'),
+            # Updated by Ariel  creates user by using simple factory function
+            user, teacher_profile = UserRegistrationFactory.register_user(
+                user_type='teacher',
+                email=email,
+                password=password,
+                name=name,
+                image_url=image_url,
                 license_number=request.POST.get('license'),
-                specialization=request.POST.get('specialization'),
-                profile_image_url=image_url
+                specialization=request.POST.get('specialization')
             )
             
             # Auto Login
