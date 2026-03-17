@@ -1,12 +1,9 @@
 {% extends 'BaseTeacher.html' %}
 {% load static %}
-
-<!-- Added by Matthew/Spooky: Load file extras if you are using custom filters for attachments -->
-
+{% load file_extras %}
 
 {% block extra_css %}
-<!-- Matthew: CSS file for styling -->
-<link rel="stylesheet" href="{% static 'courses/css/feedback.css' %}">
+<link rel="stylesheet" href="{% static 'css/feedback.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -14,69 +11,88 @@
 
 <div class="feedback-page">
 
-    <!-- Feedback Page -->
+    <!-- Added by Matthew/Spooky: Write feedback. -->
     <div class="feedback-card">
-        <h2>Feedback for {{ submission.student.full_name }}</h2>
-        <p style="color: #666; font-size: 1.1em; margin-bottom: 15px;">Task: {{ submission.task.title }}</p>
+        <h2>Write Feedback</h2>
 
-        <div style="background: #f4f7f6; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
-            <strong>Student's Submission:</strong>
-            <div style="margin-top: 10px; background: white; padding: 15px; border: 1px solid #ccc; border-radius: 5px;">
-                {{ submission.submission_text|default:"<i>No text provided.</i>"|safe }}
-            </div>
+        {% if courses %}
+        <form class="feedback-form" method="POST" action="{% url 'courses:send_feedback' %}" enctype="multipart/form-data">
+            {% csrf_token %}
 
-            {% if submission.file_url %}
-                <div style="margin-top: 15px;">
-                    <strong>Attached Media:</strong><br>
-                    <a href="{{ submission.file_url }}" target="_blank" style="display: inline-block; margin-top: 5px; padding: 8px 15px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;">
-                        Open Student's File
-                    </a>
-                </div>
-            {% endif %}
-            
-            <small style="display: block; margin-top: 15px; color: #888;">Submitted on: {{ submission.submitted_at }}</small>
-        </div>
+            <select name="receiver" required>
+                <option value="">Select Student</option>
+                {% for student in students %}
+                <option value="{{ student.user.id }}">{{ student.user.username }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="task">
+                <option value="">No Task (General Feedback)</option>
+                {% for course in courses %}
+                    {% for task in course.tasks.all %}
+                        <option value="{{ task.id }}">{{ task.title }}</option>
+                    {% endfor %}
+                {% endfor %}
+            </select>
+
+            <input type="file" name="attachment" accept="image/*,.pdf,.doc,.docx">
+
+            <textarea name="message" placeholder="Write feedback here..." required></textarea>
+
+            <button type="submit">Submit Feedback</button>
+        </form>
+        {% else %}
+        <p>You do not have any courses assigned.</p>
+        {% endif %}
     </div>
 
-    <!--  -->
+    <!-- Added by Matthew/Spooky: Sent Feedback. -->
     <div class="feedback-card">
-        <h2>{% if feedback %}Edit Feedback{% else %}Write Feedback{% endif %}</h2>
+        <h2>My Feedback</h2>
 
-        <!-- -->
-        <form class="feedback-form" method="POST" action="{% url 'teacher-feedback' submission.id %}" enctype="multipart/form-data">
-            {% csrf_token %}
-            
-            <!-- -->
-            <label style="font-weight: bold; display: block; margin-bottom: 5px;">Grade (Out of {{ submission.task.points_possible }})</label>
-            <input type="number" step="0.5" name="grade" min="0" max="{{ submission.task.points_possible }}" value="{{ feedback.grade|default:'' }}" required style="width: 150px; margin-bottom: 20px;">
+        {% if sent_feedback %}
+        <div id="teacherSentFeedbackList">
+            {% for fb in sent_feedback %}
+            <div class="feedback-item" id="feedback-{{ fb.id }}">
+                <div class="feedback-meta">
+                    <strong>To: {{ fb.receiver.username }}</strong> |
+                    {% if fb.course %}{{ fb.course.title }}{% else %}No Course{% endif %} |
+                    {% if fb.task %}{{ fb.task.title }}{% else %}General Feedback{% endif %} |
+                    {{ fb.created_at|date:"M d, Y H:i" }}
+                </div>
 
-            <!-- Matthew: Attach File -->
-            <label style="font-weight: bold; display: block; margin-bottom: 5px;">Attach File (Optional)</label>
-            <input type="file" name="attachment" accept="image/*,.pdf,.doc,.docx" style="margin-bottom: 10px;">
-            
-            {% if feedback and feedback.attachment_url %}
-                <small style="display: block; margin-bottom: 20px; color: #555;">
-                    Current attachment: <a href="{{ feedback.attachment_url }}" target="_blank">View File</a>
-                </small>
-            {% else %}
-                <div style="margin-bottom: 20px;"></div>
-            {% endif %}
+                <p>{{ fb.message }}</p>
 
-            <!-- Matthew: Comments -->
-            <label style="font-weight: bold; display: block; margin-bottom: 5px;">Comments</label>
-            <textarea name="comments" placeholder="Write feedback here..." required>{{ feedback.comments|default:'' }}</textarea>
+                {% if fb.attachment_url %}
+                    {% if fb.attachment_url|is_image %}
+                        <img src="{{ fb.attachment_url }}" alt="Attachment" style="max-width:200px; display:block; margin:5px 0;">
+                    {% else %}
+                        <p><a href="{{ fb.attachment_url }}" target="_blank">View Attachment</a></p>
+                    {% endif %}
+                {% endif %}
 
-            <!-- Matthew: Buttons -->
-            <div class="feedback-buttons" style="margin-top: 15px;">
-                <button type="submit" style="background-color: #28a745; color: white;">Save Feedback</button>
-                <a href="{% url 'teacher-task-submissions' submission.task.id %}">
-                    <button type="button" class="delete-btn">Cancel</button>
-                </a>
+                <div class="feedback-buttons">
+                    <a href="{% url 'courses:edit_feedback' fb.id %}">
+                        <button type="button" class="edit-btn">Edit</button>
+                    </a>
+                    <form method="POST" action="{% url 'courses:delete_feedback' fb.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="delete-btn delete-feedback" onclick="return confirm('Are you sure you want to delete this feedback?')">Delete</button>
+                    </form>
+                </div>
             </div>
-        </form>
+            {% endfor %}
+        </div>
+        {% else %}
+            <p>You have not sent any feedback yet.</p>
+        {% endif %}
     </div>
 
 </div>
 
 </main>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'courses/js/api.js' %}"></script>
 {% endblock %}

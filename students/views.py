@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
-from courses.models import Course, Task, TaskSubmission, Notification
+from courses.models import Course, Task, TaskSubmission, Notification, TaskFeedback
 from courses.observers import SubmissionSubject, SubmissionObserver
 from functools import wraps
 import cloudinary.uploader  # For task submission
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse
 
 # Added by Mark: Helper function to check the student profile. 
 # This is reused throughout all the views by adding @student_required just like @login_required
@@ -303,3 +305,51 @@ def studentTaskSubmit(request, task_id):
     }
     
     return render(request, 'tasks/templates/student-task-submit.html', context)
+
+@login_required
+def student_feedback(request):
+
+    # Added by Matthew/Spooky: Retrieve all feedback where the current user is the receiver.
+    feedback_list = TaskFeedback.objects.filter(submissionstudentuser=request.user).order_by("-graded_at")
+    # Added by Matthew/Spooky: Count unread feedback items.
+    unread_count = feedback_list.filter(is_read=False).count()
+
+    # Added by Matthew/Spooky: Render the student feedback page with feedback data.
+    return render(request, "courses/student_feedback.html", {
+        "feedback_list": feedback_list,
+        "unread_count": unread_count
+    })
+
+
+@login_required
+@require_POST
+def mark_feedback_read(request, feedback_id):
+
+    # Added by Matthew/Spooky: Retrieve the feedback ensuring the logged in user is the receiver.
+    feedback = get_object_or_404(TaskFeedback, id=feedback_id, submissionstudentuser=request.user)
+
+    # Added by Matthew/Spooky: Mark feedback as read.
+    feedback.is_read = True
+
+    # Added by Matthew/Spooky: Save changes to the database.
+    feedback.save()
+
+    # Added by Matthew/Spooky: Return JSON response showing success.
+    return JsonResponse({"success": True, "feedback_id": str(feedback.id)})
+
+
+@login_required
+@require_POST
+def archive_feedback(request, feedback_id):
+
+    # Added by Matthew/Spooky: Retrieve feedback ensuring the logged in student owns it.
+    feedback = get_object_or_404(TaskFeedback, id=feedback_id, submissionstudentuser=request.user)
+
+    # Added by Matthew/Spooky: Mark feedback as archived for the receiver.
+    feedback.is_archived_for_receiver = True
+
+    # Added by Matthew/Spooky: Save changes to the database.
+    feedback.save()
+
+    # Added by Matthew/Spooky: Return JSON response showing success.
+    return JsonResponse({"success": True, "feedback_id": str(feedback.id)})
