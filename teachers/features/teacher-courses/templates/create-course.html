@@ -54,6 +54,7 @@
               <label for="max-students">Max Students</label>
               <input type="number" name="max_students" id="max-students-input" min="1" max="100" required>
             </div>
+            <!--Added By Ariel  box to check if mentor wants to make course private or not-->
             <div class="private-check mb-4">
               <label for="max-students">Private Course</label>
               <input type="checkbox" name="private-box" id="private-input" {% if course.private %}checked{% endif %}>
