@@ -419,5 +419,61 @@ def deleteCourse(request, course_id):
     
     return redirect('teacher-course-list')
 
+# Added By Saim Munshi: Edit task  using create task form 
+@login_required
+@teacher_required
+def editTask(request, task_id): 
+  
+    task = get_object_or_404(Task, id=task_id)
+    
+    courses = Task.objects.all()
 
+    if request.method == "POST":
+        task.title = request.POST.get("title")
+        task.description = request.POST.get("description")
+        task.start_date = request.POST.get("start_date")
+        task.due_date = request.POST.get("due_date")
+        
+        task_pk = request.POST.get("task")
+        if task_pk:
+            task.course = get_object_or_404(Course, id=task_id)
+            
+        task.save()
 
+        Notification.objects.create(
+            user=request.user,
+            notification_type="Edit task",
+            message=f"Task '{task.title}' has been successfully updated!"
+        )
+
+        
+        return redirect("teacher-course-main")
+
+    context = {
+        "task": task,
+        "courses": courses,
+    }
+    return render(request, "tasks/templates/create-task.html", context)
+
+# Added By Saim Munshi: Delete task logic
+@login_required
+@teacher_required
+def deleteTask(request, task_id):
+    # Retrieve the course specifically for the logged-in teacher
+    task = get_object_or_404(Task, id=task_id, course__teacher=request.teacher_profile)
+    course_id = str(task.course.id) 
+
+    if request.method == "POST":
+        task_title = task.title
+        task.delete()
+        
+         # Added By Saim Munshi: Create Delete Notification:
+        Notification.objects.create(
+            user=request.user,
+            notification_type=f"delete_course",
+            message=f"Task '{task_title}' has been successfully Deleted!"
+        )
+        # Added By Saim Munshi:redirect back to the course list page
+        return redirect('teacher-course-main', course_id=course_id)
+    
+    return redirect('teacher-course-main', course_id=course_id)

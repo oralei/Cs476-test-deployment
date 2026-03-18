@@ -24,8 +24,15 @@ urlpatterns = [
     path('notifications/read/<str:notification_id>/', views.markNotificationAsRead, name='teacher-notif-read'),
     
     path('my-students/', views.My_Student, name='My_Student'), #Added by Saim Connection to my student page
+
+    # Note: Edit and Delete Course url path
     path('courses/edit-course/<str:course_id>/', views.editCourse, name='edit-course'), # Added By Saim Connect to create course with course id of exisiting course to allow user
     path('delete-course/<str:course_id>/', views.deleteCourse, name='delete-course'),  # Added By Saim Connect to delete course
+
+    # Note: Edit and Delete Task url path
+    path('tasks/edit-task/<str:task_id>/', views.editTask, name='edit-task'), # Added By Saim Connect to create course with course id of exisiting course to allow user
+    path('delete-task/<str:task_id>/', views.deleteTask, name='delete-task'),  # Added By Saim Connect to delete task
+
 
     path('calendar/', views.Calendar, name='calendar'),
     
