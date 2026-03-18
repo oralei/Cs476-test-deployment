@@ -263,8 +263,29 @@ def Create_Task(request):
     return render(request, 'tasks/templates/create-task.html', context)
 
 """
-Added by Mark: View All Submissions Page
-Notes: A page for seeing all the submissions attached to a specific task. Can lead to a Give Feedback Page
+Added by Mark: View task Submissions Page
+Notes: A page for seeing the submissions attached to a specific task. Can lead to a Give Feedback Page
+"""
+@login_required
+@teacher_required
+def teacherNeedsFeedbackList(request):
+    current_teacher = request.teacher_profile
+    
+    # Query to find all submissions where status is 'pending' AND 
+    # the task belongs to a course taught by the current teacher
+    pending_submissions = TaskSubmission.objects.filter(
+        task__course__teacher=current_teacher,
+        status='pending'
+    ).order_by('submitted_at')
+    
+    context = {
+        'pending_submissions': pending_submissions
+    }
+    return render(request, 'tasks/templates/needs-feedback-list.html', context)
+
+"""
+Added by Mark: View task Submissions Page
+Notes: A page for seeing the submissions attached to a specific task. Can lead to a Give Feedback Page
 """
 @login_required
 @teacher_required
