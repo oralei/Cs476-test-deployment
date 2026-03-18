@@ -4,13 +4,13 @@ from django.contrib.auth import get_user_model
 from students.models import Student
 from teachers.models import Teacher
 
+# Required for User model
 User = get_user_model()
 
+"""
+Implements the Simple Factory Pattern for User Registration.
+"""
 class UserRegistrationFactory:
-    """
-    Implements the Simple Factory Pattern for User Registration.
-    Matches the SimpleFactory -> User CreateUser(type) from your UML Diagram.
-    """
     
     @staticmethod
     def register_user(user_type: str, **kwargs):
@@ -19,14 +19,14 @@ class UserRegistrationFactory:
         name = kwargs.get('name')
         image_url = kwargs.get('image_url')
 
-        # 1. Create the base User model shared by both
+        # Create the base User model object from abstract User class
         user = User.objects.create_user(
             username=name,
             email=email, 
             password=password
         )
 
-        # 2. Create the Concrete Product (Student or Teacher)
+        # Create the Concrete Product depending on the order type (Student or Teacher)
         if user_type == 'student':
             profile = Student.objects.create(
                 user=user,

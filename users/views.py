@@ -31,12 +31,10 @@ def main_page_view(request):
     return render(request, 'MainHome.html')
 
 
-
-
 """
 Author: Ariel
 Function Name: upload_profile_picture
-Purpose: Helper Function for Cloudinary
+Purpose: Helper Function for Cloudinary profile photo upload
 """
 def upload_profile_picture(image_file):
     """Helper to handle image uploads cleanly"""
@@ -76,7 +74,6 @@ def student_register_view(request):
         confirmpassword = request.POST.get('confirmpassword')
         name = request.POST.get("name", "").strip()
 
-
         #Regex to ensure the name and las
         name_regex = r"^[A-Za-z]+(?: [A-Za-z'-]+)+$"
         if not name: 
@@ -103,7 +100,7 @@ def student_register_view(request):
             return render(request, "StudentRegistration.html")
         
         try:
-            # Added by Ariel using simple factory registration function
+            # Added by Ariel: Creates user object using simple_factory.py registration function
             user, student_profile = UserRegistrationFactory.register_user(
                 user_type='student',
                 email=email,
@@ -113,18 +110,15 @@ def student_register_view(request):
                 student_id=request.POST.get('studentId')
             )
 
-            # Auto Login
+            # Auto Login after registration
             login(request, user)
             return redirect('signin_page_view') # Note: url names use underscore. See student/urls.py
         
-
         except Exception as e:
             print(f"--- CRITICAL ERROR DURING SAVE: {e} ---")
             return render(request, 'StudentRegistration.html', {'error': str(e)})
 
     return render(request, 'StudentRegistration.html')
-
-
 
 
 def teacher_register_view(request):
@@ -170,7 +164,7 @@ def teacher_register_view(request):
             return render(request, 'TeacherRegistration.html', {'error': 'Email already exists'})
 
         try:
-            # Updated by Ariel  creates user by using simple factory function
+            # Added by Ariel: Creates user object using simple_factory.py registration function
             user, teacher_profile = UserRegistrationFactory.register_user(
                 user_type='teacher',
                 email=email,
@@ -181,7 +175,7 @@ def teacher_register_view(request):
                 specialization=request.POST.get('specialization')
             )
             
-            # Auto Login
+            # Auto Login after registration
             login(request, user)
             return redirect('signin_page_view') # replace with 'teacher_dashboard' when ready
 
@@ -191,8 +185,9 @@ def teacher_register_view(request):
 
     return render(request, 'TeacherRegistration.html')
 
-"""Added By Mark: For redirects """
 
+
+"""Added By Mark: Below are views for redirects"""
 class CustomLoginView(LoginView):
     template_name = 'StudentHomePage.html'
 
@@ -223,7 +218,7 @@ def signin_page_view(request):
         if user is not None:
             login(request, user)
             
-            # DEBUGGING PRINTS - Check your terminal/console!
+            # DEBUGGING PRINTS
             print(f"User {email} logged in.")
             print(f"Has Student Profile: {hasattr(user, 'students_student_profile')}")
             
