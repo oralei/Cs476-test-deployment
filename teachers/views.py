@@ -271,15 +271,27 @@ Notes: A page for seeing the submissions attached to a specific task. Can lead t
 def teacherNeedsFeedbackList(request):
     current_teacher = request.teacher_profile
     
-    # Query to find all submissions where status is 'pending' AND 
-    # the task belongs to a course taught by the current teacher
-    pending_submissions = TaskSubmission.objects.filter(
-        task__course__teacher=current_teacher,
-        status='pending'
-    ).order_by('submitted_at')
+    # Iteration 2: Instead, we get all courses so we can show or filter courses in the future
+    # Get all courses taught by the current teacher
+    courses = Course.objects.filter(teacher=current_teacher)
     
+    # Build a list that pairs each course with its pending submissions
+    course_data = []
+    for course in courses:
+        # Get pending submissions strictly for this specific course
+        pending_subs = TaskSubmission.objects.filter(
+            task__course=course,
+            status='pending'
+        ).order_by('submitted_at')
+        
+        # Append the course and its submissions to our list
+        course_data.append({
+            'course': course,
+            'submissions': pending_subs
+        })
+        
     context = {
-        'pending_submissions': pending_submissions
+        'course_data': course_data
     }
     return render(request, 'tasks/templates/needs-feedback-list.html', context)
 
