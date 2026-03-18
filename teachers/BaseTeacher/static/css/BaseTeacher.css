@@ -241,13 +241,11 @@ h2, .fw-bold, .text-dark, span {
     --bs-btn-disabled-color: #ffffff;
     --bs-btn-disabled-bg: #247e4c;
     --bs-btn-disabled-border-color: #247e4c;
-    border: 2px solid #247e4c;
 }
 
 .btn-primary:hover {
-    background-color: #ffffff;
-    color: #247e4c;
-    border: 2px solid #247e4c;
+    background-color: #105730;
+    color: #ffffff;
 }
 
 .btn-outline-primary {
@@ -269,4 +267,8 @@ h2, .fw-bold, .text-dark, span {
 
 .logout {
     font-weight: bold;
+}
+
+.notification-btn {
+    max-width: 6rem;
 }

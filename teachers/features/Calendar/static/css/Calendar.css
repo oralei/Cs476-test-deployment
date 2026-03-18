@@ -48,7 +48,6 @@ a{
   background: var(--card);
   border: 1px solid var(--stroke);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
 }
 
 /* Header card */
@@ -169,10 +168,12 @@ select:focus{
   font-weight: 650;
   text-transform: lowercase;
   box-shadow: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
-.fc .fc-button:hover{
-  background: #f8fafc;
+.fc .fc-button:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e0;
 }
 
 .fc .fc-button:focus{
