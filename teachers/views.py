@@ -121,7 +121,7 @@ def teacherCreateCourse(request):
         # Added By Saim Munshi: Create Course Notification:
         Notification.objects.create(
             user=request.user,
-            notification_type=f"create_course",
+            notification_type=f"Create Course",
             message=f"Course '{course_title}' has been successfully created!"
         )
         
@@ -239,7 +239,7 @@ def Create_Task(request):
         # Added By Saim Munshi: Create Tasks Notification:
         Notification.objects.create(
             user=request.user,
-            notification_type=f"create_task",
+            notification_type=f"Create Task",
             message=f"Task '{title}' has been successfully created!"
         )
         if student_ids:
@@ -387,7 +387,7 @@ def editCourse(request, course_id):
          # Added By Saim Munshi: Create Edit Notification:
         Notification.objects.create(
             user=request.user,
-            notification_type=f"edit_course",
+            notification_type=f"Edit Course",
             message=f"Course '{course.title}' has been successfully edited!" # (Changed "created" to "edited"  for accuracy)
         )
         #Added By Saim Munshi: if not redirect to teacher course list page
@@ -411,7 +411,7 @@ def deleteCourse(request, course_id):
          # Added By Saim Munshi: Create Delete Notification:
         Notification.objects.create(
             user=request.user,
-            notification_type=f"delete_course",
+            notification_type=f"Delete Course",
             message=f"Course '{course.title}' has been successfully Deleted!"
         )
         # Redirect back to the course list page
@@ -423,36 +423,42 @@ def deleteCourse(request, course_id):
 @login_required
 @teacher_required
 def editTask(request, task_id): 
-  
     task = get_object_or_404(Task, id=task_id)
-    
-    courses = Task.objects.all()
-
+    # Filter courses to only those owned by this teacher
+    courses = Course.objects.filter(teacher=request.teacher_profile) 
+    students = []
     if request.method == "POST":
         task.title = request.POST.get("title")
-        task.description = request.POST.get("description")
-        task.start_date = request.POST.get("start_date")
-        task.due_date = request.POST.get("due_date")
+        task.description = request.POST.get("description") 
+        task.start_date = request.POST.get("start_date") 
+        task.due_date = request.POST.get("due_date") 
         
-        task_pk = request.POST.get("task")
-        if task_pk:
-            task.course = get_object_or_404(Course, id=task_id)
-            
+        course_id = request.POST.get("course")
+        if course_id:
+            course = get_object_or_404(Course, id=course_id, teacher=request.teacher_profile)
+            task.course = course
+        
         task.save()
-
+        
+        student_ids = request.POST.getlist('students')
+        task.assigned_students.set(student_ids) 
+        
         Notification.objects.create(
             user=request.user,
             notification_type="Edit task",
             message=f"Task '{task.title}' has been successfully updated!"
         )
+        return redirect("teacher-course-main", course_id=task.course.id)
 
-        
-        return redirect("teacher-course-main")
+        if task.course:
+            students = task.course.students.all()
 
     context = {
         "task": task,
         "courses": courses,
+        "students": students,
     }
+
     return render(request, "tasks/templates/create-task.html", context)
 
 # Added By Saim Munshi: Delete task logic
@@ -470,7 +476,7 @@ def deleteTask(request, task_id):
          # Added By Saim Munshi: Create Delete Notification:
         Notification.objects.create(
             user=request.user,
-            notification_type=f"delete_course",
+            notification_type=f"Delete Task",
             message=f"Task '{task_title}' has been successfully Deleted!"
         )
         # Added By Saim Munshi:redirect back to the course list page

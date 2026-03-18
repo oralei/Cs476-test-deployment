@@ -73,12 +73,12 @@
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-sm btn-outline-primary"
                                     onclick="return confirm('Delete this course?');">
-                                    <i class="bi bi-trash"></i><strong>Delete </strong>
+                                    <i class="bi bi-trash"></i><strong>Delete</strong>
                                 </button>
                             </form>
 
-                            <a href="{% url 'edit-course' course.id %}" class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-pencil icon-blue"></i><strong>Edit</strong>
+                            <a href="{% url 'edit-task' task.id %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-pencil icon-blue"></i> <strong>Edit</strong>
                             </a>
                         </div>
                     </div>
