@@ -237,6 +237,8 @@ STATICFILES_DIRS =[
     os.path.join(BASE_DIR, 'students/features/Progress/static'),
     os.path.join(BASE_DIR, 'students/features/Courses/static'),
 
+    os.path.join(BASE_DIR, 'students/features/tasks/static'),
+
     ###### Teacher App Connection#########
     #Added By Saim Munshi: This is to connect the main base folder to the Teacher Application features in static directory. 
     os.path.join(BASE_DIR, 'teachers/BaseTeacher/static'),

@@ -310,12 +310,12 @@ def studentTaskSubmit(request, task_id):
 def student_feedback(request):
 
     # Added by Matthew/Spooky: Retrieve all feedback where the current user is the receiver.
-    feedback_list = TaskFeedback.objects.filter(submissionstudentuser=request.user).order_by("-graded_at")
+    feedback_list = TaskFeedback.objects.filter(submission__student__user=request.user).order_by("-graded_at")
     # Added by Matthew/Spooky: Count unread feedback items.
     unread_count = feedback_list.filter(is_read=False).count()
 
     # Added by Matthew/Spooky: Render the student feedback page with feedback data.
-    return render(request, "courses/student_feedback.html", {
+    return render(request, "tasks/templates/student-feedback.html", {
         "feedback_list": feedback_list,
         "unread_count": unread_count
     })
@@ -326,7 +326,7 @@ def student_feedback(request):
 def mark_feedback_read(request, feedback_id):
 
     # Added by Matthew/Spooky: Retrieve the feedback ensuring the logged in user is the receiver.
-    feedback = get_object_or_404(TaskFeedback, id=feedback_id, submissionstudentuser=request.user)
+    feedback = get_object_or_404(TaskFeedback, id=feedback_id, submission__student__user=request.user)
 
     # Added by Matthew/Spooky: Mark feedback as read.
     feedback.is_read = True
@@ -343,10 +343,13 @@ def mark_feedback_read(request, feedback_id):
 def archive_feedback(request, feedback_id):
 
     # Added by Matthew/Spooky: Retrieve feedback ensuring the logged in student owns it.
-    feedback = get_object_or_404(TaskFeedback, id=feedback_id, submissionstudentuser=request.user)
+    feedback = get_object_or_404(TaskFeedback, id=feedback_id, submission__student__user=request.user)
 
     # Added by Matthew/Spooky: Mark feedback as archived for the receiver.
     feedback.is_archived_for_receiver = True
+
+    # Added by Matthew/Spooky: Mark feedback as read.
+    feedback.is_read = True
 
     # Added by Matthew/Spooky: Save changes to the database.
     feedback.save()
