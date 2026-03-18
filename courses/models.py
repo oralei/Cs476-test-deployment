@@ -135,7 +135,12 @@ class TaskFeedback(models.Model):
       on_delete=models.CASCADE,
       related_name='feedback' # Access via: submission.feedback
   )
-  
+    # Added by Matthew/Spooky: Optional attachment.
+  attachment_url = models.URLField(blank=True, null=True)
+    # Added by Matthew/Spooky: Track read status.
+  is_read = models.BooleanField(default=False)
+    # Added by Matthew/Spooky: Track archived feedback.
+  is_archived_for_receiver = models.BooleanField(default=False)
   grade = models.FloatField() # Might be removed, don't need grading.
   comments = models.TextField(blank=True) # Example: "Great job, but check spelling."
   

@@ -1,0 +1,175 @@
+{% extends "BaseStudent.html" %}
+{% load static %}
+{% load file_extras %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/student_styles.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="main-content">
+
+    <!-- Added by Matthew/Spooky: Hidden CSRF token for JS AJAX requests. -->
+    <form style="display:none;">
+        {% csrf_token %}
+    </form>
+
+    <h2 class="mb-4">My Feedback</h2>
+
+    <!-- Added by Matthew/Spooky: Show unread count. -->
+    {% if unread_count > 0 %}
+    <div class="alert alert-info shadow-sm" id="unreadAlert" role="alert">
+        <strong>You have <span id="unreadCount">{{ unread_count }}</span> unread feedback message<span id="unreadPlural">{{ unread_count|pluralize }}</span>!</strong>
+    </div>
+    {% endif %}
+
+    <!-- Added by Matthew/Spooky: Currently active feedback. -->
+    <div class="row">
+        <div class="col-md-12 mb-5">
+            <div class="card shadow-sm border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Active Feedback</h4>
+                </div>
+                <div class="card-body" id="activeFeedbackList">
+                    
+                    {% for fb in feedback_list %}
+                        {% if not fb.is_archived_for_receiver %}
+                        <div class="card mb-3 feedback-item" id="feedback-{{ fb.id }}">
+                            
+                            <div class="card-header d-flex flex-wrap justify-content-between align-items-center bg-light">
+                                <span>
+                                    <strong>Teacher: {{ fb.submission.task.course.teacher.full_name }}</strong> | 
+                                    <a href="{% url 'student-task-submit' fb.submission.task.id %}" class="text-muted">{{ fb.submission.task.course.title }} - {{ fb.submission.task.title }}</a>
+                                </span>
+                                <small class="text-muted">{{ fb.graded_at|date:"M d, Y g:i A" }}</small>
+                            </div>
+
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">
+                                    Grade: {{ fb.grade }} / {{ fb.submission.task.points_possible }}
+                                </h5>
+                                <p class="card-text">{{ fb.comments }}</p>
+
+                                <!-- Added by Matthew: Feedback attachment handling -->
+                                {% if fb.attachment_url %}
+                                    <div class="mb-3">
+                                    <!-- Added by Matthew: is_image handling from file_extras.py-->
+                                    {% if fb.attachment_url|is_image %}
+                                        <a href="{{ fb.attachment_url }}">
+                                            <img src="{{ fb.attachment_url }}" alt="Attachment" class="img-thumbnail" style="max-width: 200px;">
+                                        </a>
+                                    {% else %}
+                                        <a href="{{ fb.attachment_url }}" target="_blank" class="btn btn-outline-info btn-sm">View Attachment</a>
+                                    {% endif %}
+                                    </div>
+                                {% endif %}
+
+                                <!-- Status Badges and Action Buttons -->
+                                <hr>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>Status:</strong> 
+                                        {% if fb.is_read %}
+                                            <span class="badge bg-success" id="status-{{ fb.id }}">Read</span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark" id="status-{{ fb.id }}">Unread</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <!-- Buttons for marking read or archive -->
+                                    <div>
+                                        {% if not fb.is_read %}
+                                        <button type="button" class="btn btn-sm btn-success mark-read-btn" 
+                                                data-id="{{ fb.id }}" 
+                                                data-url="{% url 'mark_feedback_read' fb.id %}">
+                                            Mark as Read
+                                        </button>
+                                        {% endif %}
+                                        
+                                        <button type="button" class="btn btn-sm btn-secondary archive-btn ms-2" 
+                                                data-id="{{ fb.id }}" 
+                                                data-url="{% url 'archive_feedback' fb.id %}">
+                                            Archive
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        {% endif %}
+                    <!-- Added by Matthew/Spooky: Message if no feedback. -->
+                    {% empty %}
+                        <p class="text-muted text-center mt-3">No active feedback.</p>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Added by Matthew/Spooky: Archive for feedback -->
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h4 class="mb-0">Archived Feedback</h4>
+                </div>
+                <div class="card-body bg-light" id="archiveFeedbackList">
+                    
+                    {% for fb in feedback_list %}
+                        {% if fb.is_archived_for_receiver %}
+                        <div class="card mb-3 feedback-item border-secondary opacity-75" id="feedback-{{ fb.id }}">
+                            
+                            <div class="card-header d-flex flex-wrap justify-content-between align-items-center">
+                                <span>
+                                    <strong>{{ fb.submission.task.course.teacher.full_name }}</strong> | 
+                                    <span class="text-muted">{{ fb.submission.task.course.title }} - {{ fb.submission.task.title }}</span>
+                                </span>
+                                <small class="text-muted">{{ fb.graded_at|date:"M d, Y g:i A" }}</small>
+                            </div>
+
+                            <div class="card-body text-muted">
+                                <h5 class="card-title">Grade: {{ fb.grade }} / {{ fb.submission.task.points_possible }}</h5>
+                                <p class="card-text">{{ fb.comments }}</p>
+
+                                {% if fb.attachment_url %}
+                                    <div class="mb-3">
+                                    {% if fb.attachment_url|is_image %}
+                                        <a href="{{ fb.attachment_url }}">
+                                            <img src="{{ fb.attachment_url }}" alt="Attachment" class="img-thumbnail" style="max-width: 200px;">
+                                        </a>
+                                    {% else %}
+                                        <a href="{{ fb.attachment_url }}" target="_blank" class="btn btn-outline-secondary btn-sm">View Attachment</a>
+                                    {% endif %}
+                                    </div>
+                                {% endif %}
+                                
+                                <hr>
+                                <div>
+                                    <!-- Added by Matthew/Spooky: Show read or unread in archive. -->
+                                    <strong>Status:</strong> 
+                                    {% if fb.is_read %}
+                                        <span class="badge bg-success">Read</span>
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark">Unread</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                        </div>
+                        {% endif %}
+                    <!-- Added by Matthew/Spooky: Message if no archived feedback. -->
+                    {% empty %}
+                        <p class="text-muted text-center mt-3">No archived feedback.</p>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+{% endblock %}
+
+{% block extra_js %}
+    <!-- Added by Matthew: Handle marking read and archiving from a js script. -->
+    <script src="{% static 'js/student_feedback.js' %}"></script>
+{% endblock %}
