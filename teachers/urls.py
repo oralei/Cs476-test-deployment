@@ -12,6 +12,8 @@ urlpatterns = [
     # Note: This is required for specific course pages
     path('courses/<str:course_id>/', views.teacherCourseMain, name='teacher-course-main'),
     
+    path('needs-feedback/', views.teacherNeedsFeedbackList, name='needs-feedback-list'),
+    
     # Note: This is required for specific task pages
     path('tasks/<str:task_id>/submissions/', views.teacherTaskSubmissions, name='teacher-task-submissions'),
     

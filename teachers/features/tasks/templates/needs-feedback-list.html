@@ -1,0 +1,76 @@
+{% extends 'BaseTeacher.html' %}
+{% load static %}
+
+{% block content %}
+<main class="container py-4">
+<div container-fluid>
+    <!-- Header -->
+    <div class="mb-4">
+        <h2 class="fw-bold">Submissions Needing Feedback</h2>
+    </div>
+    {% if course_data %}
+      <!-- Loop through every course -->
+      {% for item in course_data %}
+          <div class="course-section">
+              <!-- Course Title Header -->
+              <h3 class="course-header">{{ item.course.title }}</h3>
+
+    {% if item.submissions %}
+        <div class="row g-4">
+            {% for submission in item.submissions %}
+                <div class="col-12">
+                    <div class="card rounded-4 shadow-sm border">
+                        <div class="card-body d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+
+                            <!-- Left Side: Details -->
+                            <div class="mb-3 mb-md-0">
+                                <h5 class="card-title mb-2">
+                                    {{ submission.task.title }}
+                                </h5>
+
+                                <p class="mb-1 text-muted">
+                                    <strong>Course:</strong> {{ submission.task.course.title }}
+                                </p>
+
+                                <p class="mb-1 text-muted">
+                                    <strong>Student:</strong> {{ submission.student.full_name|default:submission.student }}
+                                </p>
+
+                                <p class="mb-0 text-muted">
+                                    <strong>Submitted:</strong> {{ submission.submitted_at|date:"M d, Y P" }}
+                                </p>
+                            </div>
+
+                            <!-- Right Side: Action -->
+                            <div class="text-md-end">
+                                <a href="{% url 'teacher-feedback' submission.id %}"
+                                   class="btn btn-primary px-4">
+                                    Give Feedback
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+            {% else %}
+                <!-- Empty State -->
+                <div class="text-center py-5">
+                    <p class="text-muted">
+                        There are no pending submissions that require your feedback right now.
+                    </p>
+                </div>
+            {% endif %}
+          <hr>
+      {% endfor %}
+    {% else %}
+    <!-- If the teacher hasn't created any courses yet -->
+    <div class="empty-state" style="padding: 50px;">
+        <h3>No courses found.</h3>
+        <a href="{% url 'create-course' %}">Create a course to start assigning tasks and receiving submissions.</a>
+    </div>
+    {% endif %}
+</div>
+</main>
+{% endblock %}
