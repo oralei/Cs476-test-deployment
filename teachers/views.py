@@ -4,6 +4,8 @@ from teachers.models import Teacher # Import the Teacher model
 from django.contrib.auth.decorators import login_required
 from courses.observers import SubmissionSubject, FeedbackObserver
 from courses.models import Notification
+from courses.observers import SubmissionSubject, FeedbackObserver
+from courses.models import Notification
 from django.http import HttpResponseForbidden
 from functools import wraps
 from datetime import date
@@ -109,17 +111,20 @@ def teacherCreateCourse(request):
         course_description = request.POST.get('description')
         max_students = request.POST.get('max_students')
 
+        is_private = request.POST.get('private-box') == 'on'
+
         # Save the course to MongoDB
         Course.objects.create(
             title=course_title,
             description=course_description,
             max_students=max_students,
-            teacher=current_teacher
+            teacher=current_teacher,
+            private=is_private
         )
         # Added By Saim Munshi: Create Course Notification:
         Notification.objects.create(
             user=request.user,
-            notification_type=f"create_course",
+            notification_type=f"Create Course",
             message=f"Course '{course_title}' has been successfully created!"
         )
         
@@ -237,7 +242,7 @@ def Create_Task(request):
         # Added By Saim Munshi: Create Tasks Notification:
         Notification.objects.create(
             user=request.user,
-            notification_type=f"create_task",
+            notification_type=f"Create Task",
             message=f"Task '{title}' has been successfully created!"
         )
         if student_ids:
@@ -261,8 +266,41 @@ def Create_Task(request):
     return render(request, 'tasks/templates/create-task.html', context)
 
 """
-Added by Mark: View All Submissions Page
-Notes: A page for seeing all the submissions attached to a specific task. Can lead to a Give Feedback Page
+Added by Mark: View task Submissions Page
+Notes: A page for seeing the submissions attached to a specific task. Can lead to a Give Feedback Page
+"""
+@login_required
+@teacher_required
+def teacherNeedsFeedbackList(request):
+    current_teacher = request.teacher_profile
+    
+    # Iteration 2: Instead, we get all courses so we can show or filter courses in the future
+    # Get all courses taught by the current teacher
+    courses = Course.objects.filter(teacher=current_teacher)
+    
+    # Build a list that pairs each course with its pending submissions
+    course_data = []
+    for course in courses:
+        # Get pending submissions strictly for this specific course
+        pending_subs = TaskSubmission.objects.filter(
+            task__course=course,
+            status='pending'
+        ).order_by('submitted_at')
+        
+        # Append the course and its submissions to our list
+        course_data.append({
+            'course': course,
+            'submissions': pending_subs
+        })
+        
+    context = {
+        'course_data': course_data
+    }
+    return render(request, 'tasks/templates/needs-feedback-list.html', context)
+
+"""
+Added by Mark: View task Submissions Page
+Notes: A page for seeing the submissions attached to a specific task. Can lead to a Give Feedback Page
 """
 @login_required
 @teacher_required
@@ -360,12 +398,13 @@ def editCourse(request, course_id):
     if request.method == "POST":
         course.title = request.POST.get("title")
         course.description = request.POST.get("description")
+        course.private = request.POST.get('private-box') == 'on'
         course.save()
          # Added By Saim Munshi: Create Edit Notification:
         Notification.objects.create(
             user=request.user,
-            notification_type=f"edit_course",
-            message=f"Course '{course.title}' has been successfully created!"
+            notification_type=f"Edit Course",
+            message=f"Course '{course.title}' has been successfully edited!" # (Changed "created" to "edited"  for accuracy)
         )
         #Added By Saim Munshi: if not redirect to teacher course list page
         return redirect("teacher-course-list")
@@ -388,7 +427,7 @@ def deleteCourse(request, course_id):
          # Added By Saim Munshi: Create Delete Notification:
         Notification.objects.create(
             user=request.user,
-            notification_type=f"delete_course",
+            notification_type=f"Delete Course",
             message=f"Course '{course.title}' has been successfully Deleted!"
         )
         # Redirect back to the course list page
@@ -396,5 +435,67 @@ def deleteCourse(request, course_id):
     
     return redirect('teacher-course-list')
 
+# Added By Saim Munshi: Edit task  using create task form 
+@login_required
+@teacher_required
+def editTask(request, task_id): 
+    task = get_object_or_404(Task, id=task_id)
+    # Filter courses to only those owned by this teacher
+    courses = Course.objects.filter(teacher=request.teacher_profile) 
+    students = []
+    if request.method == "POST":
+        task.title = request.POST.get("title")
+        task.description = request.POST.get("description") 
+        task.start_date = request.POST.get("start_date") 
+        task.due_date = request.POST.get("due_date") 
+        
+        course_id = request.POST.get("course")
+        if course_id:
+            course = get_object_or_404(Course, id=course_id, teacher=request.teacher_profile)
+            task.course = course
+        
+        task.save()
+        
+        student_ids = request.POST.getlist('students')
+        task.assigned_students.set(student_ids) 
+        
+        Notification.objects.create(
+            user=request.user,
+            notification_type="Edit task",
+            message=f"Task '{task.title}' has been successfully updated!"
+        )
+        return redirect("teacher-course-main", course_id=task.course.id)
 
+        if task.course:
+            students = task.course.students.all()
 
+    context = {
+        "task": task,
+        "courses": courses,
+        "students": students,
+    }
+
+    return render(request, "tasks/templates/create-task.html", context)
+
+# Added By Saim Munshi: Delete task logic
+@login_required
+@teacher_required
+def deleteTask(request, task_id):
+    # Retrieve the course specifically for the logged-in teacher
+    task = get_object_or_404(Task, id=task_id, course__teacher=request.teacher_profile)
+    course_id = str(task.course.id) 
+
+    if request.method == "POST":
+        task_title = task.title
+        task.delete()
+        
+         # Added By Saim Munshi: Create Delete Notification:
+        Notification.objects.create(
+            user=request.user,
+            notification_type=f"Delete Task",
+            message=f"Task '{task_title}' has been successfully Deleted!"
+        )
+        # Added By Saim Munshi:redirect back to the course list page
+        return redirect('teacher-course-main', course_id=course_id)
+    
+    return redirect('teacher-course-main', course_id=course_id)

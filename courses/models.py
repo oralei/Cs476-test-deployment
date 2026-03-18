@@ -3,6 +3,20 @@ from django.db import models
 from django.conf import settings
 from django_mongodb_backend.fields import ObjectIdAutoField
 
+import random
+import string
+
+# Added by: Ariel using Saim's randomTeacherCodeGenerator in teacher's models.py
+# Function: Creates a randomly generated code 
+def randomCodeGenerator():
+    codeLength = 15
+    ultimateString = string.ascii_letters + string.digits
+    randomString = "" 
+    for i in range(codeLength):
+        randomString += random.choice(ultimateString)
+    
+    return randomString
+
 # Added by Mark: This creates the blueprint for the entire Course and Task system backend.
 
 # Class: Course (MongoDB collection = courses_course)
@@ -14,6 +28,15 @@ class Course(models.Model):
   title = models.CharField(max_length=200)
   description = models.TextField()
   max_students = models.PositiveIntegerField()
+  # Added by: Ariel
+  # Creates randomly generated code for a course
+  # Used for course browsing look up if course is private
+  course_code = models.CharField(max_length=20, unique=True, default = randomCodeGenerator)
+
+  # Added by: Ariel
+  # Private feature, intially set to false
+  # Used to determine whether a course is shown in course browser
+  private = models.BooleanField(default=False)
 
   # RELATIONS
   teacher = models.ForeignKey(

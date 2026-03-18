@@ -27,4 +27,9 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
     });
+<<<<<<< HEAD
 });
+=======
+});
+
+>>>>>>> bcfa0337da280e646b76b4e84edb0880292a6a81

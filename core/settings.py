@@ -249,7 +249,6 @@ STATICFILES_DIRS =[
     os.path.join(BASE_DIR, 'teachers/features/My_Student/static'), 
     os.path.join(BASE_DIR, 'teachers/features/Setting/static'),
     os.path.join(BASE_DIR, 'teachers/BaseTeacher/static'),
-
 ]
 
 from django.core.servers.basehttp import WSGIServer

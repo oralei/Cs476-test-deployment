@@ -5,9 +5,11 @@ from courses.models import Course, Task, TaskSubmission, Notification, TaskFeedb
 from courses.observers import SubmissionSubject, SubmissionObserver
 from functools import wraps
 import cloudinary.uploader  # For task submission
+from django.db.models import Q  # For "or" queries
+from django.contrib import messages  # For error messages
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
-
+# Create your views here.
 # Added by Mark: Helper function to check the student profile. 
 # This is reused throughout all the views by adding @student_required just like @login_required
 def student_required(view_func):
@@ -18,9 +20,6 @@ def student_required(view_func):
         request.student_profile = request.user.students_student_profile
         return view_func(request, *args, **kwargs)
     return wrapper
-
-# Create your views here.
-
 """
 Name Function: Home
 type: Function 
@@ -126,13 +125,34 @@ def student_required(view_func):
 """
 Added by Mark: Course Browser Page
 Notes: A page for seeing all available courses and allows a student to enroll into it.
+Modified: Added search functionality for teacher_code / course_code and hides private courses by default.
 """
 @login_required
 @student_required
 def courseBrowser(request):
     student = request.student_profile
 
-    courses = Course.objects.all()
+    if request.method == "POST":
+        # Get the code from the search form input
+        search_code = request.POST.get('course_code', '').strip()
+        
+        if search_code:
+            # Search for courses matching EITHER the course_code OR the teacher's teacher_code
+            # This intentionally bypasses the 'private=False' check to allow finding private courses via code
+            courses = Course.objects.filter(
+                Q(course_code=search_code) | Q(teacher__teacher_code=search_code)
+            )
+            
+            # If no courses are found, send an error message to display in the HTML
+            if not courses.exists():
+                messages.error(request, "No courses found with that code.")
+        else:
+            # Fallback if they somehow submit an empty POST
+            courses = Course.objects.filter(private=False)
+    else:
+        # Standard GET request: Only show non-private courses
+        courses = Course.objects.filter(private=False)
+
     context = {
         'courses': courses,
         'student': student  # Passing student so we can check if they already joined a course
@@ -287,6 +307,13 @@ def studentTaskSubmit(request, task_id):
                 file_url=uploaded_file_url,  # Save the secure_url string!
                 status='pending'
             )
+            
+        # Observer Pattern Implementation
+        # -------------------------------------------------------------------
+        subject = SubmissionSubject(submission)
+        teacher_observer = SubmissionObserver() # Create observer
+        subject.attach(teacher_observer)     # Attach
+        subject.set_state('pending')         # Changes state and notifies
             
         # Observer Pattern Implementation
         # -------------------------------------------------------------------
