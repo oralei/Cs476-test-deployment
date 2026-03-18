@@ -92,23 +92,6 @@ document.addEventListener('DOMContentLoaded', function ()
             (info.event.endStr ? "\nEnd: " + info.event.endStr : "")
             );
         },
-
-        select: function (info)
-        {
-            // adds event visually (Note: this does not save back to the database yet)
-            calendar.addEvent({
-            title: 'Meeting (new)',
-            start: info.startStr,
-            end: info.endStr,
-            extendedProps: { 
-                type: 'meeting', 
-                course: courseSelect.value || '', 
-                // If a student is selected, attach them to the new event
-                students: studentSelect.value ? [studentSelect.value] : []
-            }
-            });
-            calendar.unselect();
-        }
     });
 
     // Render the calendar to the screen
