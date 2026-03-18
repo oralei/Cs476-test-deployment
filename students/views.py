@@ -332,7 +332,7 @@ def Progress(request):
             "pending": pending,
             "overdue": overdue,
             "total": total_tasks,
-            "tasks": task_list,  # added by win516
+            "tasks": task_list,  
         })
 
         total_completed_all += completed

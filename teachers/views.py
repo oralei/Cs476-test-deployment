@@ -304,6 +304,7 @@ def deleteCourse(request, course_id):
 @login_required
 @teacher_required
 def Progress(request):
+    from django.utils import timezone
     current_teacher = request.teacher_profile
     courses = Course.objects.filter(teacher=current_teacher)
 
@@ -313,17 +314,28 @@ def Progress(request):
     for course in courses:
         if course.title:
             course_names.append(course.title)
+
         for student in course.students.all():
             sid = str(student.id)
 
-            total_tasks = Task.objects.filter(course=course, assigned_students=student).count()
-            completed_tasks = TaskSubmission.objects.filter(
-                task__course=course, student=student, status='reviewed'
-            ).count()
-            pending_tasks = TaskSubmission.objects.filter(
-                task__course=course, student=student, status='pending'
+            total_tasks = Task.objects.filter(
+                course=course,
+                assigned_students=student
             ).count()
 
+            completed_tasks = TaskSubmission.objects.filter(
+                task__course=course,
+                student=student,
+                status='reviewed'
+            ).count()
+
+            pending_tasks = TaskSubmission.objects.filter(
+                task__course=course,
+                student=student,
+                status='pending'
+            ).count()
+
+            # Overdue = past due date and not reviewed
             overdue = Task.objects.filter(
                 course=course,
                 assigned_students=student,
@@ -335,9 +347,26 @@ def Progress(request):
                 ).values_list('task_id', flat=True)
             ).count()
 
-
-
             progress = int((completed_tasks / total_tasks) * 100) if total_tasks > 0 else 0
+
+            # Get specific overdue task names
+            overdue_task_objects = Task.objects.filter(
+                course=course,
+                assigned_students=student,
+                due_date__lt=timezone.now()
+            ).exclude(
+                id__in=TaskSubmission.objects.filter(
+                    student=student,
+                    status='reviewed'
+                ).values_list('task_id', flat=True)
+            )
+
+            # Get specific pending task names
+            pending_task_objects = TaskSubmission.objects.filter(
+                task__course=course,
+                student=student,
+                status='pending'
+            )
 
             if sid not in student_map:
                 student_map[sid] = {
@@ -347,7 +376,19 @@ def Progress(request):
                     "total_pending": 0,
                     "total_overdue": 0,
                     "total_tasks": 0,
+                    "overdue_task_names": [],
+                    "pending_task_names": [],
                 }
+
+            for t in overdue_task_objects:
+                student_map[sid]["overdue_task_names"].append(
+                    f"{t.title} ({course.title})"
+                )
+
+            for t in pending_task_objects:
+                student_map[sid]["pending_task_names"].append(
+                    f"{t.task.title} ({course.title})"
+                )
 
             student_map[sid]["courses"].append({
                 "course": course.title or "Untitled",
@@ -375,14 +416,19 @@ def Progress(request):
             "pending": s["total_pending"],
             "overdue": s["total_overdue"],
             "status": status,
+            "overdue_task_names": s["overdue_task_names"],
+            "pending_task_names": s["pending_task_names"],
         })
+
+    # Sort by progress ascending — lowest first
+    student_data.sort(key=lambda x: x["progress"])
 
     needs_attention = sum(1 for s in student_data if s['status'] == 'behind')
 
     stats = {
         "active_students": len(student_data),
         "needs_attention": needs_attention,
-        "avg_completion": int(sum(s["progress"] for s in student_data) / len(student_data)) if student_data else 0
+        "avg_completion": int(sum(s["progress"] for s in student_data) / len(student_data)) if student_data else 0,
     }
 
     return render(request, "Progress/templates/Progress.html", {
