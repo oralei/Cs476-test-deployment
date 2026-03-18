@@ -235,3 +235,162 @@ def studentTaskSubmit(request, task_id):
         'submission': submission
     }
     return render(request, 'tasks/templates/student-task-submit.html', context)
+
+
+# added by win516
+@login_required
+@student_required
+def Progress(request):
+    from django.utils import timezone
+    from courses.models import TaskFeedback
+
+    student = request.student_profile
+
+    # Get all courses this student is enrolled in
+    enrolled_courses = student.enrolled_courses.all()
+
+    course_data = []
+    total_completed_all = 0
+    total_tasks_all = 0
+    total_overdue_all = 0
+
+    for course in enrolled_courses:
+
+        # Total tasks assigned to this student in this course
+        total_tasks = Task.objects.filter(
+            course=course,
+            assigned_students=student
+        ).count()
+
+        # Completed = teacher reviewed the submission
+        completed = TaskSubmission.objects.filter(
+            task__course=course,
+            student=student,
+            status='reviewed'
+        ).count()
+
+        # Pending = submitted but not yet reviewed
+        pending = TaskSubmission.objects.filter(
+            task__course=course,
+            student=student,
+            status='pending'
+        ).count()
+
+        # Overdue = past due date and not reviewed
+        overdue = Task.objects.filter(
+            course=course,
+            assigned_students=student,
+            due_date__lt=timezone.now()
+        ).exclude(
+            id__in=TaskSubmission.objects.filter(
+                student=student,
+                status='reviewed'
+            ).values_list('task_id', flat=True)
+        ).count()
+
+        progress = int((completed / total_tasks) * 100) if total_tasks > 0 else 0
+
+        # build task list for timeline
+        tasks = Task.objects.filter(
+            course=course,
+            assigned_students=student
+        ).order_by('due_date')
+
+        task_list = []
+        for task in tasks:
+            submission = TaskSubmission.objects.filter(task=task, student=student).first()
+
+            if submission and submission.status == 'reviewed':
+                task_status = 'reviewed'
+                status_label = 'Completed'
+                status_color = 'success'
+            elif submission and submission.status == 'pending':
+                task_status = 'pending'
+                status_label = 'Pending Review'
+                status_color = 'warning'
+            elif task.due_date and task.due_date < timezone.now():
+                task_status = 'overdue'
+                status_label = 'Overdue'
+                status_color = 'danger'
+            else:
+                task_status = 'not_submitted'
+                status_label = 'Not Submitted'
+                status_color = 'secondary'
+
+            task_list.append({
+                "title": task.title,
+                "due_date": task.due_date.strftime("%b %d, %Y") if task.due_date else "No due date",
+                "status": task_status,
+                "status_label": status_label,
+                "status_color": status_color,
+            })
+
+        course_data.append({
+            "title": course.title or "Untitled",
+            "progress": progress,
+            "completed": completed,
+            "pending": pending,
+            "overdue": overdue,
+            "total": total_tasks,
+            "tasks": task_list,  # added by win516
+        })
+
+        total_completed_all += completed
+        total_tasks_all += total_tasks
+        total_overdue_all += overdue
+
+    # Overall progress across all courses
+    overall_progress = int((total_completed_all / total_tasks_all) * 100) if total_tasks_all > 0 else 0
+
+    # Upcoming deadlines — tasks due in the next 7 days not yet reviewed
+    upcoming = Task.objects.filter(
+        assigned_students=student,
+        due_date__gte=timezone.now(),
+        due_date__lte=timezone.now() + timezone.timedelta(days=7)
+    ).exclude(
+        id__in=TaskSubmission.objects.filter(
+            student=student,
+            status='reviewed'
+        ).values_list('task_id', flat=True)
+    ).order_by('due_date')
+
+    upcoming_tasks = []
+    for task in upcoming:
+        days_left = (task.due_date - timezone.now()).days
+        upcoming_tasks.append({
+            "title": task.title,
+            "course": task.course.title if task.course.title else "Untitled",
+            "days_left": max(0, days_left),
+            "due_date": task.due_date,
+        })
+
+    # Recent feedback — last 5 reviewed submissions with feedback
+    recent_submissions = TaskSubmission.objects.filter(
+        student=student,
+        status='reviewed'
+    ).order_by('-id')[:5]
+
+    recent_feedback = []
+    for submission in recent_submissions:
+        feedback = TaskFeedback.objects.filter(submission=submission).first()
+        if feedback:
+            recent_feedback.append({
+                "task_title": submission.task.title,
+                "course": submission.task.course.title if submission.task.course.title else "Untitled",
+                "grade": feedback.grade,
+                "comments": feedback.comments,
+            })
+
+    stats = {
+        "total_courses": enrolled_courses.count(),
+        "overall_progress": overall_progress,
+        "total_completed": total_completed_all,
+        "total_overdue": total_overdue_all,
+    }
+
+    return render(request, 'StudentProgress.html', {
+        "courses": course_data,
+        "upcoming_tasks": upcoming_tasks,
+        "recent_feedback": recent_feedback,
+        "stats": stats,
+    })

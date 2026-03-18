@@ -69,7 +69,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, 'users/StudentRegistration/templates'),
             os.path.join(BASE_DIR, 'users/SignInPage/templates'),
 
-            # Teacher App templates — kept above students to avoid Progress template conflict (fix by win516)
+            # Teacher App templates 
             os.path.join(BASE_DIR, 'teachers/BaseTeacher/templates'),
             os.path.join(BASE_DIR, 'teachers/features'),
             os.path.join(BASE_DIR, 'teachers/features/Progress/templates'),  # added by win516
@@ -77,6 +77,7 @@ TEMPLATES = [
             # Student App templates
             os.path.join(BASE_DIR, 'students/BaseStudent/templates'),
             os.path.join(BASE_DIR, 'students/features'),
+            os.path.join(BASE_DIR, 'students/features/Progress/templates'),  # added by win516
 
             """
             BASE_DIR / 'users' / 'TeacherRegistration' / 'templates',
