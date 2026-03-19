@@ -42,9 +42,7 @@
                     <a href="{% url 'teacher_home' %}"
                         class="nav-link {% if request.resolver_match.url_name == 'teacher_home' %}active{% endif %}"><i
                             class="bi bi-grid-fill me-3"></i>Dashboard</a>
-                    <a href="{% url 'My_Student' %}"
-                        class="nav-link  {% if request.resolver_match.url_name == 'My_Student' %}active{% endif %}"><i
-                            class="bi bi-people me-3"></i>My Students</a>
+            
                     <a href="{% url 'teacher-course-list' %}"
                         class="nav-link {% if request.resolver_match.url_name == 'teacher-course-list' %}active{% endif %}">
                         <i class="bi bi-journals"></i> My Courses
@@ -52,10 +50,6 @@
                     <a href="{% url 'create-course' %}"
                         class="nav-link {% if request.resolver_match.url_name == 'create-course' %}active{% endif %}">
                         <i class="bi bi-plus-square"></i> Create Course
-                        <a href="{% url 'My_Student' %}"
-                            class="nav-link {% if request.resolver_match.url_name == 'My_Student' %}active{% endif %}">
-                            <i class="bi bi-people"></i> My Students
-                        </a>
                         <a href="{% url 'create-task' %}"
                             class="nav-link {% if request.resolver_match.url_name == 'create-task' %}active{% endif %}">
                             <i class="bi bi-list-task"></i> Create Tasks
@@ -88,7 +82,7 @@
                     <i class="bi bi-list-task"></i> Create Tasks
                 </a>
                 <a href="{% url 'needs-feedback-list' %}"
-                    class="nav-link {% if request.resolver_match.url_name == 'teacher-course-list' %}active{% endif %}">
+                    class="nav-link {% if request.resolver_match.url_name == 'needs-feedback-list' %}active{% endif %}">
                     <i class="bi bi-clipboard-check"></i> Feedback
                 </a>
                 <a href="{% url 'teacher-course-list' %}"
@@ -98,10 +92,6 @@
                 <a href="{% url 'create-course' %}"
                     class="nav-link {% if request.resolver_match.url_name == 'create-course' %}active{% endif %}">
                     <i class="bi bi-plus-square"></i> Create Course
-                </a>
-                <a href="{% url 'My_Student' %}"
-                    class="nav-link {% if request.resolver_match.url_name == 'My_Student' %}active{% endif %}">
-                    <i class="bi bi-people"></i> My Students
                 </a>
                 <a href="{% url 'calendar' %}"
                     class="nav-link {% if request.resolver_match.url_name == 'calendar' %}active{% endif %}">
