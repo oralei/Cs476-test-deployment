@@ -1,28 +1,38 @@
-.main-content{
-    margin-left: 260px;   /* pushes content past sidebar */
+.dashboard-content{
+    margin-left: 270px;
     padding: 40px;
 }
 
-.settings-form{
-    max-width: 500px;
+.settings-card{
     background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    max-width: 500px;
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
 }
 
-.settings-form input{
+.form-group{
+    margin-bottom: 20px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:6px;
+    font-weight:500;
+}
+
+.form-group input{
     width:100%;
     padding:10px;
-    border-radius:6px;
-    border:1px solid #ccc;
+    border-radius:8px;
+    border:1px solid #ddd;
 }
 
-.settings-form button{
-    background:#4CAF50;
+.save-btn{
+    background:#4a7cf3;
     color:white;
     border:none;
     padding:10px 20px;
-    border-radius:6px;
+    border-radius:8px;
     cursor:pointer;
 }

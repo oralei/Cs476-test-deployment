@@ -6,22 +6,46 @@ from functools import wraps
 import cloudinary.uploader  # For task submission
 
 # Create your views here.
-from django.contrib.auth.models import User
 from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
 
 @login_required
 def studentSettings(request):
+
     user = request.user
 
     if request.method == "POST":
-        username = request.POST.get("username")
-        email = request.POST.get("email")
 
-        user.username = username
-        user.email = email
+        # Basic info
+        user.username = request.POST.get("username")
+        user.first_name = request.POST.get("first_name")
+        user.last_name = request.POST.get("last_name")
         user.save()
 
-        messages.success(request, "Settings updated successfully!")
+        # Password fields
+        current_password = request.POST.get("current_password")
+        new_password = request.POST.get("new_password")
+        confirm_password = request.POST.get("confirm_password")
+
+        if new_password or confirm_password:
+
+            if not current_password:
+                messages.error(request, "Enter current password to change password")
+
+            elif not user.check_password(current_password):
+                messages.error(request, "Current password is incorrect")
+
+            elif new_password != confirm_password:
+                messages.error(request, "Passwords do not match")
+
+            else:
+                user.set_password(new_password)
+                user.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, "Password updated successfully")
+
+        else:
+            messages.success(request, "Settings updated successfully")
 
         return redirect("student-settings")
 
