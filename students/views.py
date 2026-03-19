@@ -30,20 +30,39 @@ Purpose:It is used connect django with home html file through an http request
 @student_required
 def studentHome(request):  
     user = request.user 
+    student_profile = request.student_profile # Provided by your decorator
     
-    # Fetch user's unread notifications from the database
-    unread_notifications = Notification.objects.filter(user=user, is_read=False).order_by('-created_at')
-    #Added By Saim Munshi: This is to reterive student profile 
-    student_profile = Student.objects.get(user=request.user)
+  
+    # Added Saim Munshi: Count of courses the student is enrolled in
+    course_count = student_profile.enrolled_courses.count()
     
-    # Pass to html through context object
+   
+    # Added Saim Munshi: Task model has assigned_students many to many relationship
+    task_count = Task.objects.filter(assigned_students=student_profile).count()
+
+    #Added By Saim Munshi: Mentor Count For student
+    mentor_count = Course.objects.filter(students=student_profile).values('teacher').distinct().count()
+
+    #Added By Saim Munshi: upcoming task same logic from mentors task wedget
+    upcoming_tasks = Task.objects.filter( assigned_students=student_profile).order_by('due_date')[:5]
+
+    # Notifications logic (kept from your original code)
+    unread_notifications = Notification.objects.filter(
+        user=user, 
+        is_read=False
+    ).order_by('-created_at')
+    
     context = {
         'student': student_profile,
+        'course_count': course_count,
+        'task_count': task_count,
+        'mentor_count': mentor_count,
+        'upcoming_tasks': upcoming_tasks,
         'notifications': unread_notifications,
         'notification_count': unread_notifications.count()
     }
+    
     return render(request, 'StudentHomePage/templates/StudentHomePage.html', context)
-
 @login_required
 @student_required
 def markNotificationAsRead(request, notification_id):
