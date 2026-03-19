@@ -10,6 +10,8 @@ from django.http import HttpResponseForbidden
 from functools import wraps
 from datetime import date
 from django.db.models import Count
+import cloudinary
+import cloudinary.uploader
 
 #from django.contrib.auth.decorators import login_required
 
