@@ -54,7 +54,7 @@
                             <i class="bi bi-list-task"></i> Create Tasks
                         </a>
                         <a href="{% url 'needs-feedback-list' %}"
-                            class="nav-link {% if request.resolver_match.url_name == 'teacher-course-list' %}active{% endif %}">
+                            class="nav-link {% if request.resolver_match.url_name == 'needs-feedback-list' %}active{% endif %}">
                             <i class="bi bi-clipboard-check"></i> Feedback
                         </a>
                         <a href="{% url 'calendar' %}"
@@ -96,7 +96,7 @@
                     <i class="bi bi-list-task"></i> Create Tasks
                 </a>
                 <a href="{% url 'needs-feedback-list' %}"
-                    class="nav-link {% if request.resolver_match.url_name == 'teacher-course-list' %}active{% endif %}">
+                    class="nav-link {% if request.resolver_match.url_name == 'needs-feedback-list' %}active{% endif %}">
                     <i class="bi bi-clipboard-check"></i> Feedback
                 </a>
 
