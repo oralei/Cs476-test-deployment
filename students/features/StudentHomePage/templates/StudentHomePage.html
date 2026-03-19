@@ -11,14 +11,14 @@
         </header>
 
         <div class="row g-4">
-            <!----------------------------------------------------------------------------------------------------------->
             <!-- Added By Saim Munshi: Upcoming task wedget-->
+            <!----------------------------------------------------------------------------------------------------------->
             <div class="col-12 col-xl-8">
                 <div class="bg-white p-4 p-md-5 rounded-4 shadow-sm border" style="min-height: 350px;">
                     <h4 class="fw-bold mb-4">Student Profile Information</h4>
                     <div class="row align-items-center">
 
-                        <!-- Profile Image -->
+                        <!-- Added By Saim Munshi: profile image -->
                         <div class="col-12 col-md-3 text-center mb-3 mb-md-0">
                             {% if student.profile_image_url %}
                             <img src="{{ student.profile_image_url }}" alt="Profile" class="rounded-circle"
@@ -29,7 +29,7 @@
                             {% endif %}
                         </div>
 
-                        <!-- Profile Info -->
+                        <!-- Added By Saim Munshi: profile info -->
                         <div class="col-12 col-md-6">
                             <h5 class="fw-bold mb-2">{{ student.full_name }}</h5>
 
@@ -39,7 +39,7 @@
                                 <strong>Student ID Number:</strong> {{ student.student_id }}</p>
                         </div>
 
-                        <!-- Edit Profile Button -->
+                        <!-- Added By Saim Munshi: edit profile button -->
                         <div class="col-12 col-md-3 text-md-end mt-3 mt-md-0">
                             <a href="" class="btn btn-primary">
                                 Edit Profile

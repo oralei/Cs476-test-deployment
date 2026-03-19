@@ -37,6 +37,7 @@ Purpose: Connects to the Teacher Home dashboard
 def teacherHome(request):  
     user = request.user 
     teacher = request.teacher_profile
+    teacher_profile = Teacher.objects.get(user=request.user)
     print(f"Logged in User Email: {user.email} - Teacher Profile Name: {repr(teacher.full_name)}")
     
     # Fetch user's unread notifications from the database
@@ -56,7 +57,7 @@ def teacherHome(request):
 
     task_count = Task.objects.filter(course__teacher=teacher).count()
     context = {
-       'teacher': teacher,
+       'teacher': teacher_profile,
         'notifications': unread_notifications,
         'notification_count': unread_notifications.count(),
         'upcoming_tasks': upcoming_tasks,
