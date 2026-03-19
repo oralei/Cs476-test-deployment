@@ -1,46 +1,56 @@
 /*-------------------------------------------------------------------------
  * Author:          Saim Munshi
  * Type:            Base Styles
- * Last Modified:   2026-02-16
- * Purpose:         Sets the global background and typography. The linear 
- * gradient provides a modern, professional feel.
+ * Purpose:         Global background and typography.
  *-------------------------------------------------------------------------*/
-
-
 body {
-    background: linear-gradient(135deg, #fdfff1 0%, #fdfff7, #dfedff, #d2e7fd, #6dacf5, #0b79f0 100%);
+    background: linear-gradient(135deg, #fdfff1 0%, #fdfff7, #dfedff, #d2e7fd, #6dacf5, #0b79f0 100%) no-repeat fixed;
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-size: cover;
     margin: 0;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
 /*-------------------------------------------------------------------------
  * Author:          Saim Munshi
- * Type:            Layout Component
- * Last Modified:   2026-02-16
- * Purpose:         Defines the main content area. On mobile, it takes up  full width. On desktops it gains a margin. Also transition 
+ * Type:            Layout mobile component
+ * Logic:           On mobile default, margin is 0. 
+ * On Desktop       min-width: 992px add the sidebar offset.
  *-------------------------------------------------------------------------*/
 .main-content {
-    margin-left: 280px;
-    padding: 40px;
-    transition: margin 0.3s ease;
+    margin-left: 0;
+    padding: 15px;
+    transition: all 0.3s ease;
 }
 
+@media (min-width: 992px) {
+    .main-content {
+        margin-left: 280px;
+        padding: 40px;
+    }
+}
 
 /*-------------------------------------------------------------------------
- * Author:          Saim Munshi
- * Type:            Layout Component
- * Last Modified:   2026-02-16
- * Purpose:         maincontent class @media to deal with main content when screen size is 992 px
+*  Author:          Saim Munshi
+ * Type:            Sidebar Container
+ * Logic:           Hidden by default on mobile. 
+ * Visible and fixed on Desktop.
  *-------------------------------------------------------------------------*/
-.main-content {
-    @media (min-width: 992px) {
-        .main-content {
-            margin-left: 280px;
-            /* Desktop indentation */
-            padding: 40px;
-        }
+.sidebar-container {
+    display: none;
+    width: 280px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    padding: 20px;
+}
+
+@media (min-width: 992px) {
+    .sidebar-container {
+        display: block;
+        /* Show only on desktop */
     }
 }
 
@@ -142,9 +152,6 @@ body {
     color: #333;
 }
 
-#nav-mobile-div-links{
-    margin-bottom: 200px;
-}
 /*-------------------------------------------------------------------------
  * Author:          Saim Munshi
  * Type:            Floating Component
@@ -153,25 +160,28 @@ body {
  * of page scroll.
  *-------------------------------------------------------------------------*/
 
-
 .floating-chat {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 60px;
-    height: 60px;
+    bottom: 20px;
+    right: 20px;
+    width: 55px;
+    height: 55px;
     background-color: #0d6efd;
     color: white;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    z-index: 1001;
-    text-decoration: none;
+    box-shadow: 0 8px 20px rgba(13, 110, 253, 0.3);
+    z-index: 1050;
+    transition: transform 0.2s ease;
 }
 
-.floating-chat:hover {
-    transform: scale(1.1);
-    color: white;
+@media (max-width: 576px) {
+    .floating-chat {
+        bottom: 15px;
+        right: 15px;
+        width: 50px;
+        height: 50px;
+    }
 }

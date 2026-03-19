@@ -7,6 +7,8 @@ from courses.models import Notification
 from django.http import HttpResponseForbidden
 from functools import wraps
 from datetime import date
+from django.db.models import Count
+
 #from django.contrib.auth.decorators import login_required
 
 # Create your views here.
@@ -42,11 +44,23 @@ def teacherHome(request):
 
     upcoming_tasks = Task.objects.filter( course__teacher = teacher,due_date__gte= date.today()).order_by("due_date")[:5]
 
+    # Added By Saim Munshi: Count of all courses created by this teacher
+    course_count = Course.objects.filter(teacher=teacher).count()
+
+    # Added By Saim Munshi: First count of all unique students enrolled across all this teacher's courses than we filter students where their enrolled_courses has this teacher
+    student_count = Course.objects.filter(teacher=teacher).aggregate(total=Count('students', distinct=True))['total'] or 0
+
+    # Added By Saim Munshi: Count of all tasks created across all this teacher's courses 
+
+    task_count = Task.objects.filter(course__teacher=teacher).count()
     context = {
-        'teacher': teacher,
+       'teacher': teacher,
         'notifications': unread_notifications,
         'notification_count': unread_notifications.count(),
-        'upcoming_tasks': upcoming_tasks
+        'upcoming_tasks': upcoming_tasks,
+        'course_count': course_count,
+        'student_count': student_count,
+        'task_count': task_count,
     }
    
     return render(request, 'TeacherHomePage/templates/TeacherHomePage.html', context)
