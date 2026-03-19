@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from .models import Student
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from courses.models import Course, Task, TaskSubmission, Notification, TaskFeedback
 from courses.observers import SubmissionSubject, SubmissionObserver
@@ -32,9 +33,12 @@ def studentHome(request):
     
     # Fetch user's unread notifications from the database
     unread_notifications = Notification.objects.filter(user=user, is_read=False).order_by('-created_at')
+    #Added By Saim Munshi: This is to reterive student profile 
+    student_profile = Student.objects.get(user=request.user)
     
     # Pass to html through context object
     context = {
+        'student': student_profile,
         'notifications': unread_notifications,
         'notification_count': unread_notifications.count()
     }
