@@ -1,6 +1,21 @@
 # courses/models.py
 from django.db import models
+from django.conf import settings
 from django_mongodb_backend.fields import ObjectIdAutoField
+
+import random
+import string
+
+# Added by: Ariel using Saim's randomTeacherCodeGenerator in teacher's models.py
+# Function: Creates a randomly generated code 
+def randomCodeGenerator():
+    codeLength = 15
+    ultimateString = string.ascii_letters + string.digits
+    randomString = "" 
+    for i in range(codeLength):
+        randomString += random.choice(ultimateString)
+    
+    return randomString
 
 # Added by Mark: This creates the blueprint for the entire Course and Task system backend.
 
@@ -13,6 +28,15 @@ class Course(models.Model):
   title = models.CharField(max_length=200)
   description = models.TextField()
   max_students = models.PositiveIntegerField()
+  # Added by: Ariel
+  # Creates randomly generated code for a course
+  # Used for course browsing look up if course is private
+  course_code = models.CharField(max_length=20, unique=True, default = randomCodeGenerator)
+
+  # Added by: Ariel
+  # Private feature, intially set to false
+  # Used to determine whether a course is shown in course browser
+  private = models.BooleanField(default=False)
 
   # RELATIONS
   teacher = models.ForeignKey(
@@ -111,7 +135,12 @@ class TaskFeedback(models.Model):
       on_delete=models.CASCADE,
       related_name='feedback' # Access via: submission.feedback
   )
-  
+    # Added by Matthew/Spooky: Optional attachment.
+  attachment_url = models.URLField(blank=True, null=True)
+    # Added by Matthew/Spooky: Track read status.
+  is_read = models.BooleanField(default=False)
+    # Added by Matthew/Spooky: Track archived feedback.
+  is_archived_for_receiver = models.BooleanField(default=False)
   grade = models.FloatField() # Might be removed, don't need grading.
   comments = models.TextField(blank=True) # Example: "Great job, but check spelling."
   
@@ -120,3 +149,19 @@ class TaskFeedback(models.Model):
 
   def __str__(self):
     return f"Feedback for {self.submission}"
+  
+# Class: Notification (MongoDB collection = courses_notification)
+# Used in the Observer Pattern
+#
+#
+class Notification(models.Model):
+  id = ObjectIdAutoField(primary_key=True) 
+  # Link it to the user receiving the notification (Teacher or Student)
+  user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications')
+  notification_type = models.CharField(max_length=50)
+  message = models.CharField(max_length=255)
+  is_read = models.BooleanField(default=False)
+  created_at = models.DateTimeField(auto_now_add=True)
+
+  def __str__(self):
+      return f"Notification for {self.user}: {self.message}"

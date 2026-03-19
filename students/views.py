@@ -1,70 +1,111 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from .models import Student
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
-from courses.models import Course, Task, TaskSubmission
+from courses.models import Course, Task, TaskSubmission, Notification, TaskFeedback
+from courses.observers import SubmissionSubject, SubmissionObserver
 from functools import wraps
 import cloudinary.uploader  # For task submission
-
-# Create your views here.
-from django.contrib import messages
+from django.db.models import Q  # For "or" queries
+from django.contrib import messages  # For error messages
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse
 from django.contrib.auth import update_session_auth_hash
-
-@login_required
-def studentSettings(request):
-
-    user = request.user
-
-    if request.method == "POST":
-
-        # Basic info
-        user.username = request.POST.get("username")
-        user.first_name = request.POST.get("first_name")
-        user.last_name = request.POST.get("last_name")
-        user.save()
-
-        # Password fields
-        current_password = request.POST.get("current_password")
-        new_password = request.POST.get("new_password")
-        confirm_password = request.POST.get("confirm_password")
-
-        if new_password or confirm_password:
-
-            if not current_password:
-                messages.error(request, "Enter current password to change password")
-
-            elif not user.check_password(current_password):
-                messages.error(request, "Current password is incorrect")
-
-            elif new_password != confirm_password:
-                messages.error(request, "Passwords do not match")
-
-            else:
-                user.set_password(new_password)
-                user.save()
-                update_session_auth_hash(request, user)
-                messages.success(request, "Password updated successfully")
-
-        else:
-            messages.success(request, "Settings updated successfully")
-
-        return redirect("student-settings")
-
-    return render(request, "Setting/templates/Setting.html", {"user": user})
+# Create your views here.
+# Added by Mark: Helper function to check the student profile. 
+# This is reused throughout all the views by adding @student_required just like @login_required
+def student_required(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_student:
+            return HttpResponseForbidden("You must be logged in as a student.")
+        request.student_profile = request.user.students_student_profile
+        return view_func(request, *args, **kwargs)
+    return wrapper
 """
 Name Function: Home
 type: Function 
 Purpose:It is used connect django with home html file through an http request
 """
+@login_required
+@student_required
 def studentHome(request):  
-    return render(request, 'StudentHomePage/templates/StudentHomePage.html')
+    user = request.user 
+    
+    # Fetch user's unread notifications from the database
+    unread_notifications = Notification.objects.filter(user=user, is_read=False).order_by('-created_at')
+    #Added By Saim Munshi: This is to reterive student profile 
+    student_profile = Student.objects.get(user=request.user)
+    
+    # Pass to html through context object
+    context = {
+        'student': student_profile,
+        'notifications': unread_notifications,
+        'notification_count': unread_notifications.count()
+    }
+    return render(request, 'StudentHomePage/templates/StudentHomePage.html', context)
+
+@login_required
+@student_required
+def markNotificationAsRead(request, notification_id):
+    if request.method == "POST":
+        # 1. Fetch the notification (ensure it actually belongs to the logged-in user for security!)
+        notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+        
+        # 2. Change the status to read
+        notification.is_read = True
+        notification.save()
+        
+    # 3. Redirect the user right back to the page they were just on
+    # HTTP_REFERER gets the URL of the page the user clicked the button from
+    previous_page = request.META.get('HTTP_REFERER', '/') 
+    return redirect(previous_page)
 
 """
 Name Function: Calender
+Added by: Ariel
 type: Function 
 Purpose:It is used connect django with Calender html file through an http request
 """
+@login_required
+@student_required
 def Calendar(request):  
-    return render(request, 'Calendar/templates/Calendar.html')
+    current_student = request.student_profile
+    # Get courses this specific student is enrolled in
+    courses = current_student.enrolled_courses.all()
+
+    # Get tasks assigned to this student
+    tasks = Task.objects.filter(assigned_students=current_student)
+    events_data = []
+    
+    for task in tasks:
+        start_str = task.start_date.isoformat() if task.start_date else None
+        end_str = task.due_date.isoformat() if task.due_date else None
+
+        # If the task doesn't have a start date, use the due date so the event still appears on the calendar.
+        if not start_str and end_str:
+            start_str = end_str
+            
+        if not start_str:
+            continue # Skip tasks without dates
+            
+        events_data.append({
+            'id': str(task.id),
+            'title': task.title,
+            'start': start_str,
+            'end': end_str,
+            'extendedProps': {
+                'type': 'assignment',
+                'course': str(task.course_id),
+            }
+        })
+
+    context = {
+        'courses': courses,
+        'events_data': events_data,
+    }
+    
+    return render(request, 'Calendar/templates/Calendar.html', context)
 
 def Mentor(request):  
     return render(request, '/Mentors/templates/Mentor.html')
@@ -89,13 +130,34 @@ def student_required(view_func):
 """
 Added by Mark: Course Browser Page
 Notes: A page for seeing all available courses and allows a student to enroll into it.
+Modified: Added search functionality for teacher_code / course_code and hides private courses by default.
 """
 @login_required
 @student_required
 def courseBrowser(request):
     student = request.student_profile
 
-    courses = Course.objects.all()
+    if request.method == "POST":
+        # Get the code from the search form input
+        search_code = request.POST.get('course_code', '').strip()
+        
+        if search_code:
+            # Search for courses matching EITHER the course_code OR the teacher's teacher_code
+            # This intentionally bypasses the 'private=False' check to allow finding private courses via code
+            courses = Course.objects.filter(
+                Q(course_code=search_code) | Q(teacher__teacher_code=search_code)
+            )
+            
+            # If no courses are found, send an error message to display in the HTML
+            if not courses.exists():
+                messages.error(request, "No courses found with that code.")
+        else:
+            # Fallback if they somehow submit an empty POST
+            courses = Course.objects.filter(private=False)
+    else:
+        # Standard GET request: Only show non-private courses
+        courses = Course.objects.filter(private=False)
+
     context = {
         'courses': courses,
         'student': student  # Passing student so we can check if they already joined a course
@@ -243,13 +305,27 @@ def studentTaskSubmit(request, task_id):
             submission.save()
         else:
             # Create a brand new submission
-            TaskSubmission.objects.create(
+            submission = TaskSubmission.objects.create(
                 task=task,
                 student=student,
                 submission_text=submission_text,
                 file_url=uploaded_file_url,  # Save the secure_url string!
                 status='pending'
             )
+            
+        # Observer Pattern Implementation
+        # -------------------------------------------------------------------
+        subject = SubmissionSubject(submission)
+        teacher_observer = SubmissionObserver() # Create observer
+        subject.attach(teacher_observer)     # Attach
+        subject.set_state('pending')         # Changes state and notifies
+            
+        # Observer Pattern Implementation
+        # -------------------------------------------------------------------
+        subject = SubmissionSubject(submission)
+        teacher_observer = SubmissionObserver() # Create observer
+        subject.attach(teacher_observer)     # Attach
+        subject.set_state('pending')         # Changes state and notifies
         
         return redirect('student-tasks')
 
@@ -259,4 +335,99 @@ def studentTaskSubmit(request, task_id):
         'task': task,
         'submission': submission
     }
+    
     return render(request, 'tasks/templates/student-task-submit.html', context)
+
+@login_required
+def student_feedback(request):
+
+    # Added by Matthew/Spooky: Retrieve all feedback where the current user is the receiver.
+    feedback_list = TaskFeedback.objects.filter(submission__student__user=request.user).order_by("-graded_at")
+    # Added by Matthew/Spooky: Count unread feedback items.
+    unread_count = feedback_list.filter(is_read=False).count()
+
+    # Added by Matthew/Spooky: Render the student feedback page with feedback data.
+    return render(request, "tasks/templates/student-feedback.html", {
+        "feedback_list": feedback_list,
+        "unread_count": unread_count
+    })
+
+
+@login_required
+@require_POST
+def mark_feedback_read(request, feedback_id):
+
+    # Added by Matthew/Spooky: Retrieve the feedback ensuring the logged in user is the receiver.
+    feedback = get_object_or_404(TaskFeedback, id=feedback_id, submission__student__user=request.user)
+
+    # Added by Matthew/Spooky: Mark feedback as read.
+    feedback.is_read = True
+
+    # Added by Matthew/Spooky: Save changes to the database.
+    feedback.save()
+
+    # Added by Matthew/Spooky: Return JSON response showing success.
+    return JsonResponse({"success": True, "feedback_id": str(feedback.id)})
+
+
+@login_required
+@require_POST
+def archive_feedback(request, feedback_id):
+
+    # Added by Matthew/Spooky: Retrieve feedback ensuring the logged in student owns it.
+    feedback = get_object_or_404(TaskFeedback, id=feedback_id, submission__student__user=request.user)
+
+    # Added by Matthew/Spooky: Mark feedback as archived for the receiver.
+    feedback.is_archived_for_receiver = True
+
+    # Added by Matthew/Spooky: Mark feedback as read.
+    feedback.is_read = True
+
+    # Added by Matthew/Spooky: Save changes to the database.
+    feedback.save()
+
+    # Added by Matthew/Spooky: Return JSON response showing success.
+    return JsonResponse({"success": True, "feedback_id": str(feedback.id)})
+
+
+@login_required
+def studentSettings(request):
+
+    user = request.user
+
+    if request.method == "POST":
+
+        # Basic info
+        user.username = request.POST.get("username")
+        user.first_name = request.POST.get("first_name")
+        user.last_name = request.POST.get("last_name")
+        user.save()
+
+        # Password fields
+        current_password = request.POST.get("current_password")
+        new_password = request.POST.get("new_password")
+        confirm_password = request.POST.get("confirm_password")
+
+        if new_password or confirm_password:
+
+            if not current_password:
+                messages.error(request, "Enter current password to change password")
+
+            elif not user.check_password(current_password):
+                messages.error(request, "Current password is incorrect")
+
+            elif new_password != confirm_password:
+                messages.error(request, "Passwords do not match")
+
+            else:
+                user.set_password(new_password)
+                user.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, "Password updated successfully")
+
+        else:
+            messages.success(request, "Settings updated successfully")
+
+        return redirect("student-settings")
+
+    return render(request, "Setting/templates/Setting.html", {"user": user})

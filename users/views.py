@@ -6,9 +6,10 @@ from django.urls import reverse_lazy
 from students.models import Student
 from teachers.models import Teacher
 from .models import CustomUser
-from django.contrib.auth import get_user_model, login
+from django.contrib.auth import get_user_model
 from django.contrib.auth.views import LoginView
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+
 #from django.contrib.auth import get_user_model
 #from django.contrib.auth import authenticate, login
 #from teachers.models import Teacher
@@ -209,7 +210,7 @@ def teacher_register_view(request):
 
     return render(request, 'TeacherRegistration.html')
 
-"""Added By Mark: For redirecs """
+"""Added By Mark: For redirects """
 
 class CustomLoginView(LoginView):
     template_name = 'StudentHomePage.html'
@@ -230,10 +231,6 @@ class CustomLoginView(LoginView):
         # Fallback for other users (like superusers without profiles)
         else:
             return reverse_lazy('SignInPage.html')
-
-
-
-
 
 def signin_page_view(request):
     if request.method == 'POST':
@@ -262,5 +259,7 @@ def signin_page_view(request):
 
     return render(request, 'SignInPage.html')
 
-
+def logout_view(request):
+    logout(request)
+    return redirect("home")
 

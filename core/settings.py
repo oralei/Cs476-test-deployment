@@ -201,9 +201,9 @@ USE_TZ = True
 # Where to go after a successful manual login if no 'next' parameter is present
 ###LOGIN_REDIRECT_URL = 'teacher_home' 
 
-# Where the login page lives
-##LOGIN_URL = 'signin_page_view'
-
+# Added by Mark: This should fix any @login_required redirects and new logout
+LOGIN_URL = 'signin_page_view'
+LOGOUT_REDIRECT_URL = "/"
 
 
 # Static files (CSS, JavaScript, Images)
@@ -237,6 +237,8 @@ STATICFILES_DIRS =[
     os.path.join(BASE_DIR, 'students/features/Progress/static'),
     os.path.join(BASE_DIR, 'students/features/Courses/static'),
 
+    os.path.join(BASE_DIR, 'students/features/tasks/static'),
+
     ###### Teacher App Connection#########
     #Added By Saim Munshi: This is to connect the main base folder to the Teacher Application features in static directory. 
     os.path.join(BASE_DIR, 'teachers/BaseTeacher/static'),
@@ -247,7 +249,6 @@ STATICFILES_DIRS =[
     os.path.join(BASE_DIR, 'teachers/features/My_Student/static'), 
     os.path.join(BASE_DIR, 'teachers/features/Setting/static'),
     os.path.join(BASE_DIR, 'teachers/BaseTeacher/static'),
-
 ]
 
 from django.core.servers.basehttp import WSGIServer

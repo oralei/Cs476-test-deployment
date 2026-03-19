@@ -1,12 +1,99 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Page Title</title>
-</head>
-<body>
+{% extends 'BaseStudent.html' %}
+{% load static %}
 
-<h1>This is a Heading</h1>
-<p>This is a paragraph.</p>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/Calendar.css' %}">
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet" />
+{% endblock %}
 
-</body>
-</html>
+{% block content %}
+
+  <div class="container">
+
+    <!-- Header card -->
+    <header class="mb-4">
+        <h1 class="fw">My Calendar</h1>
+        <p class="text-muted">View my tasks and assignments</p>
+    </header>
+    <!-- Filters card -->
+    <div class="card filters">
+      <div class="field">
+        <label for="courseSelect" class="form-label">Select Course</label>
+          <select name="course" id="courseSelect" class="form-select" required>
+              <option value="" selected>-- All Courses --</option>
+              {% for course in courses %}
+                  <option value="{{ course.id }}">{{ course.title }}</option>
+              {% endfor %}
+          </select>
+      </div>
+</div>
+    <!-- Calendar card -->
+    <div class="card calendar-card">
+      <div id="calendar"></div>
+
+      <!-- Legend -->
+      <div class="legend">
+        <div class="legend-item"><span class="dot" style="background: var(--assignment)"></span> Assignment</div>
+        <div class="legend-item"><span class="dot" style="background: var(--quiz)"></span> Quiz</div>
+        <div class="legend-item"><span class="dot" style="background: var(--project)"></span> Project</div>
+        <div class="legend-item"><span class="dot" style="background: var(--meeting)"></span> Meeting</div>
+      </div>
+    </div>
+  </div>
+{{ events_data|json_script:"events-data" }}
+{% endblock %} 
+{% block extra_js %}
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+  <script src="{% static 'js/StudentCalendar.js' %}"></script>
+  
+
+<script>
+    // grabs rendered JSON data
+    const courseDataElement = document.getElementById('course-data');
+    const courseMap = JSON.parse(courseDataElement.textContent);
+
+    const courseSelect = document.getElementById('courseSelect');
+    const studentSelect = document.getElementById('studentSelect');
+    courseSelect.addEventListener('change', function() 
+    {
+        // Get the selected course ID
+        const selectedCourseId = this.value;
+        // Get the list of students for this course from map
+        const students = courseMap[selectedCourseId] ||[];
+        // Clear out the current options in the student dropdown
+        studentSelect.innerHTML = '';
+        // Check if there are students in the selected course
+        if (students.length > 0) 
+        {
+            // Add a default placeholder option
+            const defaultOption = document.createElement('option');
+            defaultOption.value = "";
+            defaultOption.textContent = "-- Select a student --";
+            defaultOption.disabled = true;
+            defaultOption.selected = true;
+            studentSelect.appendChild(defaultOption);
+
+            // Loop through the students array and create an option for each
+            students.forEach(function(student) {
+                const option = document.createElement('option');
+                option.value = student.id;
+                option.textContent = student.name;
+                studentSelect.appendChild(option);
+            });
+        } 
+        else 
+        {
+            // If no students are in the course, show a relevant message
+            const emptyOption = document.createElement('option');
+            emptyOption.value = "";
+            emptyOption.textContent = "-- No students in this course --";
+            emptyOption.disabled = true;
+            emptyOption.selected = true;
+            studentSelect.appendChild(emptyOption);
+        }
+        // This triggers calendar filter to update when new course is selected
+        studentSelect.dispatchEvent(new Event('change'));
+    });
+</script>
+{% endblock %}
+    

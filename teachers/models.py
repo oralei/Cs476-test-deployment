@@ -6,8 +6,8 @@ from django.conf import settings
 import random
 import string
 
-#Added By Saim Munshi: Selects stores all asccii and digit in ultimatestring and using random.choice to select 15 random character 
-# genrating the code
+#Added By Saim Munshi: Selects stores all asccii and digit in ultimatestring and using 
+#                      random.choice to select 15 random character genrating the code
 
 def randomTeacherCodeGenerator():
     codeLength = 15
@@ -18,12 +18,12 @@ def randomTeacherCodeGenerator():
     
     return randomString
 
-###########################################################
+# Teacher class, objects found in MongoDB under collection "users_teacher"
 class Teacher(MentoraBaseUser):
     id = ObjectIdAutoField(primary_key=True)
     license_number = models.CharField(max_length=50)
     specialization = models.CharField(max_length=100)
-    course_code = models.CharField(max_length=20, unique=True, default = randomTeacherCodeGenerator) #Added by Saim CourseCode
+    teacher_code = models.CharField(max_length=20, unique=True, default = randomTeacherCodeGenerator)
     
     class Meta:
         db_table = 'users_teacher'  # Custom collection name
@@ -31,9 +31,10 @@ class Teacher(MentoraBaseUser):
     def __str__(self):
         return f"{self.full_name} (Teacher)"
 
+# Mark: Notification object removed, now conforms to general model under courses/models.py
+"""
+Added By Saim Munshi: Notfication mongodb object
 
-
-#Added By Saim Munshi: Notfication mongodb object
 class Notification(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     notification_type = models.CharField(max_length=50)
@@ -43,7 +44,7 @@ class Notification(models.Model):
     class Meta:
         db_table = "teacher_notifications" 
     
-
     def __str__(self):
         return self.message
+"""
     

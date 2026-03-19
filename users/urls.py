@@ -10,4 +10,6 @@ urlpatterns = [
     path('login/', views.signin_page_view, name='signin_page_view'),
     path('students/', include('students.urls')),
     path('teachers/', include('teachers.urls')),
+    
+    path("logout/", views.logout_view, name="logout")
 ]

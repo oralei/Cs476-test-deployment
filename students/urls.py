@@ -4,7 +4,7 @@ from . import views
 
 urlpatterns = [
     path('home/', views.studentHome, name='student_home'),
-    path('calendar/', views.Calendar, name='calendar'),
+    path('calendar/', views.Calendar, name='student-calendar'),
     path('mentor/', views.Mentor, name='mentor'),
     path('progress/', views.Progress, name='progress'),
     
@@ -22,7 +22,7 @@ urlpatterns = [
     path('tasks/', views.studentTasks, name='student-tasks'),
     path('tasks/<str:task_id>/', views.studentTaskSubmit, name='student-task-submit'),
     path('settings/', views.studentSettings, name='student-settings'),
-        path('password-change/',
+    path('password-change/',
          auth_views.PasswordChangeView.as_view(
              template_name='password_change.html'),
          name='password_change'),
@@ -33,4 +33,13 @@ urlpatterns = [
          name='password_change_done'),
 
    
+    
+    # Note: for marking a notification as read
+    path('notifications/read/<str:notification_id>/', views.markNotificationAsRead, name='student-notif-read'),
+
+    # Matthew: Feedback url routing
+    path('feedback/', views.student_feedback, name='student_feedback'),
+    path('mark-feedback-read/<str:feedback_id>/', views.mark_feedback_read, name='mark_feedback_read'),
+    path('archive-feedback/<str:feedback_id>/', views.archive_feedback, name='archive_feedback'),
+
 ]
