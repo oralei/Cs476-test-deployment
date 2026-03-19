@@ -23,4 +23,10 @@ urlpatterns = [
     
     # Note: for marking a notification as read
     path('notifications/read/<str:notification_id>/', views.markNotificationAsRead, name='student-notif-read'),
+
+    # Matthew: Feedback url routing
+    path('feedback/', views.student_feedback, name='student_feedback'),
+    path('mark-feedback-read/<str:feedback_id>/', views.mark_feedback_read, name='mark_feedback_read'),
+    path('archive-feedback/<str:feedback_id>/', views.archive_feedback, name='archive_feedback'),
+
 ]

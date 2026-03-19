@@ -12,7 +12,7 @@
  * Purpose:         (Existing Course Container) this section contains code dealing with existing 
  *-------------------------------------------------------------------------*/
     .existing-container {
-        background-color: rgb(250, 250, 250);
+        background-color: transparent
     }
 
     .existing-container-card {
@@ -38,7 +38,7 @@
     <div class="tab-content tab-scroll-area" id="existing-courses-overview">
         <div class="mb-3">
             <h1>My Courses</h1>
-            <p class="text-secondary leading-relaxed">Please Create course assign sub task</p>
+            <p class="text-secondary leading-relaxed">View and manage my courses</p>
         </div>
 
         <hr class="my-4">
@@ -57,8 +57,8 @@
             <!-------------------------------------------------->
 
             <!--Added By Saim Munshi:-->
-            <div class="existing-container p-4">
-                  <div class="existing-container-card p-5 mb-3 border shadow-sm rounded-4">
+            <div class="existing-container">
+                  <div class="existing-container-card p-4 mb-3 border shadow-sm rounded-4">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <a class="fw-bold mb-0 text-primary" href="{% url 'teacher-course-main' course.id %}">{{course.title }}</a>
@@ -76,12 +76,19 @@
                                 </a>
                             </div>
                         </div>
-                        <p class="small text-muted mb-2">Instructor: {{ mentor_detected.full_name }}</p>
-                        <p class="small text-dark mb-3">{{ course.description|truncatewords:20 }}</p>
-
+                        <!--Added By Ariel:-->
+                        <!-- Checks if course is private, if it is then display a tag-->
+                            {% if course.private %}
+                                <span class="badge rounded-pill bg-secondary mb-2">Private</span>
+                            {% endif %}
+                        <p class="small text-dark mb-3">
+                            <strong>Course Description:</strong>
+                             {{ course.description|truncatewords:20 }}
+                        </p>
                         <hr>
                         <!--Added By Saim Munshi: Same code as retrieving all student enrolled in task for upcoming task wadget in teacher dashboard-->
                         <div class="d-flex flex-wrap gap-2">
+                            <span class="">Students Enrolled:    </span>
                             {% for student in course.students.all %}
                             <span class="badge rounded-pill bg-light text-dark border fw-normal px-2 py-1">
                                 {{ student.full_name }}

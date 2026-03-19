@@ -38,7 +38,6 @@
         <div class="offcanvas-body p-3">
             <nav class="nav flex-column nav-pills">
                 <a href="{% url 'student_home' %}" class="nav-link {% if request.resolver_match.url_name == 'student_home' %}active{% endif %}"> <i class="bi bi-grid-fill me-3"></i>Dashboard </a>
-                <a href="#" class="nav-link"><i class="bi bi-people me-3"></i>My Mentors</a>
                 <a href="{% url 'my-courses' %}" class="nav-link {% if request.resolver_match.url_name == 'Courses' %}active{% endif %}"><i class="bi bi-list-task me-3"></i>Courses</a>
                 <a href="#" class="nav-link"><i class="bi bi-graph-up me-3"></i>Progress</a>
                 <a href="{% url 'calendar' %}" class="nav-link {% if request.resolver_match.url_name == 'calendar' %}active{% endif %}"><i class="bi bi-calendar3 me-3"></i>Calendar</a>
@@ -59,9 +58,10 @@
             <nav class="nav flex-column nav-pills mb-auto">
                 <!-- This class code chuck checks of the request is from made to StudentMainHome html file by the student_home function in views if so add the active tag for nav link else leave it as navlink-->
                 <a href="{% url 'student_home' %}" class="nav-link {% if request.resolver_match.url_name == 'student_home' %}active{% endif %}"> <i class="bi bi-grid-fill me-3"></i>Dashboard </a>
-                
-                <a href="#" class="nav-link">
-                    <i class="bi bi-people"></i> My Mentors
+
+                <!-- This class code chuck checks of the request is from made to Coursess html file by the Courses function in views if so add the active tag for nav link else leave it as navlink-->
+                <a href="{% url 'student_feedback' %}" class="nav-link {% if request.resolver_match.url_name == 'student_feedback' %}active{% endif %}">
+                    <i class="bi bi-hand-thumbs-up"></i> Feedback
                 </a>
 
                 <!-- This class code chuck checks of the request is from made to Coursess html file by the Courses function in views if so add the active tag for nav link else leave it as navlink-->

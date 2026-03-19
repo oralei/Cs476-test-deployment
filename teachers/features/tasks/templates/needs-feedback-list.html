@@ -6,7 +6,7 @@
 <div container-fluid>
     <!-- Header -->
     <div class="mb-4">
-        <h2 class="fw-bold">Submissions Needing Feedback</h2>
+        <h1 class="fw">Submissions Needing Feedback</h1>
     </div>
     {% if course_data %}
       <!-- Loop through every course -->
@@ -56,10 +56,12 @@
         </div>
             {% else %}
                 <!-- Empty State -->
-                <div class="text-center py-5">
-                    <p class="text-muted">
-                        There are no pending submissions that require your feedback right now.
-                    </p>
+                <div class="card rounded-4 shadow-sm border">
+                    <div class="card-body text-center py-4">
+                        <p class="text-muted mb-0">
+                            There are no pending submissions that require your feedback right now.
+                        </p>
+                    </div>
                 </div>
             {% endif %}
           <hr>

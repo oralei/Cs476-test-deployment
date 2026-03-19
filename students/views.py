@@ -1,13 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
-from courses.models import Course, Task, TaskSubmission, Notification
+from courses.models import Course, Task, TaskSubmission, Notification, TaskFeedback
 from courses.observers import SubmissionSubject, SubmissionObserver
 from functools import wraps
 import cloudinary.uploader  # For task submission
 from django.db.models import Q  # For "or" queries
 from django.contrib import messages  # For error messages
-
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse
+# Create your views here.
 # Added by Mark: Helper function to check the student profile. 
 # This is reused throughout all the views by adding @student_required just like @login_required
 def student_required(view_func):
@@ -18,9 +20,6 @@ def student_required(view_func):
         request.student_profile = request.user.students_student_profile
         return view_func(request, *args, **kwargs)
     return wrapper
-
-# Create your views here.
-
 """
 Name Function: Home
 type: Function 
@@ -315,6 +314,13 @@ def studentTaskSubmit(request, task_id):
         teacher_observer = SubmissionObserver() # Create observer
         subject.attach(teacher_observer)     # Attach
         subject.set_state('pending')         # Changes state and notifies
+            
+        # Observer Pattern Implementation
+        # -------------------------------------------------------------------
+        subject = SubmissionSubject(submission)
+        teacher_observer = SubmissionObserver() # Create observer
+        subject.attach(teacher_observer)     # Attach
+        subject.set_state('pending')         # Changes state and notifies
         
         return redirect('student-tasks')
 
@@ -326,3 +332,54 @@ def studentTaskSubmit(request, task_id):
     }
     
     return render(request, 'tasks/templates/student-task-submit.html', context)
+
+@login_required
+def student_feedback(request):
+
+    # Added by Matthew/Spooky: Retrieve all feedback where the current user is the receiver.
+    feedback_list = TaskFeedback.objects.filter(submission__student__user=request.user).order_by("-graded_at")
+    # Added by Matthew/Spooky: Count unread feedback items.
+    unread_count = feedback_list.filter(is_read=False).count()
+
+    # Added by Matthew/Spooky: Render the student feedback page with feedback data.
+    return render(request, "tasks/templates/student-feedback.html", {
+        "feedback_list": feedback_list,
+        "unread_count": unread_count
+    })
+
+
+@login_required
+@require_POST
+def mark_feedback_read(request, feedback_id):
+
+    # Added by Matthew/Spooky: Retrieve the feedback ensuring the logged in user is the receiver.
+    feedback = get_object_or_404(TaskFeedback, id=feedback_id, submission__student__user=request.user)
+
+    # Added by Matthew/Spooky: Mark feedback as read.
+    feedback.is_read = True
+
+    # Added by Matthew/Spooky: Save changes to the database.
+    feedback.save()
+
+    # Added by Matthew/Spooky: Return JSON response showing success.
+    return JsonResponse({"success": True, "feedback_id": str(feedback.id)})
+
+
+@login_required
+@require_POST
+def archive_feedback(request, feedback_id):
+
+    # Added by Matthew/Spooky: Retrieve feedback ensuring the logged in student owns it.
+    feedback = get_object_or_404(TaskFeedback, id=feedback_id, submission__student__user=request.user)
+
+    # Added by Matthew/Spooky: Mark feedback as archived for the receiver.
+    feedback.is_archived_for_receiver = True
+
+    # Added by Matthew/Spooky: Mark feedback as read.
+    feedback.is_read = True
+
+    # Added by Matthew/Spooky: Save changes to the database.
+    feedback.save()
+
+    # Added by Matthew/Spooky: Return JSON response showing success.
+    return JsonResponse({"success": True, "feedback_id": str(feedback.id)})
