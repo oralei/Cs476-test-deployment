@@ -10,7 +10,7 @@
 {% block content %}
 <main class="main-content">
   <div class="mb-3">
-    <h2 class="fw-bold">Create a New Course</h2>
+    <h1 class="fw">Create a New Course</h1>
   </div>
   <!--  Added By Saim:-->
   <div class="">
@@ -49,6 +49,11 @@
             <div class="max-students mb-4">
               <label for="max-students">Max Students</label>
               <input type="number" name="max_students" id="max-students-input" min="1" max="100" required>
+            </div>
+            <!--Added By Ariel  box to check if mentor wants to make course private or not-->
+            <div class="private-check mb-4">
+              <label for="max-students">Private Course</label>
+              <input type="checkbox" name="private-box" id="private-input" {% if course.private %}checked{% endif %}>
             </div>
             <!-------------------------------------------------------------------------------------------->
             <!--Added By Saim  Select Students (dynamic programming from JavaScript) -->

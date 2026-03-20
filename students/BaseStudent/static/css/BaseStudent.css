@@ -1,147 +1,157 @@
 /*-------------------------------------------------------------------------
  * Author:          Saim Munshi
  * Type:            Base Styles
- * Last Modified:   2026-02-16
- * Purpose:         Sets the global background and typography. The linear 
- * gradient provides a modern, professional feel.
+ * Purpose:         Global background and typography.
  *-------------------------------------------------------------------------*/
-
 body {
-    background: linear-gradient(135deg, #fdfff1 0%, #fdfff7, #dfedff, #d2e7fd, #6dacf5, #0b79f0 100%);
+    background: linear-gradient(135deg, #fdfff1 0%, #fdfff7, #dfedff, #d2e7fd, #6dacf5, #0b79f0 100%) no-repeat fixed;
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-size: cover;
     margin: 0;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
 /*-------------------------------------------------------------------------
  * Author:          Saim Munshi
- * Type:            Layout Component
- * Last Modified:   2026-02-16
- * Purpose:         Defines the main content area. On mobile, it takes up  full width. On desktops it gains a margin. Also transition 
+ * Type:            Layout mobile component
+ * Logic:           On mobile default, margin is 0. 
+ * On Desktop       min-width: 992px add the sidebar offset.
  *-------------------------------------------------------------------------*/
 .main-content {
-    margin-left: 280px;
-    padding: 40px;
-    transition: margin 0.3s ease;
+    margin-left: 0;
+    padding: 15px;
+    transition: all 0.3s ease;
 }
 
-
-/*-------------------------------------------------------------------------
- * Author:          Saim Munshi
- * Type:            Layout Component
- * Last Modified:   2026-02-16
- * Purpose:         maincontent class @media to deal with main content when screen size is 992 px
- *-------------------------------------------------------------------------*/
-.main-content {
-    @media (min-width: 992px) {
-        .main-content {
-            margin-left: 280px;
-            /* Desktop indentation */
-            padding: 40px;
-        }
+@media (min-width: 992px) {
+    .main-content {
+        margin-left: 280px;
+        padding: 40px;
     }
 }
-    /*-------------------------------------------------------------------------
+
+/*-------------------------------------------------------------------------
+*  Author:          Saim Munshi
+ * Type:            Sidebar Container
+ * Logic:           Hidden by default on mobile. 
+ * Visible and fixed on Desktop.
+ *-------------------------------------------------------------------------*/
+.sidebar-container {
+    display: none;
+    width: 280px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    padding: 20px;
+}
+
+@media (min-width: 992px) {
+    .sidebar-container {
+        display: block;
+    }
+}
+
+/*-------------------------------------------------------------------------
  * Author:          Saim Munshi
  * Type:            Sidebar Container
  * Last Modified:   2026-02-16
  * Purpose:         Fixes the sidebar to the left on desktop. It is hidden 
  * on mobile to prevent overlapping content.
  *-------------------------------------------------------------------------*/
-    .sidebar-container {
-        width: 280px;
-        height: 100vh;
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 1000;
-        padding: 20px;
-    }
+.sidebar-container {
+    width: 280px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    padding: 20px;
+}
 
-    /*-------------------------------------------------------------------------
+/*-------------------------------------------------------------------------
  * Author:          Saim Munshi
  * Type:            Sidebar Styling
  * Last Modified:   2026-02-17
  * Purpose:         Creates the pill effect for the sidebar background.
  *-------------------------------------------------------------------------*/
-    .sidebar-pill {
-        height: 100%;
-        background-color: white;
-        border-radius: 40px;
-        display: flex;
-        flex-direction: column;
-        padding: 35px 20px;
-        border: 1px solid #e9ecef;
-    }
+.sidebar-pill {
+    height: 100%;
+    background-color: white;
+    border-radius: 40px;
+    display: flex;
+    flex-direction: column;
+    padding: 35px 20px;
+    border: 1px solid #e9ecef;
+}
 
-    /*-------------------------------------------------------------------------
+/*-------------------------------------------------------------------------
  * Author:          Saim Munshi
  * Type:            UI Components (Avatars)
  * Last Modified:   2026-02-17
  * Purpose:         Circular profile for students and mentors. for both normal and when small
  *-------------------------------------------------------------------------*/
-    /* Logos & Icons */
-    .avatar-circle,
-    .avatar-circle-sm {
-        background-color: #d1e7ff;
-        color: #0d6efd;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-    }
+/* Logos & Icons */
+.avatar-circle,
+.avatar-circle-sm {
+    background-color: #d1e7ff;
+    color: #0d6efd;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
 
-    .avatar-circle {
-        width: 45px;
-        height: 45px;
-        font-size: 1.2rem;
-    }
+.avatar-circle {
+    width: 45px;
+    height: 45px;
+    font-size: 1.2rem;
+}
 
-    .avatar-circle-sm {
-        width: 35px;
-        height: 35px;
-        font-size: 0.9rem;
-    }
+.avatar-circle-sm {
+    width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
+}
 
 
-    /*-------------------------------------------------------------------------
+/*-------------------------------------------------------------------------
  * Author:          Saim Munshi
  * Type:            Navigation Styling
  * Last Modified:   2026-02-17
  * Purpose:         Styles the sidebar links, including hover effects and  the distinct active state indicator.
  *-------------------------------------------------------------------------*/
-    .nav-pills .nav-link {
-        color: #6c757d;
-        font-weight: 500;
-        padding: 12px 20px;
-        border-radius: 15px;
-        margin-bottom: 8px;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-    }
+.nav-pills .nav-link {
+    color: #6c757d;
+    font-weight: 500;
+    padding: 12px 20px;
+    border-radius: 15px;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+}
 
-    .nav-pills .nav-link i {
-        font-size: 1.2rem;
-        margin-right: 15px;
-    }
+.nav-pills .nav-link i {
+    font-size: 1.2rem;
+    margin-right: 15px;
+}
 
-    .nav-pills .nav-link.active {
-        background-color: #e7f1ff !important;
-        color: #0d6efd !important;
-        border-left: 5px solid #0d6efd;
-        border-radius: 5px 15px 15px 5px;
-    }
+.nav-pills .nav-link.active {
+    background-color: #e7f1ff !important;
+    color: #0d6efd !important;
+    border-left: 5px solid #0d6efd;
+    border-radius: 5px 15px 15px 5px;
+}
 
-    .nav-pills .nav-link:hover:not(.active) {
-        background-color: #f1f3f5;
-        color: #333;
-    }
+.nav-pills .nav-link:hover:not(.active) {
+    background-color: #f1f3f5;
+    color: #333;
+}
 
-
-    /*-------------------------------------------------------------------------
+/*-------------------------------------------------------------------------
  * Author:          Saim Munshi
  * Type:            Floating Component
  * Last Modified:   2026-02-21
@@ -149,25 +159,28 @@ body {
  * of page scroll.
  *-------------------------------------------------------------------------*/
 
-
-    .floating-chat {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        width: 60px;
-        height: 60px;
-        background-color: #0d6efd;
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        z-index: 1001;
-        text-decoration: none;
-    }
-    
-.floating-chat:hover {
-    transform: scale(1.1);
+.floating-chat {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 55px;
+    height: 55px;
+    background-color: #0d6efd;
     color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 20px rgba(13, 110, 253, 0.3);
+    z-index: 1050;
+    transition: transform 0.2s ease;
+}
+
+@media (max-width: 576px) {
+    .floating-chat {
+        bottom: 15px;
+        right: 15px;
+        width: 50px;
+        height: 50px;
+    }
 }

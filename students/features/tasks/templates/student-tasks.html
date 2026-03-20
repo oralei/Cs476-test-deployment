@@ -8,7 +8,7 @@
 {% block content %}
 <!-- This page shows a list of all tasks the student has -->
 <main class="main-content">
-  <h1>My Tasks</h1>
+  <h1 class="mb-4">My Tasks</h1>
   
   <div class="list-group mt-4">
       {% for item in task_data %}
@@ -21,7 +21,8 @@
               
               <div class="text-end">
                   {% if item.is_submitted %}
-                    {% if item.t.status == 'pending' %}
+                    {% if item.status == 'pending' %}
+                    <!-- Added by: Ariel, allows students to visually see if they have feedback -->
                       <span class="badge bg-success mb-2">Submitted</span><br>
                       <a href="{% url 'student-task-submit' item.task.id %}" class="btn btn-sm btn-outline-primary">Edit Submission</a>
                     {% else %}

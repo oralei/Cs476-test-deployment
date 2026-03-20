@@ -65,12 +65,14 @@ label {
 }
 
 .existing-container-card {
-    background-color: white;
+    background-color: white !important;
     box-shadow: 0 .125rem .25rem rgba(14, 99, 155, 0.075);
-    transition: 0.3s ease;
+    transition: all 0.3s ease;
+    border: 1px solid #dee2e6 !important; /
 }
 
 .existing-container-card:hover {
-    background-color: rgb(247, 251, 253); 
-    box-shadow: 0 1rem 3rem rgba(2, 28, 53, 0.175); 
+    background-color: rgb(247, 251, 253) !important;
+    box-shadow: 0 1rem 3rem rgba(2, 28, 53, 0.175) !important;
+    transform: translateY(-2px);
 }
