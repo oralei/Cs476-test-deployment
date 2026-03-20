@@ -35,7 +35,7 @@
 <main class="main-content">
     <!-- Display Course Data -->
     <h1>{{ course.title }}</h1>
-    <div class="card mt-4 p-4">
+    <div class="card mt-4 p-4 rounded-4 shadow-sm border">
         <h3>Course Details</h3>
         {% if course.private %}
         <a>Private</a>
@@ -43,7 +43,8 @@
         <p><strong>Description:</strong> {{ course.description }}</p>
         <p><strong>Max Students Allowed:</strong> {{ course.max_students }}</p>
     </div>
-    <div class="card mt-4 p-4">
+    <!-- Enrolled Student's Card -->
+    <div class="card mt-4 p-4 rounded-4 shadow-sm border">
         <h3>Enrolled Students ({{ course.students.count }} / {{ course.max_students }})</h3>
         <ul class="list-group">
             {% for student in course.students.all %}
@@ -55,14 +56,14 @@
     </div>
 
     <!-- Course Tasks -->
-    <div class="card mt-4 p-4">
+    <div class="card mt-4 p-4 rounded-4 shadow-sm border">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3>Course Tasks</h3>
             <a href="{% url 'create-task' %}" class="btn btn-sm btn-primary">+ New Task</a>
         </div>
         {% for task in course.tasks.all %}
         <!--Added By Saim Munshi:-->
-        <div class="existing-container p-4 rounded-4 mb-">
+        <div class="existing-container p-4 mb-">
             <div class="existing-container-card p-5 mb-3 border shadow-sm rounded-4">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-2">

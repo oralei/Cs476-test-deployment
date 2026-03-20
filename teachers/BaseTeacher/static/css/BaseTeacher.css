@@ -7,13 +7,13 @@
  *-------------------------------------------------------------------------*/
 
 :root {
-    --bs-primary: #247e4c;
+    --bs-primary: #0b2469;
     --bs-primary-rgb: 0, 0, 0;
 }
 
 body {
-    background: linear-gradient(135deg, #fdfff1 0%, #fdfff7, #dbe7de, #cddacd, #afc5b5, #84ad90 100%);
-    color: #000000;
+    background: linear-gradient(135deg, #fdfff9 0%, #e4f0ef, #c4e4f3, #7e9dcc, #638fc7, #2650c4 100%);
+    color: #29292c;
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     min-height: 100vh;
@@ -21,12 +21,16 @@ body {
 }
 
 .bg-primary {
-    background-color: #247e4c !important
+    background-color: #0b2469 !important
+}
+
+.bg-secondary {
+    background-color: rgb(186, 186, 186) !important;
 }
 
 h2, .fw-bold, .text-dark, span {
-    color: black;
-    color: black !important;
+    color: rgb(32, 32, 32);
+    color: rgb(32, 32, 32) !important;
 }
 
 
@@ -115,8 +119,8 @@ h2, .fw-bold, .text-dark, span {
  *-------------------------------------------------------------------------*/
 .avatar-circle,
 .avatar-circle-sm {
-    background-color: #c9e4d1;
-    color: #247e4c;
+    background-color: #cfe4f7;
+    color: #0b2469;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -144,7 +148,7 @@ h2, .fw-bold, .text-dark, span {
  * the distinct active state indicator. (Black Theme)
  *-------------------------------------------------------------------------*/
 .nav-pills .nav-link {
-    color: #5c8064;
+    color: #616775;
     font-weight: 500;
     padding: 12px 20px;
     border-radius: 15px;
@@ -160,14 +164,14 @@ h2, .fw-bold, .text-dark, span {
 }
 
 .nav-pills .nav-link.active {
-    background-color: #d4f0e2 !important;
-    color: #247e4c !important;
-    border-left: 5px solid #247e4c;
+    background-color: #cfe4f7 !important;
+    color: #0b2469 !important;
+    border-left: 5px solid #0b2469;
     border-radius: 5px 15px 15px 5px;
 }
 
 .nav-pills .nav-link:hover:not(.active) {
-    background-color: rgb(232, 255, 239);
+    background-color: #e7f4ff;
     color: #333;
 }
 
@@ -189,13 +193,13 @@ h2, .fw-bold, .text-dark, span {
     right: 20px;
     width: 55px;
     height: 55px;
-    background-color: #0d6efd;
+    background-color: #0b2469;
     color: white;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 8px 20px rgba(13, 110, 253, 0.3);
+    box-shadow: 0 8px 20px rgba(86, 88, 87, 0.3);
     z-index: 1050;
     transition: transform 0.2s ease;
 }
@@ -213,7 +217,7 @@ h2, .fw-bold, .text-dark, span {
  * Author:          Saim Munshi
  * Type:            Cards & Containers
  * Last Modified:   2026-03-16
- * Purpose:         Overrides default container backgrounds for the black theme
+ * Purpose:         Overrides default container backgrounds for the new theme
  *-------------------------------------------------------------------------*/
 .card,
 .calendar-card {
@@ -236,58 +240,58 @@ h2, .fw-bold, .text-dark, span {
 }
 
 .btn-submit-feedback {
-    background-color: #247e4c;
+    background-color: #0b2469;
     color: white;
     border-radius: 10px;
     padding: 10px 25px;
     font-weight: 500;
     transition: 0.3s;
-    border: 2px solid #247e4c;
+    border: 2px solid #0b2469;
 }
 
 .btn-submit-feedback:hover {
     background-color: #ffffff;
-    color: #247e4c;
-    border: 2px solid #247e4c;
+    color: #0b2469;
+    border: 2px solid #0b2469;
 }
 
 .btn-primary {
     --bs-btn-color: #ffffff;
-    --bs-btn-bg: #247e4c;
-    --bs-btn-border-color: #247e4c;
-    --bs-btn-hover-color: #247e4c;
+    --bs-btn-bg: #0b2469;
+    --bs-btn-border-color: #0b2469;
+    --bs-btn-hover-color: #0b2469;
     --bs-btn-hover-bg: #ffffff;
-    --bs-btn-hover-border-color: #247e4c;
+    --bs-btn-hover-border-color: #0b2469;
     --bs-btn-focus-shadow-rgb: 0, 0, 0;
-    --bs-btn-active-color: #247e4c;
+    --bs-btn-active-color: #0b2469;
     --bs-btn-active-bg: #ffffff;
-    --bs-btn-active-border-color: #247e4c;
+    --bs-btn-active-border-color: #0b2469;
     --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
     --bs-btn-disabled-color: #ffffff;
-    --bs-btn-disabled-bg: #247e4c;
-    --bs-btn-disabled-border-color: #247e4c;
+    --bs-btn-disabled-bg: #0b2469;
+    --bs-btn-disabled-border-color: #0b2469;
 }
 
 .btn-primary:hover {
-    background-color: #105730;
+    background-color: #011242;
     color: #ffffff;
 }
 
 .btn-outline-primary {
     --bs-btn-color: #ffffff;
-    --bs-btn-bg: #247e4c;
-    --bs-btn-border-color: #247e4c;
-    --bs-btn-hover-color: #247e4c;
+    --bs-btn-bg: #0b2469;
+    --bs-btn-border-color: #0b2469;
+    --bs-btn-hover-color: #0b2469;
     --bs-btn-hover-bg: #ffffff;
-    --bs-btn-hover-border-color: #247e4c;
+    --bs-btn-hover-border-color: #0b2469;
     --bs-btn-focus-shadow-rgb: 0, 0, 0;
-    --bs-btn-active-color: #247e4c;
+    --bs-btn-active-color: #0b2469;
     --bs-btn-active-bg: #ffffff;
-    --bs-btn-active-border-color: #247e4c;
+    --bs-btn-active-border-color: #0b2469;
     --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
     --bs-btn-disabled-color: #ffffff;
-    --bs-btn-disabled-bg: #247e4c;
-    --bs-btn-disabled-border-color: #247e4c;
+    --bs-btn-disabled-bg: #0b2469;
+    --bs-btn-disabled-border-color: #0b2469;
 }
 
 .logout {
@@ -296,4 +300,21 @@ h2, .fw-bold, .text-dark, span {
 
 .notification-btn {
     max-width: 6rem;
+}
+
+.text-primary-emphasis {
+  color: #5a6583 !important;
+}
+
+.bg-primary-subtle {
+  background-color: #e2effd !important;
+}
+
+.border-primary {
+    color: #5e7da5 !important;
+    border-color: #5e7da5 !important;
+}
+
+#book-icon{
+    color: rgb(13 110 253) !important;
 }
