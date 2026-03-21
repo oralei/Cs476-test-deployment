@@ -24,7 +24,7 @@ load_dotenv()  # 2. Call the tool to "open the vault"
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -128,7 +128,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django_mongodb_backend',
         'NAME': 'MentoringAppDB',
-        'HOST': os.getenv('MONGO_URL'),
+        'HOST': os.environ.get('MONGO_URL'),
         # DO NOT put DEFAULT_AUTO_FIELD here!
     }
 }
@@ -145,7 +145,7 @@ AUTHENTICATION_BACKENDS = [
 #Added by Saim: this so Django knows to use the URL from your .env
 #Added by Saim: Storage Setup tells django to use cloudinary for storing media
 CLOUDINARY_STORAGE = {
-    'CLOUDINARY_URL': os.getenv('CLOUDINARY_URL')
+    'CLOUDINARY_URL': os.environ.get('CLOUDINARY_URL')
 }
 
 STORAGES = {
