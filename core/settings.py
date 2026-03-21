@@ -31,8 +31,10 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 CSRF_TRUSTED_ORIGINS = [
-    "https://cs476-test-deployment-production-7ee5.up.railway.app/",
+    "https://cs476-test-deployment-production-7ee5.up.railway.app",
 ]
 
 # Application definition
@@ -156,7 +158,7 @@ STORAGES = {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
 #Added By Sam MongoDb does not auto incrment numbers so the buttom code is to help
