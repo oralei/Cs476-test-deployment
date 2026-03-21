@@ -1,9 +1,0 @@
-body {
-    background: linear-gradient(135deg, #fbfcfd 0%, #ecf2f8, #deedff, #d7eaff  100%);
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-}
-

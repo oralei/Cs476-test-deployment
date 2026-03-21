@@ -20,3 +20,6 @@ media/
 # 5. IDE SETTINGS (Optional but helpful for 6 devs)
 .vscode/
 .idea/
+
+static_root/
+staticfiles.json
