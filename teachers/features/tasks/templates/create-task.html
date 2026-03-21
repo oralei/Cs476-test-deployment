@@ -15,7 +15,7 @@
     <div class="container-fluid">
 
         <header class="mb-4">
-            <h2 class="fw-bold">Task Creation Control</h2>
+            <h1 class="fw">{% if task %}Edit Task: {{ task.title }}{% else %}Task Creation Control{% endif %}</h1>
         </header>
         <!-- Edited by Mark: Hid this for now.
         <div class="alert alert-info" role="alert">
@@ -25,7 +25,7 @@
 
 
 
-            <div class="col-lg-8 h-100">
+            <div class="col-lg-12 h-100">
                 <div class="course-creation-detail-card shadow-sm ">
 
                     <ul class="nav nav-tabs px-4 pt-3 bg-light border-bottom-0" id="taskTabs">
@@ -51,10 +51,9 @@
                             <div class="mb-3">
                                 <label for="courseSelect" class="form-label">Select Course</label>
                                 <select name="course" id="courseSelect" class="form-select" required>
-                                    <option value="" disabled selected>-- Choose a Course --</option>
-
+                                    <option value="" disabled>-- Choose a Course --</option>
                                     {% for course in courses %}
-                                    <option value="{{ course.id }}" data-description="{{ course.description }}">
+                                    <option value="{{ course.id }}" data-description="{{ course.description }}" {% if task and task.course.id == course.id %}selected{% endif %}>
                                         {{ course.title }}
                                     </option>
                                     {% endfor %}
@@ -67,16 +66,16 @@
                                 <div class="mb-3">
                                     <label class="form-label">Task Title</label>
                                     <input type="text" name="title" id="title" class="form-control" required
-                                        placeholder="e.g. Chapter 4 Quiz">
+                                        placeholder="e.g. Chapter 4 Quiz" value="{{ task.title|default:'' }}" required>
                                 </div>
                                 <!-- ---------------------------->
                                 <!-- Added by Saim Munshi Task Type -->
                                 <label for="Task-Type">Task Type:</label>
-                                <select class="form-select mb-2" id="Task-Type">
-                                    <option value="Assignment">Assignment</option>
-                                    <option value="Quiz">Quiz</option>
-                                    <option value="Project">Project</option>
-                                    <option value="Meeting">Meeting</option>
+                                <select class="form-select mb-2" id="Task-Type" name="task_type" required>
+                                  <option value="Assignment" {% if task and task.task_type|default:'' == "Assignment" %}selected{% endif %}>Assignment</option>
+                                  <option value="Quiz" {% if task and task.task_type|default:'' == "Quiz" %}selected{% endif %}>Quiz</option>
+                                  <option value="Project" {% if task and task.task_type|default:'' == "Project" %}selected{% endif %}>Project</option>
+                                  <option value="Meeting" {% if task and task.task_type|default:'' == "Meeting" %}selected{% endif %}>Meeting</option>
                                 </select>
                                 <!-- -------------------------------------- -->
 
@@ -89,24 +88,22 @@
                                         Note from Mark: This calendar does not work the best in Firefox or Safari.
                                     -->
                                         <input type="datetime-local" name="start_date" id="start_date"
-                                            class="form-control">
+                                            class="form-control" value="{{ task.start_date|date:'Y-m-d\\TH:i' }}">
                                     </div>
                                     <div class="col">
                                         <label class="form-label">Due Date & Time</label>
-                                        <input type="datetime-local" name="due_date" id="due_date" class="form-control">
+                                        <input type="datetime-local" name="due_date" id="due_date" class="form-control"
+                                            value="{{ task.due_date|date:'Y-m-d\\TH:i' }}">
                                     </div>
                                 </div>
                                 <!-- -------------------------------------------------------------------------------->
 
-                                <button type="button" id="Add-Task" class="btn btn-outline-primary">Add Task</button>
-                                <button type="button" id="Delete-Task" class="btn btn-outline-primary">Remove
-                                    Task</button>
                             </div>
                             <!--Added By Mark Task Description -->
                             <div class="mb-3">
                                 <label class="form-label">Description</label>
                                 <textarea name="description" class="form-control" rows="3" required
-                                    placeholder="Instructions for the task..."></textarea>
+                                    placeholder="Instructions for the task...">{{ task.description|default:'' }}</textarea>
                             </div>
                             <!-------------------------------------------------------------------------------------------->
                             <!--Added By Saim
@@ -132,7 +129,7 @@
                             <!-------------------------------------------------------------------------------------------->
                             <!-- Added By Saim (edited by Mark): Submit Form -->
                             <button type="submit" class="btn btn-primary btn-lg w-100" id="Update-Course">
-                                Create Task
+                                {% if task %}Save Changes{% else %}Create Task{% endif %}
                             </button>
                             <!----------------------------------------------------------------------------->
                         </form>
@@ -147,86 +144,13 @@
 
             <!--Added By Saim Description And Task Map Panel-->
 
-            <div class="col-lg-4 ">
-                <div class="course-creation-detail-card shadow-sm ">
-
-                    <ul class="nav nav-tabs px-4 pt-3 bg-light border-bottom-0">
-                        <li class="nav-item">
-                            <button class="nav-link active fw-bold px-4" id="summary-btn">Summary</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link active fw-bold px-4" id="taskmap-btn">Task Map</button>
-                        </li>
-                    </ul>
-
-                    <div id="summary-content-div" class="tab-content tab-scroll-area">
-                        <div class="mb-3">
-                            <h6 class="fw-bold text-uppercase small text-muted mb-2">Course Content View </h6>
-                            <p class="text-secondary leading-relaxed">Please Create course assign sub task</p>
-                        </div>
-
-                        <hr class="my-4">
-                        <!--Added By Saim this container course title and description diplay container-->
-                        <form class="mb-4 fw-bold mb-4" method="POST" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <div class="tab-content tab-scroll-area ">
-                                <div class="course-card">
-                                    <h4 id="course-title-container">Select A Course: </h4>
-                                    <hr>
-                                    <p class="description" id="course-description-display">Select a course and view
-                                        description here</p>
-                                </div>
-
-                            </div>
-
-                        </form>
-                        <!------------------------------------------------------------------------------------>
-                    </div>
-
-                    <div id="task-map-content-div" class="tab-content tab-scroll-area  hidden-content1">
-
-                        <div class="mb-3">
-                            <h6 class="fw-bold text-uppercase small text-muted mb-2">Task Map Content View </h6>
-                            <p class="text-secondary leading-relaxed">Please Create course assign sub task</p>
-                        </div>
-                        <hr class="my-4">
-
-                        <div class="roadmap-node-container" style="background-color: azure;">
-
-                            <div class="container py-5">
-                                <div id="node-display-container">
-                                    <div id="start-node" class="roadmap-node start-end-node">
-                                        <div class="skill-node bg-success">
-                                            <i class="bi bi-pin-map-fill text-white"></i>
-                                        </div>
-                                        <p>Start Node</p>
-                                    </div>
-                                    <div class="connector start-Node-Connector"></div>
-                                    <div id="roadmap-body-div"
-                                        style=" background-color: antiquewhite; width: 80%; border: solid rgb(110, 110, 110);">
-
-
-                                    </div>
-                                    <div class="connector"></div>
-                                    <div id="end-node" class="roadmap-node start-end-node">
-                                        <div class="skill-node bg-success">
-                                            <i class="bi bi-flag text-white"></i>
-                                        </div>
-                                        <p id="course-node-title">End Node</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
             <!---------------------------------------------------------------------------------------------------------------------------->
         </div>
 
 
     </div>
     {{ course_students_map|json_script:"course-data" }}
+    {{ assigned_student_ids|json_script:"assigned-students-data" }}
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

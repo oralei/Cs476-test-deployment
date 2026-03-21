@@ -172,10 +172,17 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-###LOGIN_REDIRECT_URL = 'teacher_home'
-##LOGIN_URL = 'signin_page_view'
+# Where to go after a successful manual login if no 'next' parameter is present
+###LOGIN_REDIRECT_URL = 'teacher_home' 
 
-# Static files
+# Added by Mark: This should fix any @login_required redirects and new logout
+LOGIN_URL = 'signin_page_view'
+LOGOUT_REDIRECT_URL = "/"
+
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/6.0/howto/static-files/
+
 STATIC_URL = '/static/'
 # Added By Saim Munshi: combines base folder to path to the feature directories
 STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
@@ -197,7 +204,10 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'students/features/Progress/static'),
     os.path.join(BASE_DIR, 'students/features/Courses/static'),
 
-    ###### Teacher App Connection #########
+    os.path.join(BASE_DIR, 'students/features/tasks/static'),
+
+    ###### Teacher App Connection#########
+    #Added By Saim Munshi: This is to connect the main base folder to the Teacher Application features in static directory. 
     os.path.join(BASE_DIR, 'teachers/BaseTeacher/static'),
     os.path.join(BASE_DIR, 'teachers/features/Calendar/static'),
     os.path.join(BASE_DIR, 'teachers/features/teacher-courses/static'),  # Added by Mark
@@ -206,7 +216,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'teachers/features/My_Student/static'),
     os.path.join(BASE_DIR, 'teachers/features/Meeting/static'),
     os.path.join(BASE_DIR, 'teachers/features/Setting/static'),
-    os.path.join(BASE_DIR, 'teachers/features/Progress/static'),  # added by win516
+    os.path.join(BASE_DIR, 'teachers/BaseTeacher/static'),
 ]
 
 from django.core.servers.basehttp import WSGIServer
