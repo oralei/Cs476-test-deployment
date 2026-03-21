@@ -2,20 +2,25 @@ from django.urls import path
 from . import views  # This only imports from the teachers app
 
 urlpatterns = [
+    # If you have teacherHome in teachers/views.py:
     path('home/', views.teacherHome, name='teacher_home'),
-
-    # Course URLs (Added by Mark)
+    path('calendar/', views.Calendar, name='calendar'),
     path('courses/', views.teacherCourseList, name='teacher-course-list'),
+    path('create-task/', views.Create_Task, name='create-task'),
     path('courses/create-course', views.teacherCreateCourse, name='create-course'),
+    
+    # Note: This is required for specific course pages
     path('courses/<str:course_id>/', views.teacherCourseMain, name='teacher-course-main'),
     
     path('needs-feedback/', views.teacherNeedsFeedbackList, name='needs-feedback-list'),
     
     # Note: This is required for specific task pages
     path('tasks/<str:task_id>/submissions/', views.teacherTaskSubmissions, name='teacher-task-submissions'),
+    
+    # Note: This is required for specific feedback pages
     path('submissions/<str:submission_id>/feedback/', views.teacherFeedback, name='teacher-feedback'),
-
-    # Notification URL (Added by Saim)
+    
+    # Note: for marking a notification as read
     path('notifications/read/<str:notification_id>/', views.markNotificationAsRead, name='teacher-notif-read'),
     
     path('my-students/', views.My_Student, name='My_Student'), #Added by Saim Connection to my student page
