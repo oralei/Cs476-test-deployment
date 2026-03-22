@@ -176,7 +176,7 @@
             </div>
             <!-- Added By Saim Munshi: Upcoming task wedget-->
             <div class="col-12 col-xl-5">
-                <div class="bg-white p-4 rounded-4 shadow-sm border h-100 d-flex flex-column">
+                <div class="bg-white p-4 rounded-4 shadow-sm border h-250 d-flex flex-column">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h4 class="fw-bold mb-0">Upcoming Tasks</h4>
                         <a href="{% url 'calendar' %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
@@ -184,7 +184,7 @@
                         </a>
                     </div>
 
-                    <div class="task-list-container" style="max-height: 300px; overflow-y: auto;">
+                    <div class="task-list-container" style="max-height: 511px; overflow-y: auto;">
                         {% for task in upcoming_tasks %}
                         <div class="existing-container">
                             <div class="existing-container-card p-5 mb-3 border shadow-sm rounded-4">

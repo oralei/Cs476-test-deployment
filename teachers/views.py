@@ -72,6 +72,7 @@ def teacherHome(request):
     student_map = {}
     now = timezone.now()
 
+    # Added By Saim Munshi: this is progress logic
     # **Note: this was logic from waseera code***
     for course in courses:
         for student in course.students.all():
@@ -94,7 +95,8 @@ def teacherHome(request):
             student_map[sid]["comp"] += comp_t
             student_map[sid]["over"] += overdue_count
             student_map[sid]["total"] += total_t
-
+            
+    # Added By Saim Munshi: this is progress logic
     # **Note: this was logic from waseera code***
     needs_attention = 0
     total_progress_sum = 0
