@@ -51,8 +51,17 @@ def teacherHome(request):
     # Added By Saim Munshi: Count of all courses created by this teacher
     course_count = Course.objects.filter(teacher=teacher).count()
 
-    # Added By Saim Munshi: First count of all unique students enrolled across all this teacher's courses than we filter students where their enrolled_courses has this teacher
-    student_count = Course.objects.filter(teacher=teacher).aggregate(total=Count('students', distinct=True))['total'] or 0
+    # Added By Saim Munshi: First count of all unique students enrolled across all this teacher's courses than we filter 
+    # students where their enrolled_courses has this teacher
+    # student_count = Course.objects.filter(teacher=teacher).aggregate(total=Count('students', distinct=True))['total'] or 0
+    
+    # Updated by Mark: Safely get distinct student count to avoid MongoDB $size missing array error
+    distinct_students = set()
+    for course in Course.objects.filter(teacher=teacher):
+        # Add all student IDs from this course into the set (sets automatically prevent duplicates)
+        distinct_students.update(course.students.values_list('id', flat=True))
+
+    student_count = len(distinct_students)
 
     # Added By Saim Munshi: Count of all tasks created across all this teacher's courses 
 
