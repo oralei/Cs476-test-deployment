@@ -1,0 +1,165 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mentor Dashboard - Progress</title>
+  <link rel="stylesheet" href="{% static 'css/mentor_progress.css' %}">
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+      <div class="header">
+        <div>
+          <h1>Mentor Progress</h1>
+          <p>Track student completion, engagement, and who needs attention.</p>
+        </div>
+        <div class="header-actions">
+          <a class="btn dark" href="#" onclick="alert('Placeholder: Assign Task flow')">Assign Task</a>
+          <a class="btn light" href="#" onclick="alert('Placeholder: View Student List')">Student List</a>
+        </div>
+      </div>
+
+      <form class="filters" method="get">
+        <div class="field">
+          <label>Course</label>
+          <select name="course">
+            <option value="">All courses</option>
+            {% for c in courses %}
+              <option value="{{ c }}" {% if selected.course == c %}selected{% endif %}>{{ c }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Student</label>
+          <select name="student">
+            <option value="">All students</option>
+            {% for s in student_names %}
+              <option value="{{ s }}" {% if selected.student == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Status</label>
+          <select name="status">
+            <option value="">All</option>
+            <option value="ontrack" {% if selected.status == "ontrack" %}selected{% endif %}>On track</option>
+            <option value="behind" {% if selected.status == "behind" %}selected{% endif %}>Behind</option>
+            <option value="inactive" {% if selected.status == "inactive" %}selected{% endif %}>Inactive</option>
+          </select>
+        </div>
+
+        <div class="field actions">
+          <label>&nbsp;</label>
+          <button class="btn dark" type="submit">Apply</button>
+          <a class="btn light" href="?">Reset</a>
+        </div>
+      </form>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Active Students</div>
+          <div class="stat-value">{{ stats.active_students }}</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Average Progress</div>
+          <div class="stat-value">{{ stats.avg_progress }}%</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Needs Attention</div>
+          <div class="stat-value">{{ stats.needs_attention }}</div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="panel">
+          <div class="panel-title">Attention Needed</div>
+          {% if attention %}
+            {% for a in attention %}
+              <div class="attention-item">
+                <div class="attention-left">
+                  <div class="name">{{ a.name }}</div>
+                  <div class="reason">{{ a.reason }}</div>
+                </div>
+                <div class="badge {{ a.badge }}">
+                  <span class="dot {{ a.badge }}"></span>
+                  {{ a.badge|title }}
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="muted">No students need attention right now.</div>
+          {% endif %}
+
+          <div class="hint">
+            Logic: Inactive ≥ 7 days • Behind if progress &lt; 40% or overdue &gt; 0
+          </div>
+        </div>
+
+        <div class="panel wide">
+          <div class="panel-title">Student Progress</div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Student</th>
+                  <th>Course</th>
+                  <th>Progress</th>
+                  <th>Overdue</th>
+                  <th>Last Activity</th>
+                  <th>Status</th>
+                  <th style="text-align:right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for s in students %}
+                  <tr>
+                    <td class="strong">{{ s.name }}</td>
+                    <td>{{ s.course }}</td>
+                    <td>
+                      <div class="progress-row">
+                        <div class="bar">
+                          <div class="fill" style="width: {{ s.progress|floatformat:0 }}%;"></div>
+                        </div>
+                        <div class="pct">{{ s.progress }}%</div>
+                      </div>
+                    </td>
+                    <td>{{ s.overdue }}</td>
+                    <td>{{ s.last_activity }}</td>
+                    <td>
+                      <span class="badge {{ s.status }}">
+                        <span class="dot {{ s.status }}"></span>
+                        {{ s.status|title }}
+                      </span>
+                    </td>
+                    <td style="text-align:right;">
+                      <button class="mini" type="button" onclick="alert('Placeholder: View {{ s.name }}')">View</button>
+                      <button class="mini secondary" type="button" onclick="alert('Placeholder: Assign Task to {{ s.name }}')">Assign</button>
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr><td colspan="7" class="muted">No results for the selected filters.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="legend">
+            <span><span class="dot ontrack"></span> On track</span>
+            <span><span class="dot behind"></span> Behind</span>
+            <span><span class="dot inactive"></span> Inactive</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        This page uses mock data so it works while MongoDB/User models are being tested.
+      </div>
+    </div>
+  </div>
+</body>
+</html>

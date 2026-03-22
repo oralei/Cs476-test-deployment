@@ -1,0 +1,12 @@
+/* 
+If you're working on the Home page, this is where you'll want to do all your CSS.
+
+Note from Mark: As of (Feb 18, 2026), all it does is centre everything.
+*/ 
+
+.centred {
+  padding: 20px;
+	display: grid;
+	justify-content: center;
+	justify-items: center;
+}

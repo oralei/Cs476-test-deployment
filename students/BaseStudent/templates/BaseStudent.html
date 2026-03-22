@@ -39,7 +39,10 @@
             <nav class="nav flex-column nav-pills">
                 <a href="{% url 'student_home' %}" class="nav-link {% if request.resolver_match.url_name == 'student_home' %}active{% endif %}"> <i class="bi bi-grid-fill me-3"></i>Dashboard </a>
                 <a href="{% url 'my-courses' %}" class="nav-link {% if request.resolver_match.url_name == 'Courses' %}active{% endif %}"><i class="bi bi-list-task me-3"></i>Courses</a>
-                <a href="#" class="nav-link"><i class="bi bi-graph-up me-3"></i>Progress</a>
+                <!-- Added by win516 -->
+                <a href="{% url 'progress' %}" class="nav-link {% if request.resolver_match.url_name == 'progress' %}active{% endif %}">
+                    <i class="bi bi-graph-up"></i> Progress
+                </a>
                 <a href="{% url 'calendar' %}" class="nav-link {% if request.resolver_match.url_name == 'calendar' %}active{% endif %}"><i class="bi bi-calendar3 me-3"></i>Calendar</a>
                 <hr>
                 <a href="#" class="nav-link text-secondary"><i class="bi bi-gear me-3"></i>Settings</a>
@@ -79,9 +82,11 @@
                     <i class="bi bi-clipboard2-check"></i> Tasks
                 </a>
 
-                <a href="#" class="nav-link">
+                <!-- Added by win516 -->
+                 <a href="{% url 'progress' %}" class="nav-link {% if request.resolver_match.url_name == 'progress' %}active{% endif %}">
                     <i class="bi bi-graph-up"></i> Progress
                 </a>
+
                 <a href="{% url 'student-calendar' %}"   class="nav-link {% if request.resolver_match.url_name == 'student-calendar' %}active{% endif %}">
                     <i class="bi bi-calendar3"></i> Calendar
                 </a>
