@@ -114,10 +114,8 @@
             </nav>
 
             <div class="border-top pt-3">
-                <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#settingsModal">
-                    <i class="bi bi-gear"></i> Settings
-                </a>
-                <a href="{% url 'logout' %}" class="nav-link text-danger logout">
+                <a href="{% url 'teacher-settings' %}">Settings</a>
+                <a href="{% url 'logout' %}" class="nav-link text-danger">
                     <i class="bi bi-box-arrow-right"></i> Log out
                 </a>
             </div>
