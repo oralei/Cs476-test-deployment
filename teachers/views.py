@@ -382,71 +382,81 @@ def editCourse(request, course_id):
 def deleteCourse(request, course_id):
     course = get_object_or_404(Course, id=course_id, teacher=request.teacher_profile)
     if request.method == "POST":
+    # Added By Saim Munshi: gets all course title
+        course_title = course.title
+        # Added By Saim Munshi: gets all student enrolled in course
+        enrolled_students = list(course.students.all())
         course.delete()
+
+    
+      
+        # Added By Saim Munshi: Create Delete Notification for students
+        for student in enrolled_students:
+            Notification.objects.create(
+                user=student.user,
+                notification_type="course_deleted",
+                message=f"The course '{course_title}' has been deleted."
+            )
+         # Added By Saim Munshi: Create Delete Notification for mentor:
         Notification.objects.create(
             user=request.user,
             notification_type=f"Delete Course",
             message=f"Course '{course.title}' has been successfully Deleted!"
         )
+        # Redirect back to the course list page
         return redirect('teacher-course-list')
+    
     return redirect('teacher-course-list')
+
 
 # Added By Saim Munshi: Edit task  using create task form 
 @login_required
 @teacher_required
 def editTask(request, task_id): 
     task = get_object_or_404(Task, id=task_id)
-    teacher_profile = request.teacher_profile
-    courses = Course.objects.filter(teacher=teacher_profile) 
-
-    # Added By Saim Munshi: Note: This is from the Create Task creates empty dictionary to store student course they belong to  
-    course_students_map = {}
-    #  Added By Saim Munshi: Note: this than look to dictonary with course idllist of student and relevent 
-    for course in courses:
-        course_students_map[str(course.id)] = [
-            {'id': str(s.id), 'full_name': s.full_name} 
-            for s in course.students.all()
-        ]
-
-    # Added By Saim Munshi: gets currently assigned students lined to this task
-    assigned_student_ids = [str(sid) for sid in task.assigned_students.values_list('id', flat=True)]
-
-    # Added By Saim Munshi: check save button clicked and gets the new title description start etc typed into the form updated the old data
+    # Filter courses to only those owned by this teacher
+    courses = Course.objects.filter(teacher=request.teacher_profile) 
+    students = []
     if request.method == "POST":
         task.title = request.POST.get("title")
         task.description = request.POST.get("description") 
         task.start_date = request.POST.get("start_date") 
         task.due_date = request.POST.get("due_date") 
         
-        #Added by Saim Munshi: this is to check which course was selected in the dropdown menu
         course_id = request.POST.get("course")
         if course_id:
-            course = get_object_or_404(Course, id=course_id, teacher=teacher_profile)
+            course = get_object_or_404(Course, id=course_id, teacher=request.teacher_profile)
             task.course = course
-
-        #Added by Saim Munshi: saave task info to database
+        
         task.save()
         
-        #Added by Saim Munshi: Update many to many relationship and all selected student in the list
+        sstudent_ids = request.POST.getlist('students')
+        task.assigned_students.set(sstudent_ids) 
+        
+        # Added By Saim Munshi: get student as list 
         student_ids = request.POST.getlist('students')
         task.assigned_students.set(student_ids) 
         
-        Notification.objects.create(
-            user=request.user,
-            notification_type="Edit task",
-            message=f"Task '{task.title}' has been successfully updated!"
-        )
+        # Added By Saim Munshi: Notify students
+        for student in task.assigned_students.all():
+            Notification.objects.create(
+                user=student.user,
+                notification_type="Edit task",
+                message=f"The task '{task.title}' has been updated. Please check for changes."
+            )
+        return redirect("teacher-course-main", course_id=task.course.id)
 
-        #Added By Saim Munshi: sends the teacher back to the main course page once the edit is finished
-        return redirect("teacher-course-main", course_id=str(task.course.id))
+        if task.course:
+            students = task.course.students.all()
 
     context = {
         "task": task,
         "courses": courses,
-        "course_students_map": course_students_map, 
-        "assigned_student_ids": assigned_student_ids,
+        "students": students,
     }
-    return render(request, 'tasks/templates/create-task.html', context)
+
+    return render(request, "tasks/templates/create-task.html", context)
+
 
 # Added By Saim Munshi: Delete task logic
 @login_required
@@ -458,8 +468,19 @@ def deleteTask(request, task_id):
 
     if request.method == "POST":
         task_title = task.title
+        assigned_students = list(task.assigned_students.all())
         task.delete()
-        
+
+   
+        # Added By Saim Munshi: Notify every student from the list we saved in memory
+        for student in assigned_students:
+            Notification.objects.create(
+                user=student.user,
+                notification_type="task_deleted",
+                message=f"The task '{task_title}' has been deleted by the instructor."
+            )
+
+
          # Added By Saim Munshi: Create Delete Notification:
         Notification.objects.create(
             user=request.user,
