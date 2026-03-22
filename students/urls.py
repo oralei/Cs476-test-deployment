@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
@@ -29,4 +30,15 @@ urlpatterns = [
     path('mark-feedback-read/<str:feedback_id>/', views.mark_feedback_read, name='mark_feedback_read'),
     path('archive-feedback/<str:feedback_id>/', views.archive_feedback, name='archive_feedback'),
 
+    # Added by Stephen:
+    path('settings/', views.studentSettings, name='student-settings'),
+    path('password-change/',
+         auth_views.PasswordChangeView.as_view(
+             template_name='password_change.html'),
+         name='password_change'),
+
+    path('password-change-done/',
+         auth_views.PasswordChangeDoneView.as_view(
+             template_name='password_change_done.html'),
+         name='password_change_done'),
 ]
