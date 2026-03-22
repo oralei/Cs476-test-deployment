@@ -1,5 +1,4 @@
 from django.urls import path
-from django.contrib.auth import views as auth_views
 from . import views  # This only imports from the teachers app
 
 urlpatterns = [
@@ -36,18 +35,5 @@ urlpatterns = [
 
 
     path('calendar/', views.Calendar, name='calendar'),
-    path("settings/", views.teacherSettings, name="teacher-settings"),
-
-
-    path('password-change/',
-         auth_views.PasswordChangeView.as_view(
-             template_name='password_change.html'),
-         name='password_change'),
-
-    path('password-change-done/',
-         auth_views.PasswordChangeDoneView.as_view(
-             template_name='password_change_done.html'),
-         name='password_change_done'),
-
     
 ]

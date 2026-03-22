@@ -10,7 +10,6 @@ from django.db.models import Q  # For "or" queries
 from django.contrib import messages  # For error messages
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
-from django.contrib.auth import update_session_auth_hash
 # Create your views here.
 # Added by Mark: Helper function to check the student profile. 
 # This is reused throughout all the views by adding @student_required just like @login_required
@@ -407,47 +406,3 @@ def archive_feedback(request, feedback_id):
 
     # Added by Matthew/Spooky: Return JSON response showing success.
     return JsonResponse({"success": True, "feedback_id": str(feedback.id)})
-
-
-@login_required
-@student_required
-def studentSettings(request):
-    student = request.student_profile
-    user = request.user
-
-    if request.method == "POST":
-
-        # Basic info
-        user.email = request.POST.get("email")
-        student.full_name = request.POST.get("full_name")
-        user.save()
-        student.save()
-
-        # Password fields
-        current_password = request.POST.get("current_password")
-        new_password = request.POST.get("new_password")
-        confirm_password = request.POST.get("confirm_password")
-
-        if new_password or confirm_password:
-
-            if not current_password:
-                messages.error(request, "Enter current password to change password")
-
-            elif not user.check_password(current_password):
-                messages.error(request, "Current password is incorrect")
-
-            elif new_password != confirm_password:
-                messages.error(request, "Passwords do not match")
-
-            else:
-                user.set_password(new_password)
-                user.save()
-                update_session_auth_hash(request, user)
-                messages.success(request, "Password updated successfully")
-
-        else:
-            messages.success(request, "Settings updated successfully")
-
-        return redirect("student-settings")
-
-    return render(request, "Setting/templates/student-settings.html", {"user": user})
