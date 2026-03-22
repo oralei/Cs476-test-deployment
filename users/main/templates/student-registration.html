@@ -1,0 +1,103 @@
+{% load static %} 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/registration.css' %}">
+    <title>Student Sign Up</title>
+<style>
+        #title-container {
+            background-image: url("{% static 'images/backimage.jpg' %}");
+             background-repeat: no-repeat;
+             background-size: cover;   
+        }
+    </style>
+</head>
+<body>
+<div class="grid-container">
+    <div class="item" id="title-container">
+        
+    </div>
+    <!--
+    /*-------------------------------------------------------------------------
+    * Author:          Saim Munshi
+    * Type:            div
+    * Last Modified:   2026-02-04
+    * Modified By:     Saim Munshi
+    * Purpose:         change the modify the characterstics of the body tag
+    *-------------------------------------------------------------------------*/
+    -->
+    <div class="item" id="field-container">
+
+
+        <form id="registrationForm" action="{% url 'student-register' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="">
+                    <h1>Login Account</h1>
+            </div>
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <fieldset class="role-selector">
+                <legend>Select Your Role</legend>
+                <div class="radio-option">
+                    <input type="radio" name="role" value="student" id="roleStudent" onclick="toggleFields()" checked>
+                    <label for="roleStudent">Student / Pupil</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" name="role" value="teacher" id="roleTeacher" onclick="toggleFields()">
+                    <label for="roleTeacher">Teacher / Mentor</label>
+                </div>
+            </fieldset>
+
+            <div id="studentFields">
+                <div class="form-group">
+                    <label for="studentId">Student ID</label>
+                    <input type="text" id="studentId" name="studentId">
+                </div>
+            </div>
+
+            <div id="teacherFields" class="hidden">
+                <div class="form-group">
+                    <label for="license">License Number</label>
+                    <input type="text" id="license" name="license">
+                </div>
+                <div class="form-group">
+                    <label for="specialization">Specialization</label>
+                    <input type="text" id="specialization" name="specialization">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+             <div id="add-image">
+                <div class="form-group">
+                    <label for="studentId">Select Your Profile Image</label>
+                   <input type="file" id="UploadPFP" name="UploadPFP">
+                </div>
+            </div>
+            <button type="submit" class="register-btn">REGISTER</button>
+            <div class="form-footer">
+            Already have an account? <a href="{% url 'login' %}">Log In</a>
+            </div>
+
+
+        </form>
+    </div>
+</div>
+
+</div>
+    <script src="{% static 'js/registration.js' %}"></script>
+</body>
+</html>

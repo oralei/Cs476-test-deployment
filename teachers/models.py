@@ -2,20 +2,17 @@ from django.db import models
 from users.models import MentoraBaseUser
 from django_mongodb_backend.fields import ObjectIdAutoField
 from django.conf import settings
-
 import random
 import string
 
-#Added By Saim Munshi: Selects stores all asccii and digit in ultimatestring and using 
-#                      random.choice to select 15 random character genrating the code
-
+# Added By Saim Munshi: Selects stores all ascii and digits in ultimatestring and using
+#                       random.choice to select 15 random characters generating the code
 def randomTeacherCodeGenerator():
     codeLength = 15
     ultimateString = string.ascii_letters + string.digits
-    randomString = "" 
+    randomString = ""
     for i in range(codeLength):
         randomString += random.choice(ultimateString)
-    
     return randomString
 
 # Teacher class, objects found in MongoDB under collection "users_teacher"
@@ -27,14 +24,13 @@ class Teacher(MentoraBaseUser):
     
     class Meta:
         db_table = 'users_teacher'  # Custom collection name
-    
+
     def __str__(self):
         return f"{self.full_name} (Teacher)"
 
 # Mark: Notification object removed, now conforms to general model under courses/models.py
 """
-Added By Saim Munshi: Notfication mongodb object
-
+Added By Saim Munshi: Notification mongodb object
 class Notification(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     notification_type = models.CharField(max_length=50)
@@ -42,9 +38,7 @@ class Notification(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
     class Meta:
-        db_table = "teacher_notifications" 
-    
+        db_table = "teacher_notifications"
     def __str__(self):
         return self.message
 """
-    

@@ -35,17 +35,16 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users', 
+    'users',
     'teachers',
     'students',
-    'courses',
+    'courses',  # Added by Mark
 ]
 
 MIDDLEWARE = [
@@ -63,24 +62,22 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # DIRS tells Django to look for a root 'templates' folder for your Sidebar/Base
         'DIRS': [
-            #Users App Connection Logic:
+            # Users App Connection Logic
             os.path.join(BASE_DIR, 'users/MainHome/templates'),
             os.path.join(BASE_DIR, 'users/TeacherRegistration/templates'),
             os.path.join(BASE_DIR, 'users/StudentRegistration/templates'),
             os.path.join(BASE_DIR, 'users/SignInPage/templates'),
 
-            # Student App templates (This is likely where BaseStudent.html lives)
-            os.path.join(BASE_DIR, 'students/BaseStudent/templates'), 
-            os.path.join(BASE_DIR, 'students/features'),
-
-            # Teacher App templates
+            # Teacher App templates 
             os.path.join(BASE_DIR, 'teachers/BaseTeacher/templates'),
             os.path.join(BASE_DIR, 'teachers/features'),
+            os.path.join(BASE_DIR, 'teachers/features/Progress/templates'),  # added by win516
 
-
-
+            # Student App templates
+            os.path.join(BASE_DIR, 'students/BaseStudent/templates'),
+            os.path.join(BASE_DIR, 'students/features'),
+            os.path.join(BASE_DIR, 'students/features/Progress/templates'),  # added by win516
 
             """
             BASE_DIR / 'users' / 'TeacherRegistration' / 'templates',
@@ -98,15 +95,15 @@ TEMPLATES = [
             BASE_DIR / 'teachers' / 'features' / 'TeacherHomePage' / 'templates',
             BASE_DIR / 'teachers' / 'features' / 'Create_Task' / 'templates',
             """
-            ], 
-        'APP_DIRS': True, # This allows Django to find students/features/Calender/templates
+        ],
+        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'teachers.context_processors.notifications_processor', #Added By Saim Munshi: this is proccessor to show notification for all views in for teacher
+                'teachers.context_processors.notifications_processor',  # Added by Saim
             ],
         },
     },
@@ -114,13 +111,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-#Added by Sam: MongoDB conFiguration code takes uri from the env file
-# Edited by Mark: changed order because of race condition?
-# --- DATABASE SECTION ---
-
 # Added by Mark: Testing login sessions and user permissions
+# Edited by Mark: changed order because of race condition?
 AUTH_USER_MODEL = 'users.CustomUser'
 
 DATABASES = {
@@ -136,13 +128,9 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-
-
-# Disable default permissions
-
 # DMedia-Storage
-#Added by Saim: this so Django knows to use the URL from your .env
-#Added by Saim: Storage Setup tells django to use cloudinary for storing media
+# Added by Saim: this so Django knows to use the URL from your .env
+# Added by Saim: Storage Setup tells django to use cloudinary for storing media
 CLOUDINARY_STORAGE = {
     'CLOUDINARY_URL': os.getenv('CLOUDINARY_URL')
 }
@@ -155,12 +143,13 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
-#Added By Sam MongoDb does not auto incrment numbers so the buttom code is to help
+
+# Added By Sam: MongoDB does not auto increment numbers so the below code is to help
 DEFAULT_AUTO_FIELD = 'django_mongodb_backend.fields.ObjectIdAutoField'
 SILENCED_SYSTEM_CHECKS = ['mongodb.E001']
 
 """
-#Orginal code for Sqllite
+#Original code for Sqlite
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -168,34 +157,19 @@ DATABASES = {
     }
 }
 """
-# Password validation
-# https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
+# Password validation
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
 # Internationalization
-# https://docs.djangoproject.com/en/6.0/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
 # Where to go after a successful manual login if no 'next' parameter is present
@@ -210,44 +184,38 @@ LOGOUT_REDIRECT_URL = "/"
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = '/static/'
-#Added By Saim Munshi: combines based folder to path to the feature directories 
+# Added By Saim Munshi: combines base folder to path to the feature directories
 STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
 
-STATICFILES_DIRS =[
+STATICFILES_DIRS = [
 
-    ###### Users App Connection#########
-    #Added By Saim Munshi: This is to connect the main base folder to the user Login Page Application features in static directory.  
-    
+    ###### Users App Connection #########
     os.path.join(BASE_DIR, 'users/SignInPage/static'),
-    #Added By Saim Munshi: This is to connect the main base folder to the user Main Page Application features in static directory.  
-
     os.path.join(BASE_DIR, 'users/MainHome/static'),
+    os.path.join(BASE_DIR, 'users/TeacherRegistration/static'),
+    os.path.join(BASE_DIR, 'users/StudentRegistration/static'),
 
-
-    #Added By Saim Munshi: This is to connect the main base folder to the user Registration Application features in static directory.  
-     os.path.join(BASE_DIR, 'users/TeacherRegistration/static'),
-     os.path.join(BASE_DIR, 'users/StudentRegistration/static'),
-    ###### Student App Connection#########
-    #Added By Saim Munshi: This is to connect the main base folder to the Student Application features in static directory.  
+    ###### Student App Connection #########
     os.path.join(BASE_DIR, 'students/BaseStudent/static'),
-    os.path.join(BASE_DIR, 'students/features/Calendar/static'), # Updated spelling
+    os.path.join(BASE_DIR, 'students/features/Calendar/static'),
     os.path.join(BASE_DIR, 'students/features/StudentHomePage/static'),
     os.path.join(BASE_DIR, 'students/features/Mentors/static'),
     os.path.join(BASE_DIR, 'students/features/Setting/static'),
     os.path.join(BASE_DIR, 'students/features/Progress/static'),
     os.path.join(BASE_DIR, 'students/features/Courses/static'),
 
+    os.path.join(BASE_DIR, 'students/features/tasks/static'),
+
     ###### Teacher App Connection#########
     #Added By Saim Munshi: This is to connect the main base folder to the Teacher Application features in static directory. 
     os.path.join(BASE_DIR, 'teachers/BaseTeacher/static'),
-    os.path.join(BASE_DIR, 'teachers/features/Calendar/static'), 
-    os.path.join(BASE_DIR, 'teachers/features/teacher-courses/static'),
+    os.path.join(BASE_DIR, 'teachers/features/Calendar/static'),
+    os.path.join(BASE_DIR, 'teachers/features/teacher-courses/static'),  # Added by Mark
     os.path.join(BASE_DIR, 'teachers/features/TeacherHomePage/static'),
-    os.path.join(BASE_DIR, 'teachers/features/tasks/static'), 
-    os.path.join(BASE_DIR, 'teachers/features/My_Student/static'), 
+    os.path.join(BASE_DIR, 'teachers/features/tasks/static'),  # Added by Mark
+    os.path.join(BASE_DIR, 'teachers/features/My_Student/static'),
     os.path.join(BASE_DIR, 'teachers/features/Setting/static'),
     os.path.join(BASE_DIR, 'teachers/BaseTeacher/static'),
-
 ]
 
 from django.core.servers.basehttp import WSGIServer

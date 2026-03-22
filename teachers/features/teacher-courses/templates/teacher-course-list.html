@@ -5,28 +5,28 @@
 <title>Mentora - Course List</title>
 <link rel="stylesheet" href="{% static 'css/Courses.css' %}">
 <style>
-    /*-------------------------------------------------------------------------
+/*-------------------------------------------------------------------------
  * Author:          Saim Munshi
  * Type:            Layout Component
  * Last Modified:   2026-02-27
  * Purpose:         (Existing Course Container) this section contains code dealing with existing 
  *-------------------------------------------------------------------------*/
     .existing-container {
-        background-color: rgb(250, 250, 250);
+        background-color: transparent
     }
 
     .existing-container-card {
-        background-color: white;
+        background-color: white !important;
         box-shadow: 0 .125rem .25rem rgba(14, 99, 155, 0.075);
-        transition: 0.3s ease;
+        transition: all 0.3s ease;
+        border: 1px solid #dee2e6 !important; /
     }
 
     .existing-container-card:hover {
-        background-color: rgb(247, 251, 253);
-        box-shadow: 0 1rem 3rem rgba(2, 28, 53, 0.175);
+        background-color: rgb(247, 251, 253) !important;
+        box-shadow: 0 1rem 3rem rgba(2, 28, 53, 0.175) !important;
+        transform: translateY(-2px);
     }
-
-    /*-------------------------------------------------------------------------*/
 </style>
 {% endblock %}
 
@@ -38,7 +38,7 @@
     <div class="tab-content tab-scroll-area" id="existing-courses-overview">
         <div class="mb-3">
             <h1>My Courses</h1>
-            <p class="text-secondary leading-relaxed">Please Create course assign sub task</p>
+            <p class="text-secondary leading-relaxed">View and manage my courses</p>
         </div>
 
         <hr class="my-4">
@@ -47,7 +47,7 @@
 
         <!--Added By Saim Munshi:-->
         <!--Added By Mark:-->
-        <a href="{% url 'create-course' %}" class="btn btn-primary rounded-4 mb-3">Create New Course</a>
+        <a href="{% url 'create-course' %}" class="btn btn-primary mb-3">Create New Course</a>
         <!--Added By Mark:-->
         <!-- Check if the user has any courses -->
         {% if courses %}
@@ -57,8 +57,8 @@
             <!-------------------------------------------------->
 
             <!--Added By Saim Munshi:-->
-            <div class="existing-container p-4 rounded-4 mb-4">
-                <div class="existing-container-card p-5 rounded-4 mb-4">
+            <div class="existing-container">
+                  <div class="existing-container-card p-4 mb-3 border shadow-sm rounded-4">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <a class="fw-bold mb-0 text-primary" href="{% url 'teacher-course-main' course.id %}">{{course.title }}</a>
@@ -67,25 +67,28 @@
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-sm btn-outline-primary"
                                         onclick="return confirm('Delete this course?');">
-                                        <i class="bi bi-trash"><strong>Delete </strong></i>
+                                        <i class="bi bi-trash"></i><strong>Delete </strong>
                                     </button>
                                 </form>
 
                                 <a href="{% url 'edit-course' course.id %}" class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-pencil icon-blue"><strong>Edit</strong></i>
+                                    <i class="bi bi-pencil icon-blue"></i><strong>Edit</strong>
                                 </a>
                             </div>
                         </div>
                         <!--Added By Ariel:-->
                         <!-- Checks if course is private, if it is then display a tag-->
                             {% if course.private %}
-                                <span class="badge rounded-pill bg-secondary ms-2">Private</span>
+                                <span class="badge rounded-pill bg-secondary mb-2">Private</span>
                             {% endif %}
-                        <p class="small text-dark mb-3">{{ course.description|truncatewords:20 }}</p>
-
+                        <p class="small text-dark mb-3">
+                            <strong>Course Description:</strong>
+                             {{ course.description|truncatewords:20 }}
+                        </p>
                         <hr>
                         <!--Added By Saim Munshi: Same code as retrieving all student enrolled in task for upcoming task wadget in teacher dashboard-->
                         <div class="d-flex flex-wrap gap-2">
+                            <span class="">Students Enrolled:    </span>
                             {% for student in course.students.all %}
                             <span class="badge rounded-pill bg-light text-dark border fw-normal px-2 py-1">
                                 {{ student.full_name }}

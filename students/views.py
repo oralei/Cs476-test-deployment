@@ -1,13 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from .models import Student
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
-from courses.models import Course, Task, TaskSubmission, Notification
+from courses.models import Course, Task, TaskSubmission, Notification, TaskFeedback
 from courses.observers import SubmissionSubject, SubmissionObserver
 from functools import wraps
 import cloudinary.uploader  # For task submission
 from django.db.models import Q  # For "or" queries
 from django.contrib import messages  # For error messages
+from django.contrib.auth import update_session_auth_hash
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse
 
+# Create your views here.
 # Added by Mark: Helper function to check the student profile. 
 # This is reused throughout all the views by adding @student_required just like @login_required
 def student_required(view_func):
@@ -18,73 +23,82 @@ def student_required(view_func):
         request.student_profile = request.user.students_student_profile
         return view_func(request, *args, **kwargs)
     return wrapper
-
-# Create your views here.
-
 """
 Name Function: Home
-type: Function 
-Purpose:It is used connect django with home html file through an http request
+type: Function
+Purpose: It is used connect django with home html file through an http request
 """
 @login_required
 @student_required
 def studentHome(request):  
     user = request.user 
+    student_profile = request.student_profile # Provided by your decorator
     
-    # Fetch user's unread notifications from the database
-    unread_notifications = Notification.objects.filter(user=user, is_read=False).order_by('-created_at')
+  
+    # Added Saim Munshi: Count of courses the student is enrolled in
+    course_count = student_profile.enrolled_courses.count()
     
-    # Pass to html through context object
+   
+    # Added Saim Munshi: Task model has assigned_students many to many relationship
+    task_count = Task.objects.filter(assigned_students=student_profile).count()
+
+    #Added By Saim Munshi: Mentor Count For student
+    mentor_count = Course.objects.filter(students=student_profile).values('teacher').distinct().count()
+
+    #Added By Saim Munshi: upcoming task same logic from mentors task wedget
+    upcoming_tasks = Task.objects.filter( assigned_students=student_profile).order_by('due_date')[:5]
+
+    # Notifications logic (kept from your original code)
+    unread_notifications = Notification.objects.filter(
+        user=user, 
+        is_read=False
+    ).order_by('-created_at')
+    
     context = {
+        'student': student_profile,
+        'course_count': course_count,
+        'task_count': task_count,
+        'mentor_count': mentor_count,
+        'upcoming_tasks': upcoming_tasks,
         'notifications': unread_notifications,
         'notification_count': unread_notifications.count()
     }
+    
     return render(request, 'StudentHomePage/templates/StudentHomePage.html', context)
-
 @login_required
 @student_required
 def markNotificationAsRead(request, notification_id):
     if request.method == "POST":
-        # 1. Fetch the notification (ensure it actually belongs to the logged-in user for security!)
         notification = get_object_or_404(Notification, id=notification_id, user=request.user)
-        
-        # 2. Change the status to read
         notification.is_read = True
         notification.save()
-        
-    # 3. Redirect the user right back to the page they were just on
-    # HTTP_REFERER gets the URL of the page the user clicked the button from
-    previous_page = request.META.get('HTTP_REFERER', '/') 
+    previous_page = request.META.get('HTTP_REFERER', '/')
     return redirect(previous_page)
 
 """
-Name Function: Calender
+Name Function: Calendar
 Added by: Ariel
-type: Function 
-Purpose:It is used connect django with Calender html file through an http request
+type: Function
+Purpose: It is used connect django with Calendar html file through an http request
 """
 @login_required
 @student_required
-def Calendar(request):  
+def Calendar(request):
     current_student = request.student_profile
-    # Get courses this specific student is enrolled in
     courses = current_student.enrolled_courses.all()
-
-    # Get tasks assigned to this student
     tasks = Task.objects.filter(assigned_students=current_student)
     events_data = []
-    
+
     for task in tasks:
         start_str = task.start_date.isoformat() if task.start_date else None
         end_str = task.due_date.isoformat() if task.due_date else None
 
-        # If the task doesn't have a start date, use the due date so the event still appears on the calendar.
         if not start_str and end_str:
             start_str = end_str
-            
+
         if not start_str:
-            continue # Skip tasks without dates
-            
+            continue
+
         events_data.append({
             'id': str(task.id),
             'title': task.title,
@@ -100,28 +114,15 @@ def Calendar(request):
         'courses': courses,
         'events_data': events_data,
     }
-    
     return render(request, 'Calendar/templates/Calendar.html', context)
 
-def Mentor(request):  
+def Mentor(request):
     return render(request, '/Mentors/templates/Mentor.html')
 
-def Progress(request):  
+def Progress(request):
     return render(request, '/Progess/templates/Progess.html')
 
 """ ------------------------------ Student Courses Views/Functions ------------------------------ """
-# Note: Below are all the Course related functionality on the student's side.
-
-# Added by Mark: Helper function to check the student profile. 
-# This is reused throughout all the views by adding @student_required just like @login_required
-def student_required(view_func):
-    @wraps(view_func)
-    def wrapper(request, *args, **kwargs):
-        if not request.user.is_student:
-            return HttpResponseForbidden("You must be logged in as a student.")
-        request.student_profile = request.user.students_student_profile
-        return view_func(request, *args, **kwargs)
-    return wrapper
 
 """
 Added by Mark: Course Browser Page
@@ -156,7 +157,7 @@ def courseBrowser(request):
 
     context = {
         'courses': courses,
-        'student': student  # Passing student so we can check if they already joined a course
+        'student': student
     }
     return render(request, 'Courses/templates/course-browser.html', context)
 
@@ -167,47 +168,34 @@ Added by Mark: A function to link the current student to the course they clicked
 @student_required
 def joinCourse(request, course_id):
     student = request.student_profile
-
     if request.method == "POST":
         course = get_object_or_404(Course, id=course_id)
-        
-        # Check if course is not full using simple if
         if course.students.count() < course.max_students:
-            course.students.add(student) # Adds the student to the ManyToMany field in Course model (object)
-        
+            course.students.add(student)
         return redirect('my-courses')
-    
     return HttpResponseBadRequest("Invalid Request")
 
 """
 Added by Mark: Student Course List Page
-Notes: Shows all currently enrolled courses for the logged in student. Can lead to a specific Course Main page.
+Notes: Shows all currently enrolled courses for the logged in student.
 """
 @login_required
 @student_required
 def myCourses(request):
     student = request.student_profile
-
-    # Only get courses where Tthe current student is in the 'students' ManyToMany list
-    courses = student.enrolled_courses.all() # Note: enrolled_courses is a related_name in the Courses model, see courses/models.py
-    
+    courses = student.enrolled_courses.all()
     context = {'courses': courses}
     return render(request, 'Courses/templates/my-courses.html', context)
 
 """
 Added by Mark: Course Page
-Notes: Student mirror of a Course Details page. 
+Notes: Student mirror of a Course Details page.
 """
 @login_required
 @student_required
 def studentCourseMain(request, course_id):
     student = request.student_profile
-
-    # "get_object_or_404" is a Django function that retrieves a single object from a database 
-    # and if the object does not exist, raises an Http404 exception. 
-    # It's used everytime we need to load a page using a specific id (course, task, ubmission, feedback)
     course = get_object_or_404(Course, id=course_id, students=student)
-    
     context = {'course': course}
     return render(request, 'Courses/templates/student-course-main.html', context)
 
@@ -218,111 +206,347 @@ Added by Mark: Function that removes currently logged in student from a specific
 @student_required
 def leaveCourse(request, course_id):
     student = request.student_profile
-
     if request.method == "POST":
-        # get_object_or_404 with students=student ensures they can only leave a course they are actually in
         course = get_object_or_404(Course, id=course_id, students=student)
-        
-        # Remove the student from the ManyToMany list
-        course.students.remove(student) 
-        
-        # Redirect back to their course list
+        course.students.remove(student)
         return redirect('my-courses')
-    
     return HttpResponseBadRequest("Invalid Request")
 
 """ -------------------------- Task Views/Functions ------------------------------ """
 
 """
 Added by Mark: Tasks Page
-Notes: Page that displays all the tasks a student has. Can lead to Task Submission page.
+Notes: Page that displays all the tasks a student has.
 """
 @login_required
 @student_required
 def studentTasks(request):
     student = request.student_profile
-
-    # Get all tasks specifically assigned to this student
     tasks = Task.objects.filter(assigned_students=student).order_by('due_date')
-
-    # Package the tasks with their submission status so the HTML can display "Pending" vs "Submitted"
     task_data = []
     for t in tasks:
-        # Check if a submission already exists for this task + student combination
         submission = TaskSubmission.objects.filter(task=t, student=student).first()
         task_data.append({
             'task': t,
             'status': submission.status if submission else 'Not Submitted',
             'is_submitted': bool(submission)
         })
-
     context = {'task_data': task_data}
     return render(request, 'tasks/templates/student-tasks.html', context)
 
 """
 Added by Mark: Task Submission Page
-Notes: Page for adding a submission for a specific task. Uses a POST form to upload fields to the database.
+Notes: Page for adding a submission for a specific task.
 """
 @login_required
 @student_required
 def studentTaskSubmit(request, task_id):
     student = request.student_profile
-
     task = get_object_or_404(Task, id=task_id, assigned_students=student)
     submission = TaskSubmission.objects.filter(task=task, student=student).first()
 
     if request.method == "POST":
         submission_text = request.POST.get('submission_text', '')
         media_file = request.FILES.get('attached_file')
-        
-        # Keep the existing URL unless they upload a new file
         uploaded_file_url = submission.file_url if submission else ""
 
-        # Cloudinary Upload Logic (similar to register logic)
         if media_file:
             try:
-                # resource_type="auto" is REQUIRED for Cloudinary to accept videos!
                 upload_result = cloudinary.uploader.upload(
-                    media_file, 
+                    media_file,
                     folder="submission_files",
-                    resource_type="auto" 
+                    resource_type="auto"
                 )
                 uploaded_file_url = upload_result.get('secure_url')
                 print(f"Task Submit: Cloudinary Success: {uploaded_file_url}")
             except Exception as e:
                 print(f"Task Submit: Cloudinary Error: {e}")
-                # Note from Mark: Could add a messages.error here to tell the user it failed
 
         if submission:
-            # Update existing submission
             submission.submission_text = submission_text
-            if uploaded_file_url: 
+            if uploaded_file_url:
                 submission.file_url = uploaded_file_url
             submission.save()
         else:
-            # Create a brand new submission
             submission = TaskSubmission.objects.create(
                 task=task,
                 student=student,
                 submission_text=submission_text,
-                file_url=uploaded_file_url,  # Save the secure_url string!
+                file_url=uploaded_file_url,
                 status='pending'
             )
-            
+
         # Observer Pattern Implementation
         # -------------------------------------------------------------------
         subject = SubmissionSubject(submission)
         teacher_observer = SubmissionObserver() # Create observer
         subject.attach(teacher_observer)     # Attach
         subject.set_state('pending')         # Changes state and notifies
-        
+            
+        # Observer Pattern Implementation
+        # -------------------------------------------------------------------
+        subject = SubmissionSubject(submission)
+        teacher_observer = SubmissionObserver()
+        subject.attach(teacher_observer)
+        subject.set_state('pending')
+
         return redirect('student-tasks')
 
-    # Note from Mark: Context to be sent to page for Task data retrieval. If there's already a submission, retrieve 
-    # that data as well. It will be used in the above if condition for editing a submission or making a new one.
     context = {
         'task': task,
         'submission': submission
     }
-    
     return render(request, 'tasks/templates/student-task-submit.html', context)
+
+@login_required
+def student_feedback(request):
+
+    # Added by Matthew/Spooky: Retrieve all feedback where the current user is the receiver.
+    feedback_list = TaskFeedback.objects.filter(submission__student__user=request.user).order_by("-graded_at")
+    # Added by Matthew/Spooky: Count unread feedback items.
+    unread_count = feedback_list.filter(is_read=False).count()
+
+    # Added by Matthew/Spooky: Render the student feedback page with feedback data.
+    return render(request, "tasks/templates/student-feedback.html", {
+        "feedback_list": feedback_list,
+        "unread_count": unread_count
+    })
+
+
+@login_required
+@require_POST
+def mark_feedback_read(request, feedback_id):
+
+    # Added by Matthew/Spooky: Retrieve the feedback ensuring the logged in user is the receiver.
+    feedback = get_object_or_404(TaskFeedback, id=feedback_id, submission__student__user=request.user)
+
+    # Added by Matthew/Spooky: Mark feedback as read.
+    feedback.is_read = True
+
+    # Added by Matthew/Spooky: Save changes to the database.
+    feedback.save()
+
+    # Added by Matthew/Spooky: Return JSON response showing success.
+    return JsonResponse({"success": True, "feedback_id": str(feedback.id)})
+
+
+@login_required
+@require_POST
+def archive_feedback(request, feedback_id):
+
+    # Added by Matthew/Spooky: Retrieve feedback ensuring the logged in student owns it.
+    feedback = get_object_or_404(TaskFeedback, id=feedback_id, submission__student__user=request.user)
+
+    # Added by Matthew/Spooky: Mark feedback as archived for the receiver.
+    feedback.is_archived_for_receiver = True
+
+    # Added by Matthew/Spooky: Mark feedback as read.
+    feedback.is_read = True
+
+    # Added by Matthew/Spooky: Save changes to the database.
+    feedback.save()
+
+    # Added by Matthew/Spooky: Return JSON response showing success.
+    return JsonResponse({"success": True, "feedback_id": str(feedback.id)})
+
+# added by win516
+@login_required
+@student_required
+def Progress(request):
+    from django.utils import timezone
+    from courses.models import TaskFeedback
+
+    student = request.student_profile
+
+    # Get all courses this student is enrolled in
+    enrolled_courses = student.enrolled_courses.all()
+
+    course_data = []
+    total_completed_all = 0
+    total_tasks_all = 0
+    total_overdue_all = 0
+
+    for course in enrolled_courses:
+
+        # Total tasks assigned to this student in this course
+        total_tasks = Task.objects.filter(
+            course=course,
+            assigned_students=student
+        ).count()
+
+        # Completed = teacher reviewed the submission
+        completed = TaskSubmission.objects.filter(
+            task__course=course,
+            student=student,
+            status='reviewed'
+        ).count()
+
+        # Pending = submitted but not yet reviewed
+        pending = TaskSubmission.objects.filter(
+            task__course=course,
+            student=student,
+            status='pending'
+        ).count()
+
+        # Overdue = past due date and not reviewed
+        overdue = Task.objects.filter(
+            course=course,
+            assigned_students=student,
+            due_date__lt=timezone.now()
+        ).exclude(
+            id__in=TaskSubmission.objects.filter(
+                student=student,
+                status='reviewed'
+            ).values_list('task_id', flat=True)
+        ).count()
+
+        progress = int((completed / total_tasks) * 100) if total_tasks > 0 else 0
+
+        # build task list for timeline
+        tasks = Task.objects.filter(
+            course=course,
+            assigned_students=student
+        ).order_by('due_date')
+
+        task_list = []
+        for task in tasks:
+            submission = TaskSubmission.objects.filter(task=task, student=student).first()
+
+            if submission and submission.status == 'reviewed':
+                task_status = 'reviewed'
+                status_label = 'Completed'
+                status_color = 'success'
+            elif submission and submission.status == 'pending':
+                task_status = 'pending'
+                status_label = 'Pending Review'
+                status_color = 'warning'
+            elif task.due_date and task.due_date < timezone.now():
+                task_status = 'overdue'
+                status_label = 'Overdue'
+                status_color = 'danger'
+            else:
+                task_status = 'not_submitted'
+                status_label = 'Not Submitted'
+                status_color = 'secondary'
+
+            task_list.append({
+                "title": task.title,
+                "due_date": task.due_date.strftime("%b %d, %Y") if task.due_date else "No due date",
+                "status": task_status,
+                "status_label": status_label,
+                "status_color": status_color,
+            })
+
+        course_data.append({
+            "title": course.title or "Untitled",
+            "progress": progress,
+            "completed": completed,
+            "pending": pending,
+            "overdue": overdue,
+            "total": total_tasks,
+            "tasks": task_list,  
+        })
+
+        total_completed_all += completed
+        total_tasks_all += total_tasks
+        total_overdue_all += overdue
+
+    # Overall progress across all courses
+    overall_progress = int((total_completed_all / total_tasks_all) * 100) if total_tasks_all > 0 else 0
+
+    # Upcoming deadlines — tasks due in the next 7 days not yet reviewed
+    upcoming = Task.objects.filter(
+        assigned_students=student,
+        due_date__gte=timezone.now(),
+        due_date__lte=timezone.now() + timezone.timedelta(days=7)
+    ).exclude(
+        id__in=TaskSubmission.objects.filter(
+            student=student,
+            status='reviewed'
+        ).values_list('task_id', flat=True)
+    ).order_by('due_date')
+
+    upcoming_tasks = []
+    for task in upcoming:
+        days_left = (task.due_date - timezone.now()).days
+        upcoming_tasks.append({
+            "title": task.title,
+            "course": task.course.title if task.course.title else "Untitled",
+            "days_left": max(0, days_left),
+            "due_date": task.due_date,
+        })
+
+    # Recent feedback — last 5 reviewed submissions with feedback
+    recent_submissions = TaskSubmission.objects.filter(
+        student=student,
+        status='reviewed'
+    ).order_by('-id')[:5]
+
+    recent_feedback = []
+    for submission in recent_submissions:
+        feedback = TaskFeedback.objects.filter(submission=submission).first()
+        if feedback:
+            recent_feedback.append({
+                "task_title": submission.task.title,
+                "course": submission.task.course.title if submission.task.course.title else "Untitled",
+                "grade": feedback.grade,
+                "comments": feedback.comments,
+            })
+
+    stats = {
+        "total_courses": enrolled_courses.count(),
+        "overall_progress": overall_progress,
+        "total_completed": total_completed_all,
+        "total_overdue": total_overdue_all,
+    }
+
+    return render(request, 'StudentProgress.html', {
+        "courses": course_data,
+        "upcoming_tasks": upcoming_tasks,
+        "recent_feedback": recent_feedback,
+        "stats": stats,
+    })
+    
+""" --- Student Settings --- """
+@login_required
+@student_required
+def studentSettings(request):
+    student = request.student_profile
+    user = request.user
+
+    if request.method == "POST":
+
+        # Basic info
+        user.email = request.POST.get("email")
+        student.full_name = request.POST.get("full_name")
+        user.save()
+        student.save()
+
+        # Password fields
+        current_password = request.POST.get("current_password")
+        new_password = request.POST.get("new_password")
+        confirm_password = request.POST.get("confirm_password")
+
+        if new_password or confirm_password:
+
+            if not current_password:
+                messages.error(request, "Enter current password to change password")
+
+            elif not user.check_password(current_password):
+                messages.error(request, "Current password is incorrect")
+
+            elif new_password != confirm_password:
+                messages.error(request, "Passwords do not match")
+
+            else:
+                user.set_password(new_password)
+                user.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, "Password updated successfully")
+
+        else:
+            messages.success(request, "Settings updated successfully")
+
+        return redirect("student-settings")
+
+    return render(request, "Setting/templates/student-settings.html", {"user": user})
