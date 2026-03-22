@@ -391,17 +391,18 @@ def archive_feedback(request, feedback_id):
 
 
 @login_required
+@student_required
 def studentSettings(request):
-
+    student = request.student_profile
     user = request.user
 
     if request.method == "POST":
 
         # Basic info
-        user.username = request.POST.get("username")
-        user.first_name = request.POST.get("first_name")
-        user.last_name = request.POST.get("last_name")
+        user.email = request.POST.get("email")
+        student.full_name = request.POST.get("full_name")
         user.save()
+        student.save()
 
         # Password fields
         current_password = request.POST.get("current_password")
@@ -430,4 +431,4 @@ def studentSettings(request):
 
         return redirect("student-settings")
 
-    return render(request, "Setting/templates/Setting.html", {"user": user})
+    return render(request, "Setting/templates/student-settings.html", {"user": user})
