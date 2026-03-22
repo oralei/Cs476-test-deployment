@@ -63,9 +63,55 @@ def teacherHome(request):
 
     student_count = len(distinct_students)
 
-    # Added By Saim Munshi: Count of all tasks created across all this teacher's courses 
-
+    #Added By Saim Munshi: Count of all tasks created across all this teacher's courses 
     task_count = Task.objects.filter(course__teacher=teacher).count()
+
+    # Added By Saim Munshi: this is progress logic
+    # **Note: this was logic from waseera code***
+    courses = Course.objects.filter(teacher=teacher)
+    student_map = {}
+    now = timezone.now()
+
+    # **Note: this was logic from waseera code***
+    for course in courses:
+        for student in course.students.all():
+            sid = str(student.id)
+            
+            total_t = Task.objects.filter(course=course, assigned_students=student).count()
+            comp_t = TaskSubmission.objects.filter(task__course=course, student=student, status='reviewed').count()
+            
+            overdue_count = Task.objects.filter(
+                course=course, 
+                assigned_students=student, 
+                due_date__lt=now
+            ).exclude(
+                id__in=TaskSubmission.objects.filter(student=student, status='reviewed').values_list('task_id', flat=True)
+            ).count()
+
+            if sid not in student_map:
+                student_map[sid] = {"comp": 0, "over": 0, "total": 0}
+
+            student_map[sid]["comp"] += comp_t
+            student_map[sid]["over"] += overdue_count
+            student_map[sid]["total"] += total_t
+
+    # **Note: this was logic from waseera code***
+    needs_attention = 0
+    total_progress_sum = 0
+    for sid, s in student_map.items():
+        prog = int((s["comp"] / s["total"]) * 100) if s["total"] > 0 else 0
+        total_progress_sum += prog
+        if prog < 40 or s["over"] > 0:
+            needs_attention += 1
+
+    # **Note: this was logic from waseera code***
+    stats = {
+        "active_students": len(student_map),
+        "needs_attention": needs_attention,
+        "avg_completion": int(total_progress_sum / len(student_map)) if student_map else 0,
+    }
+   
+
     context = {
        'teacher': teacher_profile,
         'notifications': unread_notifications,
@@ -74,6 +120,7 @@ def teacherHome(request):
         'course_count': course_count,
         'student_count': student_count,
         'task_count': task_count,
+        'stats': stats, 
     }
    
     return render(request, 'TeacherHomePage/templates/TeacherHomePage.html', context)

@@ -13,8 +13,8 @@
         <div class="row g-4">
 
             <!----------------------------------------------------------------------------------------------------------->
-              <!-- Added By Saim Munshi: student profile  -->
-              <!-- Reused Code: profile wedget code reused with few db changes repurposed for students-->
+            <!-- Added By Saim Munshi: student profile  -->
+            <!-- Reused Code: profile wedget code reused with few db changes repurposed for students-->
             <div class="col-12 col-xl-8">
                 <div class="bg-white p-4 p-md-5 rounded-4 shadow-sm border" style="min-height: 350px;">
                     <h4 class="fw-bold mb-4">Student Profile Information</h4>
@@ -98,11 +98,30 @@
                 </div>
             </div>
             <!----------------------------------------------------------------------------------------------------------->
-             <!-- Added By Saim Munshi: student overview  -->
-              <!-- Reused Code: from Mentors just repurposed for students-->
+            <!-- Added By Saim Munshi: student overview  -->
+            <!-- Reused Code: from Mentors just repurposed for students-->
             <div class="col-12 col-xl-7">
                 <div class="bg-white p-4 p-md-5 rounded-4 shadow-sm border" style="min-height: 450px;">
-                    <h4 class="fw-bold mb-4">Student Overview:</h4>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="fw-bold mb-0">Learning Progress:</h4>
+                        <span
+                            class="badge rounded-pill {% if status == 'behind' %}bg-danger{% else %}bg-success{% endif %} px-3 py-2">
+                            {{ status|upper }}
+                        </span>
+                    </div>
+
+                    <div class="mb-5">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted fw-bold">Overall Completion</span>
+                            <span class="fw-bold text-primary">{{ progress }}%</span>
+                        </div>
+                        <div class="progress rounded-pill" style="height: 15px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated {% if status == 'behind' %}bg-warning{% else %}bg-success{% endif %}"
+                                role="progressbar" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}"
+                                aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="row g-3 mb-5">
                         <div class="col-4">
@@ -115,17 +134,17 @@
 
                         <div class="col-4">
                             <div class="text-center p-3 border rounded-3 bg-light">
-                                <i class="bi bi-people-fill text-success fs-3"></i>
-                                <div class="h4 fw-bold mt-2 mb-0">{{ mentor_count }}</div>
-                                <div class="text-muted small">Mentors</div>
+                                <i class="bi bi-clipboard-check-fill text-success fs-3"></i>
+                                <div class="h4 fw-bold mt-2 mb-0">{{ completed }}</div>
+                                <div class="text-muted small">Completed</div>
                             </div>
                         </div>
 
                         <div class="col-4">
                             <div class="text-center p-3 border rounded-3 bg-light">
-                                <i class="bi bi-clipboard-check-fill text-warning fs-3"></i>
-                                <div class="h4 fw-bold mt-2 mb-0">{{ task_count }}</div>
-                                <div class="text-muted small">Tasks</div>
+                                <i class="bi bi-exclamation-octagon-fill text-danger fs-3"></i>
+                                <div class="h4 fw-bold mt-2 mb-0">{{ overdue }}</div>
+                                <div class="text-muted small">Overdue</div>
                             </div>
                         </div>
                     </div>
@@ -187,7 +206,7 @@
                     <!-- -------------------------------------------------------------------- -->
                 </div>
             </div>
-             <!----------------------------------------------------------------------------------------------------------->
+            <!----------------------------------------------------------------------------------------------------------->
         </div>
     </div>
 </main>

@@ -27,7 +27,7 @@
                             <img src="{{ teacher.profile_image.url }}" class="rounded-circle img-fluid"
                                 style="max-width:120px;">
                             {% else %}
-                            <i class="bi bi-person-circle" style="font-size: 80px;"></i> {% endif %} 
+                            <i class="bi bi-person-circle" style="font-size: 80px;"></i> {% endif %}
                         </div>
 
                         <!-- Added By Saim Munshi: Mentor profile info -->
@@ -128,6 +128,31 @@
                                 <i class="bi bi-clipboard-check-fill text-warning fs-3"></i>
                                 <div class="h4 fw-bold mt-2 mb-0">{{ task_count }}</div>
                                 <div class="text-muted small">Tasks</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-5">
+                        <div class="col-4">
+                            <div class="text-center p-3 border rounded-3 bg-light">
+                                <i class="bi bi-people text-primary fs-3"></i>
+                                <div class="h4 fw-bold mt-2 mb-0">{{ stats.active_students }}</div>
+                                <div class="text-muted small">Active Students</div>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="text-center p-3 border rounded-3 bg-light">
+                                <i class="bi bi-graph-up-arrow text-success fs-3"></i>
+                                <div class="h4 fw-bold mt-2 mb-0">{{ stats.avg_completion }}%</div>
+                                <div class="text-muted small">Average Progress</div>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="text-center p-3 border rounded-3 bg-light">
+                                <i class="bi bi-exclamation-triangle-fill text-danger fs-3"></i>
+                                <div class="h4 fw-bold mt-2 mb-0">{{ stats.needs_attention }}</div>
+                                <div class="text-muted small">Needs Attention</div>
                             </div>
                         </div>
                     </div>
