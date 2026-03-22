@@ -41,6 +41,7 @@ Purpose: Connects to the Teacher Home dashboard
 def teacherHome(request):  
     user = request.user 
     teacher = request.teacher_profile
+    teacher_profile = Teacher.objects.get(user=request.user)
     print(f"Logged in User Email: {user.email} - Teacher Profile Name: {repr(teacher.full_name)}")
     
     # Fetch user's unread notifications from the database
@@ -60,7 +61,7 @@ def teacherHome(request):
 
     task_count = Task.objects.filter(course__teacher=teacher).count()
     context = {
-       'teacher': teacher,
+       'teacher': teacher_profile,
         'notifications': unread_notifications,
         'notification_count': unread_notifications.count(),
         'upcoming_tasks': upcoming_tasks,
@@ -259,7 +260,7 @@ def Create_Task(request):
         # Added By Saim Munshi: Create Tasks Notification:
         Notification.objects.create(
             user=request.user,
-            notification_type=f"Create Task",
+            notification_type=f"create_task",
             message=f"Task '{title}' has been successfully created!"
         )
         if student_ids:
@@ -281,6 +282,7 @@ def Create_Task(request):
         'course_students_map': course_students_map 
     }
     return render(request, 'tasks/templates/create-task.html', context)
+
 
 """
 Added by Mark: View task Submissions Page
@@ -457,22 +459,38 @@ def deleteCourse(request, course_id):
 @teacher_required
 def editTask(request, task_id): 
     task = get_object_or_404(Task, id=task_id)
-    # Filter courses to only those owned by this teacher
-    courses = Course.objects.filter(teacher=request.teacher_profile) 
-    students = []
+    teacher_profile = request.teacher_profile
+    courses = Course.objects.filter(teacher=teacher_profile) 
+
+    # Added By Saim Munshi: Note: This is from the Create Task creates empty dictionary to store student course they belong to  
+    course_students_map = {}
+    #  Added By Saim Munshi: Note: this than look to dictonary with course idllist of student and relevent 
+    for course in courses:
+        course_students_map[str(course.id)] = [
+            {'id': str(s.id), 'full_name': s.full_name} 
+            for s in course.students.all()
+        ]
+
+    # Added By Saim Munshi: gets currently assigned students lined to this task
+    assigned_student_ids = [str(sid) for sid in task.assigned_students.values_list('id', flat=True)]
+
+    # Added By Saim Munshi: check save button clicked and gets the new title description start etc typed into the form updated the old data
     if request.method == "POST":
         task.title = request.POST.get("title")
         task.description = request.POST.get("description") 
         task.start_date = request.POST.get("start_date") 
         task.due_date = request.POST.get("due_date") 
         
+        #Added by Saim Munshi: this is to check which course was selected in the dropdown menu
         course_id = request.POST.get("course")
         if course_id:
-            course = get_object_or_404(Course, id=course_id, teacher=request.teacher_profile)
+            course = get_object_or_404(Course, id=course_id, teacher=teacher_profile)
             task.course = course
-        
+
+        #Added by Saim Munshi: saave task info to database
         task.save()
         
+        #Added by Saim Munshi: Update many to many relationship and all selected student in the list
         student_ids = request.POST.getlist('students')
         task.assigned_students.set(student_ids) 
         
@@ -481,18 +499,17 @@ def editTask(request, task_id):
             notification_type="Edit task",
             message=f"Task '{task.title}' has been successfully updated!"
         )
-        return redirect("teacher-course-main", course_id=task.course.id)
 
-        if task.course:
-            students = task.course.students.all()
+        #Added By Saim Munshi: sends the teacher back to the main course page once the edit is finished
+        return redirect("teacher-course-main", course_id=str(task.course.id))
 
     context = {
         "task": task,
         "courses": courses,
-        "students": students,
+        "course_students_map": course_students_map, 
+        "assigned_student_ids": assigned_student_ids,
     }
-
-    return render(request, "tasks/templates/create-task.html", context)
+    return render(request, 'tasks/templates/create-task.html', context)
 
 # Added By Saim Munshi: Delete task logic
 @login_required

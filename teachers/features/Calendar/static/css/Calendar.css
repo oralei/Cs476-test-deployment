@@ -10,8 +10,8 @@
   --radius: 12px;
 
   --assignment: #38448f; 
-  --quiz: #f59e0b;     
-  --project: #6d28f8;    
+  --quiz: #b95043;     
+  --project: #725dac;    
   --meeting: #afc4fb;   
 }
 
@@ -46,7 +46,6 @@ a{
   background: var(--card);
   border: 1px solid var(--stroke);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
 }
 
 /* Header card */
@@ -167,6 +166,7 @@ select:focus{
   font-weight: 650;
   text-transform: lowercase;
   box-shadow: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 /* For the  hover*/
@@ -180,15 +180,15 @@ select:focus{
 }
 
 .fc .fc-button:focus{
-  box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+  box-shadow: 0 0 0 3px rgba(59, 93, 246, 0.12);
 }
 
 /* right-side view buttons (month/week/list)  */
 .fc .fc-toolbar-chunk:last-child .fc-button-group{
   border-radius: 8px;
   overflow: hidden;
-  border: 1px solid #587fd4;
-  background: #007bff;
+  border: 1px solid #ffffff;
+  background: #0b2469;
 }
 
 .fc .fc-toolbar-chunk:last-child .fc-button{

@@ -150,6 +150,7 @@
 
     </div>
     {{ course_students_map|json_script:"course-data" }}
+    {{ assigned_student_ids|json_script:"assigned-students-data" }}
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

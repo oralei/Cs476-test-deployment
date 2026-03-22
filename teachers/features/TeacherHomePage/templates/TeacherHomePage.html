@@ -23,8 +23,11 @@
 
                         <!-- Added By Saim Munshi -->
                         <div class="col-12 col-md-3 text-center mb-3 mb-md-0">
-                            <img src="{% static 'images/default-avatar.png' %}" class="rounded-circle img-fluid"
+                            {% if teacher.profile_image %}
+                            <img src="{{ teacher.profile_image.url }}" class="rounded-circle img-fluid"
                                 style="max-width:120px;">
+                            {% else %}
+                            <i class="bi bi-person-circle" style="font-size: 80px;"></i> {% endif %} 
                         </div>
 
                         <!-- Added By Saim Munshi: Mentor profile info -->
@@ -32,8 +35,9 @@
 
                             <h5 class="fw-bold mb-2">{{ teacher.full_name }}</h5>
 
+
                             <p class="mb-1">
-                                <strong>Email:</strong> {{ teacher.email }}
+                                <strong>Email:</strong> {{ teacher.user.email }}
                             </p>
 
                             <p class="mb-1">
@@ -80,7 +84,7 @@
                                 <form action="{% url 'teacher-notif-read' notif.id %}" method="POST" style="margin: 0;">
                                     {% csrf_token %}
                                     <button type="submit"
-                                        style="background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                                        style="background-color: #0b2469; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
                                         Mark as Read ✓
                                     </button>
                                 </form>
@@ -100,12 +104,12 @@
             <!--Added By Saim Munshi: This is overview of mentors task course students-->
             <div class="col-12 col-xl-7">
                 <div class="bg-white p-4 p-md-5 rounded-4 shadow-sm border" style="min-height: 450px;">
-                    <h4 class="fw-bold mb-4">Overview</h4>
+                    <h4 class="fw-bold mb-4">Mentor Overview:</h4>
 
                     <div class="row g-3 mb-5">
                         <div class="col-4">
                             <div class="text-center p-3 border rounded-3 bg-light">
-                                <i class="bi bi-book-fill text-primary fs-3"></i>
+                                <i class="bi bi-book-fill fs-3" id="book-icon"></i>
                                 <div class="h4 fw-bold mt-2 mb-0">{{ course_count }}</div>
                                 <div class="text-muted small">Courses</div>
                             </div>
@@ -208,7 +212,7 @@
             </div>
             <!-- ---------------------------------------------------------------------------------------------->
 
-        
+
         </div>
 
     </div>
