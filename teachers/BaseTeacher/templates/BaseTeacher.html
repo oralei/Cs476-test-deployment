@@ -62,9 +62,13 @@
                             class="nav-link {% if request.resolver_match.url_name == 'calendar' %}active{% endif %}">
                             <i class="bi bi-calendar3 me-3"></i>Calendar
                         </a>
+                        <a href="{% url 'teacher-settings' %}"
+                            class="nav-link {% if request.resolver_match.url_name == 'teacher-settings' %}active{% endif %}">
+                            <i class="bi bi-gear me-3 me-3"></i>Setting
+                        </a>
 
                         <hr>
-                        <a href="#" class="nav-link text-secondary"><i class="bi bi-gear me-3"></i>Settings</a>
+              
                         <a href="{% url 'logout' %}" class="nav-link text-danger"><i
                                 class="bi bi-box-arrow-right me-3"></i>Log out</a>
             </nav>
@@ -111,10 +115,15 @@
                     class="nav-link {% if request.resolver_match.url_name == 'calendar' %}active{% endif %}">
                     <i class="bi bi-calendar3"></i> Calendar
                 </a>
+                <hr>
+                <a href="{% url 'teacher-settings' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'teacher-settings' %}active{% endif %}">
+                    <i class="bi bi-gear me-3 me-3"></i>Setting
+                </a>
             </nav>
 
             <div class="border-top pt-3">
-                <a href="{% url 'teacher-settings' %}">Settings</a>
+
                 <a href="{% url 'logout' %}" class="nav-link text-danger">
                     <i class="bi bi-box-arrow-right"></i> Log out
                 </a>
