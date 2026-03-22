@@ -10,10 +10,14 @@ from django.http import HttpResponseForbidden
 from functools import wraps
 from datetime import date
 from django.db.models import Count
+import cloudinary
+import cloudinary.uploader
 
 #from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
 
 # Added by Mark: Helper function to check teacher profile. 
 # It checks both if the user accessing is a user of type teacher 
@@ -529,3 +533,47 @@ def deleteTask(request, task_id):
         return redirect('teacher-course-main', course_id=course_id)
     
     return redirect('teacher-course-main', course_id=course_id)
+
+@login_required
+@teacher_required
+def teacherSettings(request):
+    teacher = request.teacher_profile
+    user = request.user
+
+    if request.method == "POST":
+
+        # Basic info
+        # Basic info
+        user.email = request.POST.get("email")
+        teacher.full_name = request.POST.get("full_name")
+        user.save()
+        teacher.save()
+
+        # Password fields
+        current_password = request.POST.get("current_password")
+        new_password = request.POST.get("new_password")
+        confirm_password = request.POST.get("confirm_password")
+
+        if new_password or confirm_password:
+
+            if not current_password:
+                messages.error(request, "Enter current password to change password")
+
+            elif not user.check_password(current_password):
+                messages.error(request, "Current password is incorrect")
+
+            elif new_password != confirm_password:
+                messages.error(request, "Passwords do not match")
+
+            else:
+                user.set_password(new_password)
+                user.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, "Password updated successfully")
+
+        else:
+            messages.success(request, "Settings updated successfully")
+
+        return redirect("teacher-settings")
+
+    return render(request, "Setting/templates/teacher-settings.html", {"user": user})
