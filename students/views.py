@@ -172,7 +172,15 @@ def joinCourse(request, course_id):
         course = get_object_or_404(Course, id=course_id)
         if course.students.count() < course.max_students:
             course.students.add(student)
+        #Added By Saim Munshi: This creates a notfication when the student joins the course 
+        #Note: Code reused from mentor 
+        Notification.objects.create(
+                user=request.user,
+                notification_type="Course Enrollment",
+                message=f"You have successfully enrolled in {course.title}!"
+            )
         return redirect('my-courses')
+        
     return HttpResponseBadRequest("Invalid Request")
 
 """
@@ -206,10 +214,23 @@ Added by Mark: Function that removes currently logged in student from a specific
 @student_required
 def leaveCourse(request, course_id):
     student = request.student_profile
+
     if request.method == "POST":
+        # get_object_or_404 with students=student ensures they can only leave a course they are actually in
         course = get_object_or_404(Course, id=course_id, students=student)
-        course.students.remove(student)
+        
+        # Remove the student from the ManyToMany list
+        course.students.remove(student) 
+        #Added By Saim Munshi: This creates a notfication when the student leaves the course 
+        #Note: Code reused from mentor 
+        Notification.objects.create(
+            user=request.user,
+            notification_type="Course Leave",
+            message=f"You have left the course: {course.title}."
+        )
+        # Redirect back to their course list
         return redirect('my-courses')
+    
     return HttpResponseBadRequest("Invalid Request")
 
 """ -------------------------- Task Views/Functions ------------------------------ """
@@ -275,7 +296,25 @@ def studentTaskSubmit(request, task_id):
                 file_url=uploaded_file_url,
                 status='pending'
             )
+        
+        #Added By Saim Munshi: This creates a notfication when the student submits task
+        #Note: Code reused from mentor     
+        Notification.objects.create(
+            user=request.user,
+            notification_type="Task Submission",
+            message=f"You have successfully  your work for '{task.title}'."
+        ) 
 
+
+        #Added By Saim Munshi: This creates a notfication for Teacher
+        #Note: Code reused from mentor         
+        teacher_user = task.course.teacher.user 
+        Notification.objects.create(
+            user=teacher_user,
+            notification_type="Student Task Submission",
+            message=f"New submission from {student.full_name} for task: '{task.title}'."
+        )   
+        # Observer Pattern Implementation
         # Observer Pattern Implementation
         # -------------------------------------------------------------------
         subject = SubmissionSubject(submission)

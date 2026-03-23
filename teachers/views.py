@@ -95,7 +95,7 @@ def teacherHome(request):
             student_map[sid]["comp"] += comp_t
             student_map[sid]["over"] += overdue_count
             student_map[sid]["total"] += total_t
-            
+
     # Added By Saim Munshi: this is progress logic
     # **Note: this was logic from waseera code***
     needs_attention = 0
@@ -281,7 +281,7 @@ def Create_Task(request):
         # Added By Saim Munshi: Create Tasks Notification
         Notification.objects.create(
             user=request.user,
-            notification_type=f"create_task",
+            notification_type=f"Create Task",
             message=f"Task '{title}' has been successfully created!"
         )
         if student_ids:
