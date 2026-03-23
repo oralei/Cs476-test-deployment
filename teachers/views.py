@@ -13,6 +13,8 @@ from django.db.models import Count
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.utils import timezone #added by win516
+import cloudinary
+import cloudinary.uploader
 
 # Create your views here.
 
