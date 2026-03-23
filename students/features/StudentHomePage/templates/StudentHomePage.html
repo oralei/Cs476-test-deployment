@@ -99,43 +99,50 @@
             </div>
             <!----------------------------------------------------------------------------------------------------------->
             <!-- Added By Saim Munshi: student overview  -->
-            <!-- Reused Code: from Mentors just repurposed for students-->
+              <!-- Reused Code: from Mentors just repurposed for students-->
             <div class="col-12 col-xl-7">
                 <div class="bg-white p-4 p-md-5 rounded-4 shadow-sm border" style="min-height: 450px;">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h4 class="fw-bold mb-0">Learning Progress:</h4>
-                        <span
-                            class="badge rounded-pill {% if status == 'behind' %}bg-danger{% else %}bg-success{% endif %} px-3 py-2">
-                            {{ status|upper }}
-                        </span>
-                    </div>
-
-                    <div class="mb-5">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted fw-bold">Overall Completion</span>
-                            <span class="fw-bold text-primary">{{ progress }}%</span>
-                        </div>
-                        <div class="progress rounded-pill" style="height: 15px;">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated {% if status == 'behind' %}bg-warning{% else %}bg-success{% endif %}"
-                                role="progressbar" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}"
-                                aria-valuemin="0" aria-valuemax="100">
-                            </div>
-                        </div>
-                    </div>
+                    <h4 class="fw-bold mb-4">Student Overview:</h4>
 
                     <div class="row g-3 mb-5">
                         <div class="col-4">
                             <div class="text-center p-3 border rounded-3 bg-light">
                                 <i class="bi bi-book-fill text-primary fs-3"></i>
-                                <div class="h4 fw-bold mt-2 mb-0">{{ course_count }}</div>
+                                <div class="h4 fw-bold mt-2 mb-0">{{ stats.total_courses }}</div>
                                 <div class="text-muted small">Courses</div>
                             </div>
                         </div>
 
                         <div class="col-4">
                             <div class="text-center p-3 border rounded-3 bg-light">
+                                <i class="bi bi-people-fill text-success fs-3"></i>
+                                <div class="h4 fw-bold mt-2 mb-0">{{ mentor_count }}</div>
+                                <div class="text-muted small">Mentors</div>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="text-center p-3 border rounded-3 bg-light">
+                                <i class="bi bi-clipboard-check-fill text-warning fs-3"></i>
+                                <div class="h4 fw-bold mt-2 mb-0">{{ stats.total_tasks_all }}</div>
+                                <div class="text-muted small">Tasks</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-5">
+                         <div class="col-4">
+                            <div class="text-center p-3 border rounded-3 bg-light">
+                                <i class="bi bi-book-fill text-primary fs-3"></i>
+                                <div class="h4 fw-bold mt-2 mb-0">{{ stats.overall_progress }}%</div>
+                                <div class="text-muted small">Progress</div>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="text-center p-3 border rounded-3 bg-light">
                                 <i class="bi bi-clipboard-check-fill text-success fs-3"></i>
-                                <div class="h4 fw-bold mt-2 mb-0">{{ completed }}</div>
+                                <div class="h4 fw-bold mt-2 mb-0">{{ stats.total_completed }}</div>
                                 <div class="text-muted small">Completed</div>
                             </div>
                         </div>
@@ -143,7 +150,7 @@
                         <div class="col-4">
                             <div class="text-center p-3 border rounded-3 bg-light">
                                 <i class="bi bi-exclamation-octagon-fill text-danger fs-3"></i>
-                                <div class="h4 fw-bold mt-2 mb-0">{{ overdue }}</div>
+                                <div class="h4 fw-bold mt-2 mb-0">{{ stats.total_overdue }}</div>
                                 <div class="text-muted small">Overdue</div>
                             </div>
                         </div>
@@ -155,8 +162,8 @@
 
             <!-- Added By Saim Munshi: student upcoming task  -->
             <!-- Reused Code: from upcoming task wedget from Mentors just repurposed for students with submit button-->
-            <div class="col-12 col-xl-5">
-                <div class="bg-white p-4 rounded-4 shadow-sm border h-100 d-flex flex-column">
+           <div class="col-12 col-xl-5">
+                <div class="bg-white p-4 rounded-4 shadow-sm border h-250 d-flex flex-column">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h4 class="fw-bold mb-0">Upcoming Tasks</h4>
                         <a href="{% url 'calendar' %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
@@ -164,7 +171,7 @@
                         </a>
                     </div>
 
-                    <div class="task-list-container" style="max-height: 300px; overflow-y: auto;">
+                    <div class="task-list-container" style="max-height: 511px; overflow-y: auto;">
                         {% for task in upcoming_tasks %}
                         <div class="existing-container">
                             <div class="existing-container-card p-5 mb-3 border shadow-sm rounded-4">

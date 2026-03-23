@@ -727,3 +727,5 @@ def teacherSettings(request):
         return redirect("teacher-settings")
 
     return render(request, "Setting/templates/teacher-settings.html", {"user": user})
+
+
