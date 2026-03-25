@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     {% block extra_css %}{% endblock %}
     <link rel="stylesheet" href="{% static 'css/BaseTeacher.css' %}">
+    <link rel="icon" href="{% static 'images/favicon.ico' %}">
 </head>
 
 <body>
@@ -163,10 +164,13 @@
                     </div>
                     <div class="d-flex justify-content-between align-items-center">
                         <small class="text-secondary">Sent by System</small>
-                        <div class="form-check">
-                            <button class="btn btn-primary btn-sm remove-btn"
-                                data-id="{{ notification.id }}">Remove</button>
-                        </div>
+                        <form action="{% url 'teacher-notif-read' notification.id %}" method="POST" style="margin: 0;">
+                            {% csrf_token %}
+                            <button type="submit"
+                                style="background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                                Remove
+                            </button>
+                        </form>
                     </div>
                 </div>
                 {% empty %}

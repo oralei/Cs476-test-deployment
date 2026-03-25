@@ -357,18 +357,13 @@ def studentTaskSubmit(request, task_id):
         Notification.objects.create(
             user=request.user,
             notification_type="Task Submission",
-            message=f"You have successfully  your work for '{task.title}'."
+            message=f"You have successfully submitted your work for '{task.title}'."
         ) 
 
 
-        #Added By Saim Munshi: This creates a notfication for Teacher
-        #Note: Code reused from mentor         
-        teacher_user = task.course.teacher.user 
-        Notification.objects.create(
-            user=teacher_user,
-            notification_type="Student Task Submission",
-            message=f"New submission from {student.full_name} for task: '{task.title}'."
-        )   
+        # Added By Saim Munshi: This creates a notfication for Teacher
+        # Removed by Mark: Notification is already created through Observer Pattern
+        
         # Observer Pattern Implementation
         # -------------------------------------------------------------------
         subject = SubmissionSubject(submission)

@@ -24,10 +24,10 @@
                         <div class="col-12 col-md-3 text-center mb-3 mb-md-0">
                             {% if student.profile_image_url %}
                             <img src="{{ student.profile_image_url }}" alt="Profile" class="rounded-circle"
-                                style="width: 80px; height: 80px; object-fit: cover;">
+                                style="width: 120px; height: 120px; object-fit: cover;">
                             {% else %}
                             <img src="{% static 'images/default-profile.png' %}" alt="Profile" class="rounded-circle"
-                                style="width: 80px; height: 80px; object-fit: cover;">
+                                style="width: 120px; height: 120px; object-fit: cover;">
                             {% endif %}
                         </div>
 
@@ -91,10 +91,10 @@
                             {% endfor %}
                         </div>
                     </div>
-                    <!-- Link to the future History page -->
+                    <!-- Link to the future History page 
                     <div style="text-align: right; margin-top: 10px;">
                         <a href="#">View Notification History</a>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <!----------------------------------------------------------------------------------------------------------->
