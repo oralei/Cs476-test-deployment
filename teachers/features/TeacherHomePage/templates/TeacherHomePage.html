@@ -27,7 +27,9 @@
                             <img src="{{ teacher.profile_image_url }}" class="rounded-circle img-fluid"
                                 style="max-width:120px;">
                             {% else %}
-                            <i class="bi bi-person-circle" style="font-size: 80px;"></i> {% endif %}
+                            <img src="{% static 'images/default-profile.jpg' %}" alt="Profile" class="rounded-circle"
+                                style="width: 120px; height: 120px; object-fit: cover;">
+                            {% endif %}
                         </div>
 
                         <!-- Added By Saim Munshi: Mentor profile info -->
@@ -84,7 +86,7 @@
                                 <form action="{% url 'teacher-notif-read' notif.id %}" method="POST" style="margin: 0;">
                                     {% csrf_token %}
                                     <button type="submit"
-                                        style="background-color: #0b2469; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                                        style="background-color: #0b2469; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; width: 100px">
                                         Mark as Read ✓
                                     </button>
                                 </form>
