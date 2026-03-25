@@ -5,6 +5,33 @@
 from abc import ABC, abstractmethod
 from courses.models import Notification
 
+# --------- Added for acceptance testing ----------
+import time
+from functools import wraps 
+def measure_performance(max_ms_allowed):
+    """
+    Decorator to measure function execution time and print it to the console.
+    """
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            start = time.perf_counter()
+            result = func(*args, **kwargs)
+            end = time.perf_counter()
+            
+            duration_ms = (end - start) * 1000
+            status = "PASS" if duration_ms <= max_ms_allowed else "FAIL"
+            
+            print(f"\n--- PERFORMANCE TEST [{status}] ---")
+            print(f"Function: {func.__name__}")
+            print(f"Time Taken: {duration_ms:.2f} ms")
+            print(f"Threshold:  {max_ms_allowed} ms")
+            print("----------------------------------\n")
+            
+            return result
+        return wrapper
+    return decorator
+
 
 """
 <<Interface>> Subject
@@ -57,6 +84,7 @@ class SubmissionSubject(Subject):
             observer.update(self)
 
     # Getter method for Pull Strategy
+    @measure_performance(max_ms_allowed=200) # For acceptance testing
     def get_state(self):
         return {
             'status': self._state,

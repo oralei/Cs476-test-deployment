@@ -366,7 +366,15 @@ Notes: A page for giving feedback on a specific task.
 @teacher_required
 def teacherFeedback(request, submission_id):
     current_teacher = request.teacher_profile
-    submission = get_object_or_404(TaskSubmission, id=submission_id, task__course__teacher=current_teacher)
+    # Before optimization:
+    # submission = get_object_or_404(TaskSubmission, id=submission_id, task__course__teacher=current_teacher)
+
+    # After optimization: (Tell Django to pre-fetch the task, course, teacher, and student in one go)
+    submission = get_object_or_404(
+        TaskSubmission.objects.select_related('task__course__teacher', 'student'), 
+        id=submission_id, 
+        task__course__teacher=current_teacher
+    )
     feedback = TaskFeedback.objects.filter(submission=submission).first()
     if request.method == "POST":
         grade = request.POST.get('grade')

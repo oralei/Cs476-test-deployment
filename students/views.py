@@ -370,19 +370,11 @@ def studentTaskSubmit(request, task_id):
             message=f"New submission from {student.full_name} for task: '{task.title}'."
         )   
         # Observer Pattern Implementation
-        # Observer Pattern Implementation
         # -------------------------------------------------------------------
         subject = SubmissionSubject(submission)
         teacher_observer = SubmissionObserver() # Create observer
         subject.attach(teacher_observer)     # Attach
         subject.set_state('pending')         # Changes state and notifies
-            
-        # Observer Pattern Implementation
-        # -------------------------------------------------------------------
-        subject = SubmissionSubject(submission)
-        teacher_observer = SubmissionObserver()
-        subject.attach(teacher_observer)
-        subject.set_state('pending')
 
         return redirect('student-tasks')
 
