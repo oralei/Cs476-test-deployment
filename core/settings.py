@@ -189,6 +189,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
 
 STATICFILES_DIRS = [
 
+    # Added by Mark: For site favicon
+    os.path.join(BASE_DIR, 'static'),
+
     ###### Users App Connection #########
     os.path.join(BASE_DIR, 'users/SignInPage/static'),
     os.path.join(BASE_DIR, 'users/MainHome/static'),

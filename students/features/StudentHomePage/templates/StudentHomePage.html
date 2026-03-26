@@ -24,10 +24,10 @@
                         <div class="col-12 col-md-3 text-center mb-3 mb-md-0">
                             {% if student.profile_image_url %}
                             <img src="{{ student.profile_image_url }}" alt="Profile" class="rounded-circle"
-                                style="width: 80px; height: 80px; object-fit: cover;">
+                                style="width: 120px; height: 120px; object-fit: cover;">
                             {% else %}
-                            <img src="{% static 'images/default-profile.png' %}" alt="Profile" class="rounded-circle"
-                                style="width: 80px; height: 80px; object-fit: cover;">
+                            <img src="{% static 'images/default-profile.jpg' %}" alt="Profile" class="rounded-circle"
+                                style="width: 120px; height: 120px; object-fit: cover;">
                             {% endif %}
                         </div>
 
@@ -44,7 +44,7 @@
 
                         <!-- Added By Saim Munshi: edit profile button -->
                         <div class="col-12 col-md-3 text-md-end mt-3 mt-md-0">
-                            <a href="" class="btn btn-primary">
+                            <a href="{% url 'student-settings' %}" class="btn btn-primary">
                                 Edit Profile
                             </a>
                         </div>
@@ -80,7 +80,7 @@
                                 <form action="{% url 'student-notif-read' notif.id %}" method="POST" style="margin: 0;">
                                     {% csrf_token %}
                                     <button type="submit"
-                                        style="background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                                        style="background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; width: 100px">
                                         Mark as Read ✓
                                     </button>
                                 </form>
@@ -91,10 +91,10 @@
                             {% endfor %}
                         </div>
                     </div>
-                    <!-- Link to the future History page -->
+                    <!-- Link to the future History page 
                     <div style="text-align: right; margin-top: 10px;">
                         <a href="#">View Notification History</a>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <!----------------------------------------------------------------------------------------------------------->

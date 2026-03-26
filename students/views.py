@@ -357,32 +357,19 @@ def studentTaskSubmit(request, task_id):
         Notification.objects.create(
             user=request.user,
             notification_type="Task Submission",
-            message=f"You have successfully  your work for '{task.title}'."
+            message=f"You have successfully submitted your work for '{task.title}'."
         ) 
 
 
-        #Added By Saim Munshi: This creates a notfication for Teacher
-        #Note: Code reused from mentor         
-        teacher_user = task.course.teacher.user 
-        Notification.objects.create(
-            user=teacher_user,
-            notification_type="Student Task Submission",
-            message=f"New submission from {student.full_name} for task: '{task.title}'."
-        )   
-        # Observer Pattern Implementation
+        # Added By Saim Munshi: This creates a notfication for Teacher
+        # Removed by Mark: Notification is already created through Observer Pattern
+        
         # Observer Pattern Implementation
         # -------------------------------------------------------------------
         subject = SubmissionSubject(submission)
         teacher_observer = SubmissionObserver() # Create observer
         subject.attach(teacher_observer)     # Attach
         subject.set_state('pending')         # Changes state and notifies
-            
-        # Observer Pattern Implementation
-        # -------------------------------------------------------------------
-        subject = SubmissionSubject(submission)
-        teacher_observer = SubmissionObserver()
-        subject.attach(teacher_observer)
-        subject.set_state('pending')
 
         return redirect('student-tasks')
 
@@ -601,3 +588,48 @@ def Progress(request):
         "stats": stats,
     })
     
+""" --- Student Settings --- """
+
+# Added by Stephen:
+@login_required
+@student_required
+def studentSettings(request):
+    student = request.student_profile
+    user = request.user
+
+    if request.method == "POST":
+
+        # Basic info
+        user.email = request.POST.get("email")
+        student.full_name = request.POST.get("full_name")
+        user.save()
+        student.save()
+
+        # Password fields
+        current_password = request.POST.get("current_password")
+        new_password = request.POST.get("new_password")
+        confirm_password = request.POST.get("confirm_password")
+
+        if new_password or confirm_password:
+
+            if not current_password:
+                messages.error(request, "Enter current password to change password")
+
+            elif not user.check_password(current_password):
+                messages.error(request, "Current password is incorrect")
+
+            elif new_password != confirm_password:
+                messages.error(request, "Passwords do not match")
+
+            else:
+                user.set_password(new_password)
+                user.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, "Password updated successfully")
+
+        else:
+            messages.success(request, "Settings updated successfully")
+
+        return redirect("student-settings")
+
+    return render(request, "Setting/templates/student-settings.html", {"user": user})
