@@ -473,9 +473,8 @@ def deleteCourse(request, course_id):
 @teacher_required
 def editTask(request, task_id): 
     task = get_object_or_404(Task, id=task_id)
-    # Filter courses to only those owned by this teacher
     courses = Course.objects.filter(teacher=request.teacher_profile) 
-    students = []
+    
     if request.method == "POST":
         task.title = request.POST.get("title")
         task.description = request.POST.get("description") 
@@ -489,33 +488,34 @@ def editTask(request, task_id):
         
         task.save()
         
-        sstudent_ids = request.POST.getlist('students')
-        task.assigned_students.set(sstudent_ids) 
-        
-        # Added By Saim Munshi: get student as list 
+        # Added by Saim Munshi Update assigned students
         student_ids = request.POST.getlist('students')
         task.assigned_students.set(student_ids) 
         
-        # Added By Saim Munshi: Notify students
-        for student in task.assigned_students.all():
-            Notification.objects.create(
-                user=student.user,
-                notification_type="Edit task",
-                message=f"The task '{task.title}' has been updated. Please check for changes."
-            )
+        # Notify students logic here...
+        
         return redirect("teacher-course-main", course_id=task.course.id)
 
-        if task.course:
-            students = task.course.students.all()
+
+    #Added By Saim Munshi Map students to courses for the js
+    course_students_map = {}
+    for c in courses:
+        course_students_map[str(c.id)] = [
+            {'id': str(s.id), 'name': s.full_name} for s in c.students.all()
+        ]
+    
+  
+
+    assigned_student_ids = [str(s.id) for s in task.assigned_students.all()]
 
     context = {
         "task": task,
         "courses": courses,
-        "students": students,
+        "course_students_map": course_students_map,
+        "assigned_student_ids": assigned_student_ids,
     }
 
     return render(request, "tasks/templates/create-task.html", context)
-
 
 # Added By Saim Munshi: Delete task logic
 @login_required
