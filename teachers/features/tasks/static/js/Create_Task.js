@@ -16,8 +16,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 option.value = student.id;
                 option.textContent = student.name;
 
-    
-                if (assignedStudentIds.includes(student.id)) {
+                // Bug fix: Default to all selected if no specific assignments exist yet
+                if (assignedStudentIds.length === 0 || assignedStudentIds.includes(student.id)) {
                     option.selected = true;
                 }
 
