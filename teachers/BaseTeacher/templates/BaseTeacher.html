@@ -79,7 +79,7 @@
     <div class="sidebar-container d-none d-lg-block">
         <div class="sidebar-pill shadow-sm">
             <div class="d-flex align-items-center mb-5 px-3">
-                <div class="avatar-circle me-3">M</div>
+                <div class="me-3"><img src="{% static 'images/mentora_logo2.png' %}" style="max-width: 40px;"></div>
                 <span class="fs-4 fw-bold text-dark">Mentora</span>
             </div>
 
@@ -135,14 +135,13 @@
 
     <a class="floating-chat d-none d-lg-flex" data-bs-toggle="offcanvas" href="#chatWindow" role="button"
         aria-controls="offcanvasExample">
-        <i class="bi bi-chat-dots-fill"></i>
+        <i class="bi bi-bell-fill"></i>
     </a>
 
     <!-- Chat Window (Added by Saim) -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="chatWindow" aria-labelledby="chatWindow">
         <div class="offcanvas-header border-bottom">
             <div class="d-flex align-items-center">
-                <div class="avatar-circle-sm me-2">M</div>
                 <span class="fw-bold">Notifications</span>
             </div>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
@@ -166,7 +165,7 @@
                         <form action="{% url 'teacher-notif-read' notification.id %}" method="POST" style="margin: 0;">
                             {% csrf_token %}
                             <button type="submit"
-                                style="background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                                style="background-color: #0b2469; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
                                 Remove
                             </button>
                         </form>
