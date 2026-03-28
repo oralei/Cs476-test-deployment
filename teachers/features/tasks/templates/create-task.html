@@ -19,9 +19,10 @@
             <code class="fs-5">{{ teacher_profile.course_code }}</code>
         </div>-->
         <div class="row g-4">
-                <div class="col-lg-8 mx-auto h-100">
+            <div class="col-lg-8 mx-auto h-100">
                 <header class="mb-3">
-                    <h1 class="fw">{% if task %}Edit Task: {{ task.title }}{% else %}Task Creation Control{% endif %}</h1>
+                    <h1 class="fw">{% if task %}Edit Task: {{ task.title }}{% else %}Task Creation Control{% endif %}
+                    </h1>
                 </header>
                 <!-- Edited by: Ariel Removed tab for overview -->
                 <div class="course-creation-detail-card card rounded-4 shadow-sm border p-4 p-md-5 bg-white">
@@ -32,7 +33,9 @@
                             <h5 class="fw-bold mb-2">Task Details</h5>
                             <p class="text-secondary">Fill out the form below to assign a new task to your course.</p>
                         </div>
-
+                     
+                        <!--Added By Saim Munshi: Warning message for due date and start date wrong date entry(past date)-->
+                        <div id="js-error" class="alert alert-danger" style="display:none;"></div>
                         <hr class="my-4">
                         <form method="POST">
                             {% csrf_token %}
@@ -44,9 +47,7 @@
                                 <select name="course" id="courseSelect" class="form-select" required>
                                     <option value="" disabled>-- Choose a Course --</option>
                                     {% for course in courses %}
-                                    <option value="{{ course.id }}" data-description="{{ course.description }}" {% if task and task.course.id == course.id %}selected{% endif %}>
-                                        {{ course.title }}
-                                    </option>
+                                    <option value="{{ course.id }}" data-description="{{ course.description }}" {% if task and task.course.id == course.id %}selected{% endif %}>{{ course.title }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -63,10 +64,13 @@
                                 <!-- Added by Saim Munshi Task Type -->
                                 <label for="Task-Type">Task Type:</label>
                                 <select class="form-select mb-2" id="Task-Type" name="task_type" required>
-                                  <option value="Assignment" {% if task and task.task_type|default:'' == "Assignment" %}selected{% endif %}>Assignment</option>
-                                  <option value="Quiz" {% if task and task.task_type|default:'' == "Quiz" %}selected{% endif %}>Quiz</option>
-                                  <option value="Project" {% if task and task.task_type|default:'' == "Project" %}selected{% endif %}>Project</option>
-                                  <option value="Meeting" {% if task and task.task_type|default:'' == "Meeting" %}selected{% endif %}>Meeting</option>
+                                    <option value="Assignment" {% if task and task.task_type|default:'' == "Assignment" %}selected{% endif %}>Assignment</option>
+    
+                                    <option value="Quiz" {% if task and task.task_type|default:'' == "Quiz" %}selected{% endif %}>Quiz</option>
+
+                                    <option value="Project" {% if task and task.task_type|default:'' == "Project" %}selected{% endif %}>Project</option>
+
+                                    <option value="Meeting" {% if task and task.task_type|default:'' == "Meeting" %}selected{% endif %}>Meeting</option>
                                 </select>
                                 <!-- -------------------------------------- -->
 
@@ -79,12 +83,13 @@
                                         Note from Mark: This calendar does not work the best in Firefox or Safari.
                                     -->
                                         <input type="datetime-local" name="start_date" id="start_date"
-                                            class="form-control" value="{{ task.start_date|date:'Y-m-d\\TH:i' }}">
+                                            class="form-control" value="{{ task.start_date|date:'Y-m-d\\TH:i' }}"
+                                            required>
                                     </div>
                                     <div class="col">
                                         <label class="form-label">Due Date & Time</label>
                                         <input type="datetime-local" name="due_date" id="due_date" class="form-control"
-                                            value="{{ task.due_date|date:'Y-m-d\\TH:i' }}">
+                                            value="{{ task.due_date|date:'Y-m-d\\TH:i' }}" required>
                                     </div>
                                 </div>
                                 <!-- -------------------------------------------------------------------------------->

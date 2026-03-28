@@ -273,6 +273,7 @@ def Create_Task(request):
         due_date = request.POST.get('due_date') or None
         student_ids = request.POST.getlist('students')
         course = get_object_or_404(Course, id=course_id, teacher=current_teacher)
+
         new_task = Task.objects.create(
             course=course,
             title=title,

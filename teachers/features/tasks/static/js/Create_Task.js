@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     courseSelect.addEventListener("change", function () {
         const courseId = this.value;
-        studentSelect.innerHTML = ""; 
+        studentSelect.innerHTML = "";
 
         if (courseData[courseId]) {
             courseData[courseId].forEach(student => {
@@ -29,4 +29,51 @@ document.addEventListener("DOMContentLoaded", function () {
     if (courseSelect.value) {
         courseSelect.dispatchEvent(new Event("change"));
     }
+});
+
+
+// Added by Saim Munshi: JavaScript logic for handling unaccaptable start and due date .
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.querySelector('form');
+    const startInput = document.getElementById('start_date');
+    const dueInput = document.getElementById('due_date');
+    const errorDiv = document.getElementById('js-error');
+
+    form.addEventListener('submit', function (event) {
+        let errors = [];
+        const now = new Date();
+        const startDate = new Date(startInput.value);
+        const dueDate = new Date(dueInput.value);
+
+        // Added by Saim Munshi: clear previous errors
+        errorDiv.style.display = 'none';
+        errorDiv.innerHTML = '';
+
+        // Added by Saim Munshi: check if start date is in the past
+        if (startDate < now) {
+            errors.push("Start date cannot be in the past.");
+        }
+
+        // Added by Saim Munshi: check if start date is in the past
+        if (dueDate < now) {
+            errors.push("Due date cannot be in the past.");
+        }
+
+        // Added by Saim Munshi: Due Date is before Start Date
+        if (dueDate <= startDate) {
+            errors.push("Due date must be after the start date.");
+        }
+
+        if (errors.length > 0) {
+
+            event.preventDefault();
+
+            errorDiv.style.display = 'block';
+            for (let i = 0; i < errors.length; i++) {
+                let err = errors[i];
+                errorDiv.innerHTML += '<div>' + err + '</div>';
+            }
+           
+        }
+    });
 });
