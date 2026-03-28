@@ -1,51 +1,38 @@
 
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            body tage
+ * Last Modified:   2026-03-27
+ * Modified By:     Saim Munshi
+ * Purpose:         main body tag
+ *-------------------------------------------------------------------------*/
 body {
-    background: linear-gradient(135deg, #f0f4f8 0%, #479df3, #deedff, #4395f3  100%);
+    background: linear-gradient(135deg, #f0f3f7 0%, #f6f8fa, #d6e8fd, #ecf5ff 100%);
     min-height: 100vh;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    position: relative;
+    margin: 0;
+    padding: 0;
+    display: block;
     overflow-x: hidden;
-    padding-top: 80px;
 }
 
-
-
-.glass-card {
-   
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 32px;
-    padding: 100px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s ease;
+/* Navbar Section */
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Navbar
+ * Last Modified:   2026-03-27
+ * Modified By:     Saim Munshi
+ * Purpose:         Navbar
+ *-------------------------------------------------------------------------*/
+.navbar {
+    transition: all 0.3s ease-in-out;
+    background-color: white !important;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    z-index: 1100;
+    border-bottom: 1px solid transparent;
 }
 
-.glass-card:hover {
-    transform: translateY(-8px);
-    background: rgba(255, 255, 255, 0.8);
-    background-color: #e9f1ff;
-}
-
-/* 3. Typography & Icons */
-.card-icon {
-    font-size: 2.5rem;
-    width: 70px;
-    height: 70px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-    border-radius: 20px;
-}
-.student-bg { background: rgba(94, 234, 212, 0.1); }
-.teacher-bg { background: rgba(59, 130, 246, 0.1); }
-
-/* Added Saim Munshi: Login button style code */
 .login-btn {
     padding: 8px 22px;
     border-radius: 50px;
@@ -67,20 +54,113 @@ body {
     border: 1.5px solid #3b82f6;
 }
 
-.reg-btn {
-    background: #3b82f6;
-    color: white;
-    padding: 14px;
-    border-radius: 16px;
-    text-decoration: none;
-    font-weight: 700;
-    display: block;
-    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2);
+/* Main Info Section */
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            class
+ * Last Modified:   2026-03-27
+ * Modified By:     Saim Munshi
+ * Purpose:         this is the main class for the infor section
+ *-------------------------------------------------------------------------*/
+.main-info-section {
+    width: 100%;
+    padding-top: 200px !important;
+    padding-left: 100px;
+    padding-right: 100px;
+    padding-bottom: 250px !important;
+    background: azure;
+    margin: 0;
+    border-bottom: none;
 }
 
-/* Added Saim Munshi: this makes modfication to body and glass card and circle when screen size is at 768 pixels */
-@media (max-width: 768px) {
-    body { padding-top: 100px; padding-bottom: 40px; }
-    .glass-card { padding: 30px 20px; }
-    .circle { width: 200px; height: 200px; }
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Navbar
+ * Last Modified:   2026-03-27
+ * Modified By:     Saim Munshi
+ * Purpose:         main section role div
+ *-------------------------------------------------------------------------*/
+.roles-box {
+    background-color: #ffffff !important;
 }
+
+.badge {
+    font-weight: 600;
+    min-width: 85px;
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            image
+ * Last Modified:   2026-03-27
+ * Modified By:     Saim Munshi
+ * Purpose:         image style
+ *-------------------------------------------------------------------------*/
+.image-main {
+    max-height: 520px;
+    border-radius: 2.5rem;
+    box-shadow: 0 15px 35px 0 rgba(0, 0, 0, 0.1);
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Section
+ * Last Modified:   2026-03-28
+ * Modified By:     Saim Munshi
+ * Purpose:         Full-width wrapper for the registration area with a 
+ * vertical blue gradient background.
+ *-------------------------------------------------------------------------*/
+.registration-wrapper-full {
+    background: linear-gradient(135deg, #f0f4f8 0%, #a1cefc, #deedff, #95c6ff 100%);
+    width: 100%;
+    margin: 0;
+    padding: 150px 0;
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Component
+ * Last Modified:   2026-03-28
+ * Modified By:     Saim Munshi
+ * Purpose:         registration card  for student and mentor
+ *-------------------------------------------------------------------------*/
+.registration-card {
+    border-radius: 2.5rem !important;
+    transition: transform 0.3s ease;
+     background-color: white !important;
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    padding: 3rem !important;
+    text-align: center !important;
+    border: 0 !important;
+    position: relative;
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Class
+ * Last Modified:   2026-03-28
+ * Modified By:     Saim Munshi
+ * Purpose:         animation and hover css for registration cards
+ *-------------------------------------------------------------------------*/
+.registration-card:hover {
+    transform: translateY(-10px);
+    background-color: #e9f1ff !important;
+    cursor: pointer;
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Class
+ * Last Modified:   2026-03-28
+ * Modified By:     Saim Munshi
+ * Purpose:         Styling for the outline version of primary buttons 
+ * with specific border thickness.
+ *-------------------------------------------------------------------------*/
+.btn-outline-thick {
+    border-width: 2px !important;
+}
+
+
