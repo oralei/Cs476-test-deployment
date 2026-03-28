@@ -18,7 +18,7 @@
     <nav class="navbar navbar-expand-lg fixed-top bg-white shadow-sm px-3 px-md-5">
         <div class="d-flex align-items-center">
             <div class="me-3">
-                <img src="{% static 'images/mentora_logo2.png' %}" style="max-width: 30px;">
+                <img src="{% static 'images/mentora_logo.png' %}" style="max-width: 30px;">
             </div>
             <span class="fw-bold">Mentora</span>
         </div>
@@ -30,6 +30,14 @@
         </div>
     </nav>
 
+    <!-- Main login/register buttons: visible before navbar appears -->
+    <div class="hero-login-btn-wrapper">
+        <a href="{% url 'signin_page_view' %}" class="login-btn btn-primary">Login</a>
+    </div>
+    <div class="hero-register-btn-wrapper">
+        <a href="#register-part" class="register-btn btn-primary">Register now</a>
+    </div>
+
     <!--Added By Saim: student card -->
     <div class="container-fluid px-0">
         <div class="row g-0 mt-navbar">
@@ -38,7 +46,8 @@
 
                 <div class="row align-items-center g-5">
                     <div class="col-lg-7">
-                        <h1 class="display-5 fw-bold mb-3 text-dark">Our Mission</h1>
+                        <h1 class="display-5 fw-bold mb-3 text-dark" id="title">Welcome to Mentora!</h1>
+                        <h3 class="display-5 fw-bold mb-3 text-dark" id="header-2">Our Mission</h3>
                         <p class="text-secondary fs-5 mb-4">
                             Mentora is a sophisticated online mentoring platform designed to foster real-time
                             collaboration between mentors and students.
@@ -94,7 +103,7 @@
             </div>
 
         </div>
-        <div class="registration-wrapper-full">
+        <div class="registration-wrapper-full" id="register-part">
             <div class="container-fluid px-md-5">
                 <div class="row justify-content-center mb-5 mx-0">
                     <div class="col-lg-8 text-center">
@@ -147,8 +156,20 @@
             </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            const navbar = document.querySelector('.navbar');
+            const heroBtn = document.querySelector('.hero-login-btn-wrapper');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > window.innerHeight * 0.85) {
+                    navbar.classList.add('navbar-visible');
+                    heroBtn.classList.add('hidden');
+                } else {
+                    navbar.classList.remove('navbar-visible');
+                    heroBtn.classList.remove('hidden');
+                }
+            });
+        </script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </body>
 
 </html>
-
