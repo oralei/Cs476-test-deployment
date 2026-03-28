@@ -14,31 +14,23 @@
     <!------------------------------------------------------------------------------------------------------------------------------------>
     <div class="container-fluid">
 
-        <header class="mb-4">
-            <h1 class="fw">{% if task %}Edit Task: {{ task.title }}{% else %}Task Creation Control{% endif %}</h1>
-        </header>
         <!-- Edited by Mark: Hid this for now.
         <div class="alert alert-info" role="alert">
             <code class="fs-5">{{ teacher_profile.course_code }}</code>
         </div>-->
         <div class="row g-4">
+                <div class="col-lg-8 mx-auto h-100">
+                <header class="mb-3">
+                    <h1 class="fw">{% if task %}Edit Task: {{ task.title }}{% else %}Task Creation Control{% endif %}</h1>
+                </header>
+                <!-- Edited by: Ariel Removed tab for overview -->
+                <div class="course-creation-detail-card card rounded-4 shadow-sm border p-4 p-md-5 bg-white">
 
+                    <div class="tab-scroll-area" id="course-creation-form">
 
-
-            <div class="col-lg-12 h-100">
-                <div class="course-creation-detail-card shadow-sm ">
-
-                    <ul class="nav nav-tabs px-4 pt-3 bg-light border-bottom-0" id="taskTabs">
-                        <li class="nav-item">
-                            <button class="nav-link active fw-bold px-4" id="overview-button">Overview</button>
-                        </li>
-
-                    </ul>
-
-                    <div class="tab-content tab-scroll-area " id="course-creation-form">
-
-                        <div class="mb-3">
-                            <h6 class="fw-bold text-uppercase small text-muted mb-2">Course Creation Form Panel</h6>
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-2">Task Details</h5>
+                            <p class="text-secondary">Fill out the form below to assign a new task to your course.</p>
                         </div>
 
                         <hr class="my-4">
