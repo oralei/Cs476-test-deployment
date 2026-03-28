@@ -130,12 +130,19 @@ def teacher_register_view(request):
         image_url = upload_profile_picture(request.FILES.get('UploadPFP'))
 
         # Set user data with POST data
-        email = request.POST.get('email')
+        email = request.POST.get('email', '').strip()
         password = request.POST.get('mainpassword')
         confirmpassword = request.POST.get('confirmpassword')
         name = request.POST.get("name", "").strip()
+        license_num = request.POST.get('license', '').strip()
+        specialization = request.POST.get('specialization', '').strip()
 
-         #Regex to ensure the name and las
+        #Added By Saim Munshi: checks all fields and they must be filled 
+        if not all([email, password, confirmpassword, name, license_num, specialization]):
+            messages.error(request, "All fields are required")
+            return render(request, "TeacherRegistration.html")
+        
+        #Regex to ensure the name and las
         name_regex = r"^[A-Za-z]+(?: [A-Za-z'-]+)+$"
         if not name: 
             messages.error(request, "Full name is required.")
@@ -144,6 +151,13 @@ def teacher_register_view(request):
         if not re.match(name_regex, name):
             messages.error(request, "Full name is Required")
             return render(request, "TeacherRegistration.html")
+        
+        #Added By Saim Munshi: valid email regex
+        email_regex = r'^[\w\-\.]+@([\w\-]+\.)+[\w\-]{2,4}$'
+        if not re.match(email_regex, email):
+            messages.error(request, "Please enter a valid email address.")
+            return render(request, "TeacherRegistration.html")
+        
         if User.objects.filter(email=email).exists():
             print("Teacher Register: User already exists ---")
             return render(request, 'TeacherRegistration.html', {'error': 'Email already exists'})
