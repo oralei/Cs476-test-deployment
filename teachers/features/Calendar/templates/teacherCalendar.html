@@ -8,8 +8,8 @@
 
 {% block content %}
 
-  <div class="container">
-
+<main class="main-content">
+  <div class="container-fluid">
     <!-- Header card -->
     <header class="mb-4">
         <h1 class="fw">Mentor Calendar</h1>
@@ -47,8 +47,8 @@
         <div class="legend-item"><span class="dot" style="background: var(--meeting)"></span> Meeting</div>
       </div>
     </div>
-
   </div>
+</main>
 {{ course_students_map|json_script:"course-data" }}
 {{ events_data|json_script:"events-data" }}
 {% endblock %} 
