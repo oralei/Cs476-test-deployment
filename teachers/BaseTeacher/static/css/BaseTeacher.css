@@ -24,6 +24,15 @@ body {
     background-color: #0b2469 !important
 }
 
+#mobile-side-button {
+    color: #0b2469;
+    transition: color 80ms ease;
+}
+
+#mobile-side-button:hover {
+    color: #87aacc;
+}
+
 .bg-secondary {
     background-color: rgb(186, 186, 186) !important;
 }
@@ -32,6 +41,8 @@ h2, .fw-bold, .text-dark, span {
     color: rgb(32, 32, 32);
     color: rgb(32, 32, 32) !important;
 }
+
+
 
 
 /*-------------------------------------------------------------------------

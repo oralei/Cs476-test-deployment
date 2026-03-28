@@ -18,16 +18,23 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-white d-lg-none shadow-sm px-3 fixed-top">
         <div class="container-fluid">
+            <!-- Left side -->
             <div class="d-flex align-items-center">
-                <span class="fw-bold">Notifications</span>
+                <div class="me-3">
+                    <img src="{% static 'images/mentora_logo2.png' %}" style="max-width: 30px;">
+                </div>
+                <span class="fw-bold">Mentora</span>
             </div>
-            <button class="btn border-0 justify-content-end" type="button" data-bs-toggle="offcanvas"
-                data-bs-target="#chatWindow" aria-controls="chatWindow">
-                <i class="bi bi-bell-fill"></i>
-            </button>
-            <button class="btn border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
-                <i class="bi bi-list fs-2"></i>
-            </button>
+            <!-- Right side (buttons grouped) -->
+            <div class="d-flex align-items-center ms-auto">
+                <button class="btn border-0 d-flex me-2" id="mobile-side-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#chatWindow" style="max-width: 30px">
+                    <i class="bi bi-bell-fill"></i>
+                </button>
+
+                <button class="btn border-0 d-flex" id="mobile-side-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
         </div>
     </nav>
 
@@ -79,7 +86,7 @@
     <div class="sidebar-container d-none d-lg-block">
         <div class="sidebar-pill shadow-sm">
             <div class="d-flex align-items-center mb-5 px-3">
-                <div class="avatar-circle me-3">M</div>
+                <div class="me-3"><img src="{% static 'images/mentora_logo2.png' %}" style="max-width: 40px;"></div>
                 <span class="fs-4 fw-bold text-dark">Mentora</span>
             </div>
 
@@ -135,14 +142,13 @@
 
     <a class="floating-chat d-none d-lg-flex" data-bs-toggle="offcanvas" href="#chatWindow" role="button"
         aria-controls="offcanvasExample">
-        <i class="bi bi-chat-dots-fill"></i>
+        <i class="bi bi-bell-fill"></i>
     </a>
 
     <!-- Chat Window (Added by Saim) -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="chatWindow" aria-labelledby="chatWindow">
         <div class="offcanvas-header border-bottom">
             <div class="d-flex align-items-center">
-                <div class="avatar-circle-sm me-2">M</div>
                 <span class="fw-bold">Notifications</span>
             </div>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
@@ -166,7 +172,7 @@
                         <form action="{% url 'teacher-notif-read' notification.id %}" method="POST" style="margin: 0;">
                             {% csrf_token %}
                             <button type="submit"
-                                style="background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                                style="background-color: #0b2469; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
                                 Remove
                             </button>
                         </form>
