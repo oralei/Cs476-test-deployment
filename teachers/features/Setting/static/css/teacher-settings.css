@@ -5,8 +5,9 @@
 
 .settings-card{
     background: white;
-    max-width: 500px;
-    padding: 35px;
+    height: 100%;
+    width: 100%;
+    padding: 40px;
     border-radius: 12px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.08);
 }
@@ -29,10 +30,27 @@
 }
 
 .save-btn{
-    background:#0b2469;
+    background:#0d6efd;
     color:white;
     border:none;
     padding:10px 20px;
     border-radius:8px;
     cursor:pointer;
+}
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.main-content {
+    margin-left: 270px;
+    min-height: 100vh;
+    padding: 20px 40px;
+
+    display: flex;
+    justify-content: center;  
+    align-items: center;      
+
+    box-sizing: border-box;
 }
