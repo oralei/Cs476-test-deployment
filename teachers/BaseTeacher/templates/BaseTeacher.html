@@ -18,16 +18,23 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-white d-lg-none shadow-sm px-3 fixed-top">
         <div class="container-fluid">
+            <!-- Left side -->
             <div class="d-flex align-items-center">
-                <span class="fw-bold">Notifications</span>
+                <div class="me-3">
+                    <img src="{% static 'images/mentora_logo2.png' %}" style="max-width: 30px;">
+                </div>
+                <span class="fw-bold">Mentora</span>
             </div>
-            <button class="btn border-0 justify-content-end" type="button" data-bs-toggle="offcanvas"
-                data-bs-target="#chatWindow" aria-controls="chatWindow">
-                <i class="bi bi-bell-fill"></i>
-            </button>
-            <button class="btn border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
-                <i class="bi bi-list fs-2"></i>
-            </button>
+            <!-- Right side (buttons grouped) -->
+            <div class="d-flex align-items-center ms-auto">
+                <button class="btn border-0 d-flex me-2" id="mobile-side-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#chatWindow" style="max-width: 30px">
+                    <i class="bi bi-bell-fill"></i>
+                </button>
+
+                <button class="btn border-0 d-flex" id="mobile-side-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
         </div>
     </nav>
 
