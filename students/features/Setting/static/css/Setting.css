@@ -6,7 +6,7 @@
 .settings-card{
     background: white;
     height: 100%;
-    width: 100%;
+    width: 80%;
     padding: 40px;
     border-radius: 12px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.08);
@@ -36,7 +36,13 @@
     padding:10px 20px;
     border-radius:8px;
     cursor:pointer;
+    transition: background 80ms ease;
 }
+
+.save-btn:hover{
+    background:rgb(45, 136, 255);
+}
+
 html, body {
     height: 100%;
     margin: 0;
@@ -44,7 +50,6 @@ html, body {
 }
 
 .main-content {
-    margin-left: 270px;
     min-height: 100vh;
     padding: 20px 40px;
 
