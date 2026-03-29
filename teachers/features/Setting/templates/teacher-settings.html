@@ -1,19 +1,17 @@
-{% extends "BaseTeacher.html" %}
+{% extends 'BaseTeacher.html' %}
 {% load static %}
 
-{% block content %}
-
+{% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/teacher-settings.css' %}">
+{% endblock %}
 
-<div class="main-content">
 
-    <div class="settings-card">
-
+{% block content %}
+<main class="main-content mb-3" style="padding-top: 50px;">
+    <div class="settings-card mt-5">
         <h2>Teacher Settings</h2>
-
         <form method="POST">
             {% csrf_token %}
-
             <div class="form-group">
                 <label>Username</label>
                 <input type="text" name="email" value="{{ user.email }}" required>
@@ -49,6 +47,10 @@
 
     </div>
 
-</div>
+
+
+
+</main>
+{% endblock %} {% block extra_js %}
 
 {% endblock %}
