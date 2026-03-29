@@ -234,7 +234,7 @@ def Calendar(request):
             'start': task.start_date.isoformat() if task.start_date else None,
             'end': task.due_date.isoformat() if task.due_date else None,
             'extendedProps': {
-                'type': 'assignment',
+                'type': task.task_type.lower() if getattr(task, 'task_type', None) else 'assignment',
                 'course': str(task.course.id),
                 'students': [str(student.id) for student in task.assigned_students.all()]
             }
@@ -271,6 +271,7 @@ def Create_Task(request):
         description = request.POST.get('description')
         start_date = request.POST.get('start_date') or None
         due_date = request.POST.get('due_date') or None
+        task_type = request.POST.get('task_type', 'Assignment')
         student_ids = request.POST.getlist('students')
         course = get_object_or_404(Course, id=course_id, teacher=current_teacher)
 
@@ -279,7 +280,8 @@ def Create_Task(request):
             title=title,
             description=description,
             start_date=start_date,
-            due_date=due_date
+            due_date=due_date,
+            task_type=task_type
         )
         # Added By Saim Munshi: Create Tasks Notification
         Notification.objects.create(
@@ -480,7 +482,8 @@ def editTask(request, task_id):
         task.title = request.POST.get("title")
         task.description = request.POST.get("description") 
         task.start_date = request.POST.get("start_date") 
-        task.due_date = request.POST.get("due_date") 
+        task.due_date = request.POST.get("due_date")
+        task.task_type = request.POST.get("task_type", "Assignment") 
         
         course_id = request.POST.get("course")
         if course_id:
