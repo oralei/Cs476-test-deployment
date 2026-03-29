@@ -1,0 +1,66 @@
+<!-- 
+Added by Mark: This HTML acts as a template for the top and left navigation bar of the site. 
+See something like student-dashboard.html for an example of it's usage.
+-->
+
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block page-title %}Mentora Base{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  {% block head %}{% endblock %}
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="topbar__left">
+      <a class="brand" href="{% url 'home' %}">Mentora</a>
+    </div>
+
+    <nav class="topbar__right">
+      {% if user.is_authenticated %}
+        <span class="muted">Hi, {{ user.username }}</span>
+      {% endif %}
+    </nav>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar__section">
+        {% if user.is_student %}
+          <p><a class="sidebar__link" href="{% url 'student_dashboard' %}">Dashboard</a></p>
+          <p><a class="sidebar__link" href="{% url 'student_feedback' %}">Feedback</a></p>
+        {% endif %}
+          <a class="sidebar__link sidebar-link-bottom" href="{% url 'home' %}">Home (Main Page)</a>
+        {% if user.is_authenticated %}
+          <a href="#" class="sidebar__link" id="logout-link">Logout</a>
+          <form id="logout-form" method="post" action="{% url 'logout' %}" style="display:none;">
+            {% csrf_token %}
+          </form>
+        {% endif %}
+      </div>
+
+      {% block sidebar_extra %}{% endblock %}
+    </aside>
+
+    <main class="content">
+      {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+            <div class="message">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% block content %}
+      {% endblock %}
+    </main>
+  </div>
+
+  <script src="{% static 'js/base.js' %}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

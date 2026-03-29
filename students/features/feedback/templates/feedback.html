@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page-title %}My Feedback{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/feedback.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- 
+Added by Mark: PLACEHOLDER PAGE - NO LONGER USED
+-->
+
+<div class="feedback-container">
+    <h1>Latest Feedback</h1>
+    
+    <div class="feedback-list">
+        
+        <!-- 
+           DJANGO LOOP START 
+        -->
+        
+        <!-- Example Item 1 -->
+        <div class="feedback-item" 
+            onclick="openFeedback(this)"
+            data-task="C Major Chords"
+            data-course="Intro Piano"
+            data-grade="100"
+            data-comment="Good speed on your transitions.">
+            
+            <div class="fb-info">
+                <h3>C Major Chords</h3>
+                <p>Intro Piano - Jan 12, 2026</p>
+            </div>
+            <div class="grade-badge">Good</div>
+        </div>
+
+        <!-- Example Item 2 -->
+        <div class="feedback-item" 
+            onclick="openFeedback(this)"
+            data-task="Python Functions Quiz"
+            data-course="CS 101"
+            data-grade="65"
+            data-comment="You struggled with the recursion question. Please review Chapter 4 and come see me during office hours.">
+            
+            <div class="fb-info">
+                <h3>Python Functions Quiz</h3>
+                <p>CS 101 - Feb 4, 2026</p>
+            </div>
+            <div class="grade-badge low">Poor</div>
+        </div>
+
+        <!-- DJANGO LOOP END -->
+
+    </div>
+</div>
+
+<!-- THE MODAL (Hidden Markup) -->
+<div id="feedbackModal" class="modal-overlay" onclick="closeFeedback(event)">
+    <div class="modal-card">
+        <span class="close-btn" onclick="closeFeedbackActual()">&times;</span>
+        
+        <div class="modal-header">
+            <h2 id="modalTitle">Task Title</h2>
+            <p id="modalCourse" style="color: #666;">Course Name</p>
+        </div>
+        
+        <div class="modal-body">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h4>Mentor's Feedback:</h4>
+                <div id="modalGrade" class="grade-badge">Poor</div>
+            </div>
+            
+            <div id="modalComment" class="teacher-comment-box">
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+    <script src="{% static 'js/feedback.js' %}"></script>
+{% endblock %}
+
+{% endblock %}

@@ -72,6 +72,14 @@ class Task(models.Model):
   start_date = models.DateTimeField(null=True, blank=True)
   due_date = models.DateTimeField(null=True, blank=True)
   points_possible = models.IntegerField(default=100) # Might be removed, don't need grading.
+  # Added by Ariel for calendar
+  TASK_TYPE_CHOICES = [
+    ('Assignment', 'Assignment'),
+    ('Quiz', 'Quiz'),
+    ('Project', 'Project'),
+    ('Meeting', 'Meeting'),
+  ]
+  task_type = models.CharField(max_length=20, choices=TASK_TYPE_CHOICES, default='Assignment')
   assigned_students = models.ManyToManyField(
       'students.Student',
       related_name='assigned_tasks',

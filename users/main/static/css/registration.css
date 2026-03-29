@@ -1,0 +1,146 @@
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Body Tag
+ * Last Modified:   2026-02-04
+ * Modified By:     Saim Munshi
+ * Purpose:         change the modify the characterstics of the body tag
+ *-------------------------------------------------------------------------*/
+htnml, body {
+     margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100%;
+}
+
+
+/*-------Grid Container----------*/
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            class
+ * Last Modified:   2026-02-04
+ * Modified By:     Saim Munshi
+ * Purpose:         Structuring the Html Page as a grid
+ *-------------------------------------------------------------------------*/
+.grid-container{
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 0px; 
+    align-items: stretch; 
+    height: 100%;
+    margin: 0;
+}
+
+/*-------Item----------*/
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            class
+ * Last Modified:   2026-02-04
+ * Modified By:     Saim Munshi
+ * Purpose:         Item in grid system
+ *-------------------------------------------------------------------------*/
+.item{
+    padding: 1em;
+    display: grid;
+}
+
+/*-------Title Container----------*/
+#title-container{
+    background-image: url("{% static '../images/white-gray-abstract-gradient-background_69286-550.jpg' %}");
+    background: hsl(0, 0%, 100%);
+
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Id container
+ * Last Modified:   2026-02-04
+ * Modified By:     Saim Munshi
+ * Purpose:         change the modify the characterstics of the body tag
+ *-------------------------------------------------------------------------*/
+
+
+#field-container{
+    display: flex;
+    font-weight: bold;
+    background-color: #fdffff;
+    justify-content: center;
+    align-items: center;
+}
+/* Typography */
+
+
+/* Form Styling */
+
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box; /* Ensures padding doesn't break width */
+}
+
+/* Role Selector (Radio buttons) */
+.role-selector {
+    font-size: 17px;
+    border: 1px solid #f5f2ea;
+    background-color: whitesmoke;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.radio-option {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.radio-option label {
+    display: inline;
+    font-weight: normal;
+}
+
+/* Button */
+.register-btn {
+    width: 100%;
+    margin-top: 60px;
+    padding: 12px;
+    background-color: #f8f7f0;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.register-btn:hover {
+    background-color: #999896;
+}
+
+/* Logic Classes */
+.hidden {
+    display: none;
+}
+
+/* Footer Links */
+.form-footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.form-footer a {
+    color: #2e7d32;
+    text-decoration: none;
+    font-weight: bold;
+}

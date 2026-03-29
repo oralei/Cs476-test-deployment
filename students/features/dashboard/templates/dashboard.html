@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block page-title %}Your Dashboard{% endblock %}
+{% block content %}
+
+<h1>Your Dashboard</h1>
+<p>Welcome, {{ student.full_name }}!</p>
+<p>Your Student ID is: {{ student.student_id }}</p>
+
+{% endblock %}

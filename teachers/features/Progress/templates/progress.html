@@ -1,0 +1,348 @@
+{% extends 'BaseTeacher.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/Progress.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="main-content">
+    <div class="container-fluid">
+
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold mb-1">My Students Progress</h2>
+                <p class="text-muted mb-0">Track student completion, engagement, and who needs attention.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{% url 'create-task' %}" class="btn btn-dark px-4">Assign Task</a>
+                <a href="{% url 'needs-feedback-list' %}" class="btn btn-outline-secondary px-4">Feedback</a>
+            </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-md-4">
+                <div class="stat-card bg-white rounded-4 shadow-sm border p-4">
+                    <div class="small text-muted mb-1">Active Students</div>
+                    <div class="stat-value">{{ stats.active_students }}</div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="stat-card bg-white rounded-4 shadow-sm border p-4">
+                    <div class="small text-muted mb-1">Average Progress</div>
+                    <div class="stat-value text-primary">{{ stats.avg_completion }}%</div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="stat-card bg-white rounded-4 shadow-sm border p-4">
+                    <div class="small text-muted mb-1">Needs Attention</div>
+                    <div class="stat-value text-danger">{{ stats.needs_attention }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attention Needed -->
+        <div class="bg-white rounded-4 shadow-sm border p-4 mb-4">
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <i class="bi bi-exclamation-circle-fill text-danger"></i>
+                <h6 class="fw-bold mb-0">Attention Needed</h6>
+                <span class="ms-auto text-muted" style="font-size:0.7rem;">
+                    Behind if progress &lt; 40% or overdue &gt; 0
+                </span>
+            </div>
+
+            <div class="row g-3" id="attentionList">
+                {% for student in students %}
+                {% if student.status == 'behind' %}
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <div class="attention-card p-3 rounded-3 border h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="avatar-circle flex-shrink-0" style="width:32px;height:32px;font-size:0.8rem;">
+                                    {{ student.name|first }}
+                                </div>
+                                <div>
+                                    <div class="fw-semibold small">{{ student.name }}</div>
+                                    <div class="text-muted" style="font-size:0.72rem;">
+                                        {{ student.courses|length }} course{{ student.courses|length|pluralize }}
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="status-badge status-behind">● Behind</span>
+                        </div>
+
+                        <div class="attention-reasons mt-2">
+                            {% for task_name in student.overdue_task_names %}
+                            <div class="attention-reason">
+                                <i class="bi bi-exclamation-triangle-fill text-danger me-1"></i>
+                                {{ task_name }} — overdue
+                            </div>
+                            {% endfor %}
+
+                            {% for task_name in student.pending_task_names %}
+                            <div class="attention-reason">
+                                <i class="bi bi-hourglass-split text-warning me-1"></i>
+                                {{ task_name }} — pending review
+                            </div>
+                            {% endfor %}
+
+                            {% if student.progress < 40 %}
+                            <div class="attention-reason">
+                                <i class="bi bi-graph-down text-danger me-1"></i>
+                                Overall progress at {{ student.progress }}% — below 40%.
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+
+            <div id="allOnTrackMsg" class="text-center text-muted py-3" style="display:none;">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                All students are on track!
+            </div>
+        </div>
+
+        <!-- Search + Filters -->
+        <div class="bg-white rounded-4 shadow-sm border p-3 mb-4">
+            <div class="row g-3 align-items-end">
+
+                <!-- Live Search with Dropdown -->
+                <div class="col-12 col-md-3">
+                    <label class="small text-muted fw-semibold mb-1">Search Student</label>
+                    <div class="search-wrapper">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="bi bi-search text-muted"></i>
+                            </span>
+                            <input type="text" id="searchStudent"
+                                class="form-control border-start-0 bg-light"
+                                placeholder="Type a name..."
+                                oninput="applyFilters()"
+                                onfocus="showDropdown()"
+                                onblur="hideDropdown()"
+                                autocomplete="off">
+                        </div>
+                        <div id="searchDropdown" class="search-dropdown" style="display:none;">
+                            {% for student in students %}
+                            <div class="search-option" onmousedown="selectStudent('{{ student.name }}')">
+                                <span>{{ student.name }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-3">
+                    <label class="small text-muted fw-semibold mb-1">Course</label>
+                    <select id="filterCourse" class="form-select form-select-sm" onchange="applyFilters()">
+                        <option value="all">All courses</option>
+                        {% for course in courses %}
+                        <option value="{{ course|lower }}">{{ course }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-12 col-md-3">
+                    <label class="small text-muted fw-semibold mb-1">Status</label>
+                    <select id="filterStatus" class="form-select form-select-sm" onchange="applyFilters()">
+                        <option value="all">All</option>
+                        <option value="ontrack">On Track</option>
+                        <option value="behind">Behind</option>
+                    </select>
+                </div>
+                <!-- Fixed Reset button visibility - win516 -->
+                <div class="col-12 col-md-3 d-flex align-items-end">
+                    <button class="btn btn-dark btn-sm px-4 w-100" onclick="resetFilters()">
+                        Reset
+                    </button>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Cards -->
+        <div class="bg-white rounded-4 shadow-sm border p-4 mb-4">
+            <h6 class="fw-bold mb-4">All Students</h6>
+
+            <div id="studentList">
+                {% for student in students %}
+                <div class="student-row p-3 rounded-3 mb-3 border"
+                    data-name="{{ student.name|lower }}"
+                    data-status="{{ student.status }}"
+                    data-courses="{% for c in student.courses %}{{ c.course|lower }},{% endfor %}">
+                    <div class="row align-items-start g-3">
+
+                        <!-- Avatar + Name -->
+                        <div class="col-12 col-md-2 d-flex align-items-center gap-3">
+                            <div class="avatar-circle flex-shrink-0">
+                                {{ student.name|first }}
+                            </div>
+                            <div>
+                                <div class="fw-semibold">{{ student.name }}</div>
+                                <div class="text-muted small">
+                                    {{ student.courses|length }} course{{ student.courses|length|pluralize }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Per Course Progress Bars -->
+                        <div class="col-12 col-md-8">
+                            {% for c in student.courses %}
+                            <div class="course-bar mb-3" data-course="{{ c.course|lower }}">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="small text-muted fw-semibold">{{ c.course }}</span>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="small fw-bold
+                                            {% if c.progress >= 75 %}text-success
+                                            {% elif c.progress >= 40 %}text-warning
+                                            {% else %}text-danger{% endif %}">
+                                            {{ c.progress }}%
+                                        </span>
+                                        {% if c.progress >= 40 and c.overdue == 0 %}
+                                        <span class="status-badge status-ontrack" style="font-size:0.65rem;padding:2px 7px;">● On track</span>
+                                        {% else %}
+                                        <span class="status-badge status-behind" style="font-size:0.65rem;padding:2px 7px;">● Behind</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="progress mb-2" style="height: 8px; border-radius: 10px;">
+                                    <div class="progress-bar
+                                        {% if c.progress >= 75 %}bg-success
+                                        {% elif c.progress >= 40 %}bg-warning
+                                        {% else %}bg-danger{% endif %}"
+                                        role="progressbar"
+                                        style="width: {{ c.progress }}%;">
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <span class="badge-pill bg-success-subtle text-success">
+                                        <i class="bi bi-check-circle me-1"></i>{{ c.completed }} Done
+                                    </span>
+                                    <span class="badge-pill bg-warning-subtle text-warning">
+                                        <i class="bi bi-hourglass-split me-1"></i>{{ c.pending }} Pending
+                                    </span>
+                                    {% if c.overdue > 0 %}
+                                    <span class="badge-pill bg-danger-subtle text-danger">
+                                        <i class="bi bi-exclamation-triangle me-1"></i>{{ c.overdue }} Overdue
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Overall Status -->
+                        <div class="col-12 col-md-2 text-md-end">
+                            {% if student.status == 'ontrack' %}
+                            <span class="status-badge status-ontrack">● On track</span>
+                            {% else %}
+                            <span class="status-badge status-behind">● Behind</span>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center text-muted py-5">
+                    <i class="bi bi-people fs-1 d-block mb-2"></i>
+                    No students enrolled yet.
+                </div>
+                {% endfor %}
+            </div>
+
+            <div id="noResults" class="text-center text-muted py-4" style="display:none;">
+                <i class="bi bi-search fs-1 d-block mb-2"></i>
+                No students match your search.
+            </div>
+        </div>
+
+    </div>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function applyFilters() {
+        const search = document.getElementById('searchStudent').value.toLowerCase();
+        const courseFilter = document.getElementById('filterCourse').value.toLowerCase();
+        const statusFilter = document.getElementById('filterStatus').value.toLowerCase();
+
+        let visibleCount = 0;
+
+        document.querySelectorAll('#studentList .student-row').forEach(row => {
+            const rowName = row.getAttribute('data-name').toLowerCase();
+            const rowStatus = row.getAttribute('data-status').toLowerCase();
+            const rowCourses = row.getAttribute('data-courses').toLowerCase();
+
+            const matchSearch = search === '' || rowName.includes(search);
+            const matchStatus = statusFilter === 'all' || rowStatus === statusFilter;
+            const matchCourse = courseFilter === 'all' || rowCourses.includes(courseFilter);
+
+            if (matchSearch && matchStatus && matchCourse) {
+                row.style.display = '';
+                visibleCount++;
+                row.querySelectorAll('.course-bar').forEach(bar => {
+                    const barCourse = bar.getAttribute('data-course').toLowerCase();
+                    bar.style.display = (courseFilter === 'all' || barCourse.includes(courseFilter)) ? '' : 'none';
+                });
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
+
+        // Filter dropdown options as user types
+        const query = document.getElementById('searchStudent').value.toLowerCase();
+        document.querySelectorAll('.search-option').forEach(option => {
+            const name = option.querySelector('span').textContent.toLowerCase();
+            option.style.display = name.includes(query) ? 'flex' : 'none';
+        });
+    }
+
+    function resetFilters() {
+        document.getElementById('searchStudent').value = '';
+        document.getElementById('filterCourse').value = 'all';
+        document.getElementById('filterStatus').value = 'all';
+        document.querySelectorAll('#studentList .student-row').forEach(row => {
+            row.style.display = '';
+            row.querySelectorAll('.course-bar').forEach(bar => {
+                bar.style.display = '';
+            });
+        });
+        document.getElementById('noResults').style.display = 'none';
+    }
+
+    function showDropdown() {
+        // Reset all options to visible first
+        document.querySelectorAll('.search-option').forEach(option => {
+            option.style.display = 'flex';
+        });
+        document.getElementById('searchDropdown').style.display = 'block';
+    }
+
+    function hideDropdown() {
+        setTimeout(() => {
+            document.getElementById('searchDropdown').style.display = 'none';
+        }, 150);
+    }
+
+    function selectStudent(name) {
+        document.getElementById('searchStudent').value = name;
+        applyFilters();
+        hideDropdown();
+    }
+
+    window.addEventListener('load', function () {
+        const items = document.querySelectorAll('#attentionList .col-12');
+        const msg = document.getElementById('allOnTrackMsg');
+        if (items.length === 0) msg.style.display = 'block';
+    });
+</script>
+{% endblock %}

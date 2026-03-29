@@ -23,7 +23,6 @@ from users.views import signin_page_view #connects the views function that retur
 
 urlpatterns = [
     
-    
     path('admin/', admin.site.urls),
     path('', include('users.urls')),
     
@@ -32,7 +31,7 @@ urlpatterns = [
     #path("teacher-register/", teacher_register_view, name="teacher-register"),
 
     path('students/', include('students.urls')),
-    path('teachers/', include('teachers.urls')),
+    path('teachers/', include('teachers.urls')),  # Fixed by win516: removed duplicate
     path('users/', include('users.urls')),
     
     # Note by Mark: Add this once teachers/urls.py is made and ready

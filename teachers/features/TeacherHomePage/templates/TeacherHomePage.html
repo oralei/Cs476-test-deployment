@@ -23,11 +23,13 @@
 
                         <!-- Added By Saim Munshi -->
                         <div class="col-12 col-md-3 text-center mb-3 mb-md-0">
-                            {% if teacher.profile_image %}
-                            <img src="{{ teacher.profile_image.url }}" class="rounded-circle img-fluid"
+                            {% if teacher.profile_image_url %}
+                            <img src="{{ teacher.profile_image_url }}" class="rounded-circle img-fluid"
                                 style="max-width:120px;">
                             {% else %}
-                            <i class="bi bi-person-circle" style="font-size: 80px;"></i> {% endif %} 
+                            <img src="{% static 'images/default-profile.jpg' %}" alt="Profile" class="rounded-circle"
+                                style="width: 120px; height: 120px; object-fit: cover;">
+                            {% endif %}
                         </div>
 
                         <!-- Added By Saim Munshi: Mentor profile info -->
@@ -48,11 +50,14 @@
                                 <strong>Specialization:</strong> {{ teacher.specialization }}
                             </p>
 
+                            <p class="mb-1">
+                                <strong>Teacher Code:</strong> {{ teacher.teacher_code }}
+                            </p>
                         </div>
 
                         <!-- Added By Saim edit Button -->
                         <div class="col-12 col-md-3 text-md-end mt-3 mt-md-0">
-                            <a href="#" class="btn btn-primary">
+                            <a href="{% url 'teacher-settings' %}" class="btn btn-primary">
                                 Edit Profile
                             </a>
                         </div>
@@ -84,7 +89,7 @@
                                 <form action="{% url 'teacher-notif-read' notif.id %}" method="POST" style="margin: 0;">
                                     {% csrf_token %}
                                     <button type="submit"
-                                        style="background-color: #0b2469; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                                        style="background-color: #0b2469; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; width: 100px">
                                         Mark as Read ✓
                                     </button>
                                 </form>
@@ -131,6 +136,31 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row g-3 mb-5">
+                        <div class="col-4">
+                            <div class="text-center p-3 border rounded-3 bg-light">
+                                <i class="bi bi-people text-primary fs-3"></i>
+                                <div class="h4 fw-bold mt-2 mb-0">{{ stats.active_students }}</div>
+                                <div class="text-muted small">Active Students</div>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="text-center p-3 border rounded-3 bg-light">
+                                <i class="bi bi-graph-up-arrow text-success fs-3"></i>
+                                <div class="h4 fw-bold mt-2 mb-0">{{ stats.avg_completion }}%</div>
+                                <div class="text-muted small">Average Progress</div>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="text-center p-3 border rounded-3 bg-light">
+                                <i class="bi bi-exclamation-triangle-fill text-danger fs-3"></i>
+                                <div class="h4 fw-bold mt-2 mb-0">{{ stats.needs_attention }}</div>
+                                <div class="text-muted small">Needs Attention</div>
+                            </div>
+                        </div>
+                    </div>
                     <!-- this code is out as no active progress has been added yet 
                     <h5 class="fw-bold mb-3">Active Progression</h5>
                     {% for task in upcoming_tasks|slice:":2" %}
@@ -151,7 +181,7 @@
             </div>
             <!-- Added By Saim Munshi: Upcoming task wedget-->
             <div class="col-12 col-xl-5">
-                <div class="bg-white p-4 rounded-4 shadow-sm border h-100 d-flex flex-column">
+                <div class="bg-white p-4 rounded-4 shadow-sm border h-250 d-flex flex-column">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h4 class="fw-bold mb-0">Upcoming Tasks</h4>
                         <a href="{% url 'calendar' %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
@@ -159,7 +189,7 @@
                         </a>
                     </div>
 
-                    <div class="task-list-container" style="max-height: 300px; overflow-y: auto;">
+                    <div class="task-list-container" style="max-height: 511px; overflow-y: auto;">
                         {% for task in upcoming_tasks %}
                         <div class="existing-container">
                             <div class="existing-container-card p-5 mb-3 border shadow-sm rounded-4">

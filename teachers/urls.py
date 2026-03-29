@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views  # This only imports from the teachers app
 
 urlpatterns = [
@@ -35,5 +36,11 @@ urlpatterns = [
 
 
     path('calendar/', views.Calendar, name='calendar'),
+
+    # Added by win516
+    path('progress/', views.Progress, name='teacher_progress'),
     
+    # Added by Stephen:
+    path("settings/", views.teacherSettings, name="teacher-settings"),
+
 ]

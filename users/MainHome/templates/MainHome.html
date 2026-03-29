@@ -9,12 +9,19 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/MainHome.css' %}">
+    <link rel="icon" href="{% static 'images/favicon.ico' %}">
 </head>
 
 <body>
- 
+
     <!--Added By Saim: Nav login button and temporary button to access teacher and student view-->
-    <nav class="navbar navbar-expand-lg fixed-top px-3 px-md-5">
+    <nav class="navbar navbar-expand-lg fixed-top bg-white shadow-sm px-3 px-md-5">
+        <div class="d-flex align-items-center">
+            <div class="me-3">
+                <img src="{% static 'images/mentora_logo.png' %}" style="max-width: 30px;">
+            </div>
+            <span class="fw-bold">Mentora</span>
+        </div>
         <div class="container-fluid justify-content-end">
             <div class="d-flex align-items-center gap-2">
                 <span class="login-text d-none d-lg-inline ms-2">Already a member?</span>
@@ -23,39 +30,146 @@
         </div>
     </nav>
 
+    <!-- Main login/register buttons: visible before navbar appears -->
+    <div class="hero-login-btn-wrapper">
+        <a href="{% url 'signin_page_view' %}" class="login-btn btn-primary">Login</a>
+    </div>
+    <div class="hero-register-btn-wrapper">
+        <a href="#register-part" class="register-btn btn-primary">Register now</a>
+    </div>
 
     <!--Added By Saim: student card -->
-    <div class="container main-content">
-        <div class="row g-4 justify-content-center">
+    <div class="container-fluid px-0">
+        <div class="row g-0 mt-navbar">
 
-            <div class="col-12 col-md-6 col-lg-5">
-                <div class="glass-card shadow-sm h-100">
-                    <div class="card-icon student-bg"><i class="bi bi-mortarboard"></i></div>
-                    <h2 class="fw-bold mt-3">Student Portal</h2>
-                    <p class="text-muted">Map your progression, and track your milestones in real-time.</p>
-                    <div class="mt-auto">
-                        <a href="{% url 'student_register_view' %}" class="reg-btn w-100">Register as Student</a>
+            <div class="main-info-section lg p-4 p-md-5 mb-4">
+
+                <div class="row align-items-center g-5">
+                    <div class="col-lg-7">
+                        <h1 class="display-5 fw-bold mb-3 text-dark" id="title">Welcome to Mentora!</h1>
+                        <h3 class="display-5 fw-bold mb-3 text-dark" id="header-2">Our Mission</h3>
+                        <p class="text-secondary fs-5 mb-4">
+                            Mentora is a sophisticated online mentoring platform designed to foster real-time
+                            collaboration between mentors and students.
+                        </p>
+
+                        <div class="row g-4 mb-5">
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-start">
+                                    <i class="bi bi-hand-thumbs-up text-primary fs-4 me-3"></i>
+                                    <div>
+                                        <h5 class="fw-bold mb-1">Intuitive Experience</h5>
+                                        <p class="small text-muted mb-0">Tailored interfaces for specialists and
+                                            students alike.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-start">
+                                    <i class="bi bi-eye text-primary fs-4 me-3"></i>
+                                    <div>
+                                        <h5 class="fw-bold mb-1">Live Feedback</h5>
+                                        <p class="small text-muted mb-0">Instant notifications the moment a mentor
+                                            reviews work.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="roles-box p-4 rounded-4 shadow-sm bg-white border">
+                            <h4 class="fw-bold mb-4">Platform Roles</h4>
+                            <ul class="list-unstyled mb-0">
+                                <li class="d-flex align-items-center mb-3">
+                                    <span
+                                        class="badge bg-primary-subtle text-primary rounded-pill me-3 px-3 py-2">Mentors</span>
+                                    <span class="text-dark small">Create courses, assign tasks, and provide graded
+                                        feedback.</span>
+                                </li>
+                                <li class="d-flex align-items-center">
+                                    <span
+                                        class="badge bg-success-subtle text-success rounded-pill me-3 px-3 py-2">Students</span>
+                                    <span class="text-dark small">Enroll in courses, track progress, and stay ahead
+                                        with calendars.</span>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <!--Added By Saim: teacher card -->
-            <div class="col-12 col-md-6 col-lg-5">
-                <div class="glass-card shadow-sm h-100">
-                    <div class="card-icon teacher-bg"><i class="bi bi-person-workspace"></i></div>
-                    <h2 class="fw-bold mt-3">Teacher Portal</h2>
-                    <p class="text-muted">Manage curriculum, monitor student growth, and build custom skill trees for
-                        your department.</p>
-                    <div class="mt-auto">
-                        <a href="{% url 'teacher_register_view' %}" class="reg-btn w-100">Register as Teacher</a>
+
+                    <div class="col-lg-5 d-none d-lg-block text-center">
+                        <img src="{% static 'images/mainhome.jpg' %}" alt="Mentoring Illustration"
+                            class="img-fluid image-main ">
                     </div>
                 </div>
             </div>
 
         </div>
-    </div>
+        <div class="registration-wrapper-full" id="register-part">
+            <div class="container-fluid px-md-5">
+                <div class="row justify-content-center mb-5 mx-0">
+                    <div class="col-lg-8 text-center">
+                        <h2 class="fw-bold display-5 mb-3 text-dark">Ready to start your journey?</h2>
+                        <p class="text-secondary fs-5">
+                            Select your path below to create your account and join the Mentora community.
+                        </p>
+                    </div>
+                </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+                <div class="row g-5 justify-content-center mx-0">
+                    <div class="col-12 col-md-6 col-xl-5">
+                       <div class="registration-card ">
+                            <div class=" mx-auto mb-4">
+                                <i class="bi bi-mortarboard fs-1"></i>
+                            </div>
+                            <h2 class="fw-bold mb-3">Student Portal</h2>
+                            <p class="text-muted flex-grow-1 px-lg-4 mb-4 fs-5">
+                                Access structured roadmaps, submit tasks for review, and visualize your skill growth in
+                                real-time.
+                            </p>
+                            <div class="mt-auto">
+                                <a href="{% url 'student_register_view' %}"
+                                    class="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow-sm fs-5 stretched-link">
+                                    Register as Student
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-xl-5">
+                        <div class="registration-card">
+                            <div class=" mx-auto mb-4">
+                                  <i class="bi bi-person-workspace fs-1"></i>
+                            </div>
+                            <h2 class="fw-bold mb-3">Mentor Portal</h2>
+                            <p class="text-muted flex-grow-1 px-lg-4 mb-4 fs-5">
+                                  Design custom curriculum, manage student cohorts, and provide high-impact graded
+                                feedback.
+                            </p>
+                            <div class="mt-auto">
+                                <a href="{% url 'teacher_register_view' %}"
+                                    class="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow-sm fs-5 stretched-link">
+                                    Register as Mentor
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            const navbar = document.querySelector('.navbar');
+            const heroBtn = document.querySelector('.hero-login-btn-wrapper');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > window.innerHeight * 0.85) {
+                    navbar.classList.add('navbar-visible');
+                    heroBtn.classList.add('hidden');
+                } else {
+                    navbar.classList.remove('navbar-visible');
+                    heroBtn.classList.remove('hidden');
+                }
+            });
+        </script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </body>
 
 </html>

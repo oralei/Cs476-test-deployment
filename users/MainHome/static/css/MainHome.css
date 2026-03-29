@@ -1,51 +1,70 @@
-
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            body tage
+ * Last Modified:   2026-03-27
+ * Modified By:     Saim Munshi
+ * Purpose:         main body tag
+ *-------------------------------------------------------------------------*/
 body {
-    background: linear-gradient(135deg, #f0f4f8 0%, #479df3, #deedff, #4395f3  100%);
+    background: linear-gradient(135deg, #f0f3f7 0%, #f6f8fa, #d6e8fd, #ecf5ff 100%);
     min-height: 100vh;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    position: relative;
+    margin: 0;
+    padding: 0;
+    display: block;
     overflow-x: hidden;
-    padding-top: 80px;
 }
 
-
-
-.glass-card {
-   
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 32px;
-    padding: 100px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s ease;
+/* Navbar Section */
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Navbar
+ * Last Modified:   2026-03-27
+ * Modified By:     Saim Munshi
+ * Purpose:         Navbar
+ *-------------------------------------------------------------------------*/
+.navbar {
+    transition: transform 0.4s ease, opacity 0.4s ease, border-color 0.3s ease;
+    background-color: white !important;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    z-index: 1100;
+    border-bottom: 1px solid transparent;
+    transform: translateY(-100%);
+    opacity: 0;
+}
+ 
+.navbar.navbar-visible {
+    transform: translateY(0);
+    opacity: 1;
+    border-bottom: 1px solid #e5e7eb;
+}
+ 
+.hero-login-btn-wrapper {
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    z-index: 1050;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+ 
+.hero-login-btn-wrapper.hidden {
+    opacity: 0;
+    visibility: hidden;
 }
 
-.glass-card:hover {
-    transform: translateY(-8px);
-    background: rgba(255, 255, 255, 0.8);
-    background-color: #e9f1ff;
+.hero-register-btn-wrapper {
+    position: fixed;
+    top: 20px;
+    right: 120px;
+    z-index: 1050;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
 }
-
-/* 3. Typography & Icons */
-.card-icon {
-    font-size: 2.5rem;
-    width: 70px;
-    height: 70px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-    border-radius: 20px;
+ 
+.hero-register-btn-wrapper.hidden {
+    opacity: 0;
+    visibility: hidden;
 }
-.student-bg { background: rgba(94, 234, 212, 0.1); }
-.teacher-bg { background: rgba(59, 130, 246, 0.1); }
-
-/* Added Saim Munshi: Login button style code */
+ 
 .login-btn {
     padding: 8px 22px;
     border-radius: 50px;
@@ -54,33 +73,152 @@ body {
     font-size: 0.9rem;
     transition: 0.3s;
 }
-
+ 
 .btn-outline {
     border: 1.5px solid #3b82f6;
     color: #3b82f6;
     background: white;
 }
-
+ 
 .btn-primary {
     background: #3b82f6;
     color: white;
     border: 1.5px solid #3b82f6;
+    transition: background 0.4s ease;
 }
 
-.reg-btn {
-    background: #3b82f6;
+.btn-primary:hover {
+    background: #1e5adb;
     color: white;
-    padding: 14px;
-    border-radius: 16px;
-    text-decoration: none;
-    font-weight: 700;
-    display: block;
-    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2);
+    border: 1.5px solid #3b82f6;
 }
 
-/* Added Saim Munshi: this makes modfication to body and glass card and circle when screen size is at 768 pixels */
-@media (max-width: 768px) {
-    body { padding-top: 100px; padding-bottom: 40px; }
-    .glass-card { padding: 30px 20px; }
-    .circle { width: 200px; height: 200px; }
+.register-btn {
+    padding: 8px 22px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: 0.3s;
+}
+
+/* Main Info Section */
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            class
+ * Last Modified:   2026-03-27
+ * Modified By:     Saim Munshi
+ * Purpose:         this is the main class for the infor section
+ *-------------------------------------------------------------------------*/
+.main-info-section {
+    width: 100%;
+    padding-top: 200px !important;
+    padding-left: 100px;
+    padding-right: 100px;
+    padding-bottom: 250px !important;
+    background: azure;
+    margin: 0;
+    border-bottom: none;
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Navbar
+ * Last Modified:   2026-03-27
+ * Modified By:     Saim Munshi
+ * Purpose:         main section role div
+ *-------------------------------------------------------------------------*/
+.roles-box {
+    background-color: #ffffff !important;
+}
+
+.badge {
+    font-weight: 600;
+    min-width: 85px;
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            image
+ * Last Modified:   2026-03-27
+ * Modified By:     Saim Munshi
+ * Purpose:         image style
+ *-------------------------------------------------------------------------*/
+.image-main {
+    max-height: 520px;
+    border-radius: 2.5rem;
+    box-shadow: 0 15px 35px 0 rgba(0, 0, 0, 0.1);
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Section
+ * Last Modified:   2026-03-28
+ * Modified By:     Saim Munshi
+ * Purpose:         Full-width wrapper for the registration area with a 
+ * vertical blue gradient background.
+ *-------------------------------------------------------------------------*/
+.registration-wrapper-full {
+    background: linear-gradient(135deg, #f0f4f8 0%, #a1cefc, #deedff, #95c6ff 100%);
+    width: 100%;
+    margin: 0;
+    padding: 150px 0;
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Component
+ * Last Modified:   2026-03-28
+ * Modified By:     Saim Munshi
+ * Purpose:         registration card  for student and mentor
+ *-------------------------------------------------------------------------*/
+.registration-card {
+    border-radius: 2.5rem !important;
+    transition: transform 0.3s ease;
+     background-color: white !important;
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    padding: 3rem !important;
+    text-align: center !important;
+    border: 0 !important;
+    position: relative;
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Class
+ * Last Modified:   2026-03-28
+ * Modified By:     Saim Munshi
+ * Purpose:         animation and hover css for registration cards
+ *-------------------------------------------------------------------------*/
+.registration-card:hover {
+    transform: translateY(-10px);
+    background-color: #e9f1ff !important;
+    cursor: pointer;
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            Class
+ * Last Modified:   2026-03-28
+ * Modified By:     Saim Munshi
+ * Purpose:         Styling for the outline version of primary buttons 
+ * with specific border thickness.
+ *-------------------------------------------------------------------------*/
+.btn-outline-thick {
+    border-width: 2px !important;
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Mark         * Last Modified by:          Mark
+ * Last Modified:   2026-03-28
+ *-------------------------------------------------------------------------*/
+#title {
+    font-size: calc(20px + 2.2vw);
+}
+
+#header-2 {
+    font-size: calc(14px + 1.2vw);
 }

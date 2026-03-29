@@ -13,8 +13,8 @@
         <div class="row g-4">
 
             <!----------------------------------------------------------------------------------------------------------->
-              <!-- Added By Saim Munshi: student profile  -->
-              <!-- Reused Code: profile wedget code reused with few db changes repurposed for students-->
+            <!-- Added By Saim Munshi: student profile  -->
+            <!-- Reused Code: profile wedget code reused with few db changes repurposed for students-->
             <div class="col-12 col-xl-8">
                 <div class="bg-white p-4 p-md-5 rounded-4 shadow-sm border" style="min-height: 350px;">
                     <h4 class="fw-bold mb-4">Student Profile Information</h4>
@@ -24,10 +24,10 @@
                         <div class="col-12 col-md-3 text-center mb-3 mb-md-0">
                             {% if student.profile_image_url %}
                             <img src="{{ student.profile_image_url }}" alt="Profile" class="rounded-circle"
-                                style="width: 80px; height: 80px; object-fit: cover;">
+                                style="width: 120px; height: 120px; object-fit: cover;">
                             {% else %}
-                            <img src="{% static 'images/default-profile.png' %}" alt="Profile" class="rounded-circle"
-                                style="width: 80px; height: 80px; object-fit: cover;">
+                            <img src="{% static 'images/default-profile.jpg' %}" alt="Profile" class="rounded-circle"
+                                style="width: 120px; height: 120px; object-fit: cover;">
                             {% endif %}
                         </div>
 
@@ -44,7 +44,7 @@
 
                         <!-- Added By Saim Munshi: edit profile button -->
                         <div class="col-12 col-md-3 text-md-end mt-3 mt-md-0">
-                            <a href="" class="btn btn-primary">
+                            <a href="{% url 'student-settings' %}" class="btn btn-primary">
                                 Edit Profile
                             </a>
                         </div>
@@ -80,7 +80,7 @@
                                 <form action="{% url 'student-notif-read' notif.id %}" method="POST" style="margin: 0;">
                                     {% csrf_token %}
                                     <button type="submit"
-                                        style="background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                                        style="background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; width: 100px">
                                         Mark as Read ✓
                                     </button>
                                 </form>
@@ -91,14 +91,14 @@
                             {% endfor %}
                         </div>
                     </div>
-                    <!-- Link to the future History page -->
+                    <!-- Link to the future History page 
                     <div style="text-align: right; margin-top: 10px;">
                         <a href="#">View Notification History</a>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <!----------------------------------------------------------------------------------------------------------->
-             <!-- Added By Saim Munshi: student overview  -->
+            <!-- Added By Saim Munshi: student overview  -->
               <!-- Reused Code: from Mentors just repurposed for students-->
             <div class="col-12 col-xl-7">
                 <div class="bg-white p-4 p-md-5 rounded-4 shadow-sm border" style="min-height: 450px;">
@@ -108,7 +108,7 @@
                         <div class="col-4">
                             <div class="text-center p-3 border rounded-3 bg-light">
                                 <i class="bi bi-book-fill text-primary fs-3"></i>
-                                <div class="h4 fw-bold mt-2 mb-0">{{ course_count }}</div>
+                                <div class="h4 fw-bold mt-2 mb-0">{{ stats.total_courses }}</div>
                                 <div class="text-muted small">Courses</div>
                             </div>
                         </div>
@@ -124,8 +124,34 @@
                         <div class="col-4">
                             <div class="text-center p-3 border rounded-3 bg-light">
                                 <i class="bi bi-clipboard-check-fill text-warning fs-3"></i>
-                                <div class="h4 fw-bold mt-2 mb-0">{{ task_count }}</div>
+                                <div class="h4 fw-bold mt-2 mb-0">{{ stats.total_tasks_all }}</div>
                                 <div class="text-muted small">Tasks</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-5">
+                         <div class="col-4">
+                            <div class="text-center p-3 border rounded-3 bg-light">
+                                <i class="bi bi-book-fill text-primary fs-3"></i>
+                                <div class="h4 fw-bold mt-2 mb-0">{{ stats.overall_progress }}%</div>
+                                <div class="text-muted small">Progress</div>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="text-center p-3 border rounded-3 bg-light">
+                                <i class="bi bi-clipboard-check-fill text-success fs-3"></i>
+                                <div class="h4 fw-bold mt-2 mb-0">{{ stats.total_completed }}</div>
+                                <div class="text-muted small">Completed</div>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="text-center p-3 border rounded-3 bg-light">
+                                <i class="bi bi-exclamation-octagon-fill text-danger fs-3"></i>
+                                <div class="h4 fw-bold mt-2 mb-0">{{ stats.total_overdue }}</div>
+                                <div class="text-muted small">Overdue</div>
                             </div>
                         </div>
                     </div>
@@ -136,8 +162,8 @@
 
             <!-- Added By Saim Munshi: student upcoming task  -->
             <!-- Reused Code: from upcoming task wedget from Mentors just repurposed for students with submit button-->
-            <div class="col-12 col-xl-5">
-                <div class="bg-white p-4 rounded-4 shadow-sm border h-100 d-flex flex-column">
+           <div class="col-12 col-xl-5">
+                <div class="bg-white p-4 rounded-4 shadow-sm border h-250 d-flex flex-column">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h4 class="fw-bold mb-0">Upcoming Tasks</h4>
                         <a href="{% url 'calendar' %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
@@ -145,7 +171,7 @@
                         </a>
                     </div>
 
-                    <div class="task-list-container" style="max-height: 300px; overflow-y: auto;">
+                    <div class="task-list-container" style="max-height: 511px; overflow-y: auto;">
                         {% for task in upcoming_tasks %}
                         <div class="existing-container">
                             <div class="existing-container-card p-5 mb-3 border shadow-sm rounded-4">
@@ -187,7 +213,7 @@
                     <!-- -------------------------------------------------------------------- -->
                 </div>
             </div>
-             <!----------------------------------------------------------------------------------------------------------->
+            <!----------------------------------------------------------------------------------------------------------->
         </div>
     </div>
 </main>

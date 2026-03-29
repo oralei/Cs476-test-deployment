@@ -9,6 +9,7 @@ from .models import CustomUser
 from django.contrib.auth import get_user_model
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import authenticate, login, logout
+from .simple_factory import UserRegistrationFactory # Added By Ariel for simple factory pattern
 
 #from django.contrib.auth import get_user_model
 #from django.contrib.auth import authenticate, login
@@ -30,15 +31,31 @@ def main_page_view(request):
     return render(request, 'MainHome.html')
 
 
-
-
-
+"""
+Author: Ariel
+Function Name: upload_profile_picture
+Purpose: Helper Function for Cloudinary profile photo upload
+"""
+def upload_profile_picture(image_file):
+    """Helper to handle image uploads cleanly"""
+    if not image_file:
+        print("Register: No image file provided")
+        return None
+    try:
+        upload_result = cloudinary.uploader.upload(image_file, folder="Mentora_Profiles")
+        image_url = upload_result.get('secure_url')
+        print(f"Cloudinary Success: {image_url} ---")
+        return image_url
+    except Exception as e:
+        print(f"Cloudinary Error: {e} ---")
+        return None
 
 """
 Author: Saim Munshi
 Function Name: student_register_view
 Purpose: direct view.py django to the correct html file
 Update: Fixed Cloudinary-MongoDB picture upload - Mark
+Update: Updated to work with simple factory and separated Cloudinary upload
 """
 # Get the active User model (CustomUser)
 User = get_user_model() # make sure it uses the custom user configuration 
@@ -48,28 +65,14 @@ def student_register_view(request):
         # Print all data received - Used to debug and test if POST data is being sent.
         print(f"Data: {request.POST}")
         
-        # Check for file
-        image_url = None
-        image_file = request.FILES.get('UploadPFP')
-        if image_file:
-            try:
-                upload_result = cloudinary.uploader.upload(
-                    image_file, 
-                    folder="Mentora_Profiles"
-                )
-                image_url = upload_result.get('secure_url')
-                print(f"Student Register: Cloudinary Success: {image_url} ---")
-            except Exception as e:
-                print(f"Student Register: Cloudinary Error: {e} ---")
-        else:
-            print("Student Register: No image file provided")
+        # Updated by Ariel  Using Cloudinary helper function
+        image_url = upload_profile_picture(request.FILES.get('UploadPFP'))
 
         # Set user data with POST data
         email = request.POST.get('email')
         password = request.POST.get('mainpassword')
         confirmpassword = request.POST.get('confirmpassword')
         name = request.POST.get("name", "").strip()
-
 
         #Regex to ensure the name and las
         name_regex = r"^[A-Za-z]+(?: [A-Za-z'-]+)+$"
@@ -97,34 +100,25 @@ def student_register_view(request):
             return render(request, "StudentRegistration.html")
         
         try:
-            # Create User
-            user = User.objects.create_user(
-                username=request.POST.get('name'),  # Changed from email to name
-                email=email, 
-                password=password
+            # Added by Ariel: Creates user object using simple_factory.py registration function
+            user, student_profile = UserRegistrationFactory.register_user(
+                user_type='student',
+                email=email,
+                password=password,
+                name=name,
+                image_url=image_url,
+                student_id=request.POST.get('studentId')
             )
 
-   
-            student = Student.objects.create(
-                user=user,
-                full_name=request.POST.get('name'),
-                student_id=request.POST.get('studentId'),
-                profile_image_url=image_url
-            )
-            
-
-            # Auto Login
+            # Auto Login after registration
             login(request, user)
             return redirect('signin_page_view') # Note: url names use underscore. See student/urls.py
         
-
         except Exception as e:
             print(f"--- CRITICAL ERROR DURING SAVE: {e} ---")
             return render(request, 'StudentRegistration.html', {'error': str(e)})
 
     return render(request, 'StudentRegistration.html')
-
-
 
 
 def teacher_register_view(request):
@@ -133,28 +127,22 @@ def teacher_register_view(request):
         print(f"Data: {request.POST}")
         
         # Check for file
-        image_url = None
-        image_file = request.FILES.get('UploadPFP')
-        if image_file:
-            try:
-                upload_result = cloudinary.uploader.upload(
-                    image_file, 
-                    folder="Mentora_Profiles"
-                )
-                image_url = upload_result.get('secure_url')
-                print(f"Student Register: Cloudinary Success: {image_url} ---")
-            except Exception as e:
-                print(f"Student Register: Cloudinary Error: {e} ---")
-        else:
-            print("Student Register: No image file provided")
+        image_url = upload_profile_picture(request.FILES.get('UploadPFP'))
 
         # Set user data with POST data
-        email = request.POST.get('email')
+        email = request.POST.get('email', '').strip()
         password = request.POST.get('mainpassword')
         confirmpassword = request.POST.get('confirmpassword')
         name = request.POST.get("name", "").strip()
+        license_num = request.POST.get('license', '').strip()
+        specialization = request.POST.get('specialization', '').strip()
 
-         #Regex to ensure the name and las
+        #Added By Saim Munshi: checks all fields and they must be filled 
+        if not all([email, password, confirmpassword, name, license_num, specialization]):
+            messages.error(request, "All fields are required")
+            return render(request, "TeacherRegistration.html")
+        
+        #Regex to ensure the name and las
         name_regex = r"^[A-Za-z]+(?: [A-Za-z'-]+)+$"
         if not name: 
             messages.error(request, "Full name is required.")
@@ -163,6 +151,13 @@ def teacher_register_view(request):
         if not re.match(name_regex, name):
             messages.error(request, "Full name is Required")
             return render(request, "TeacherRegistration.html")
+        
+        #Added By Saim Munshi: valid email regex
+        email_regex = r'^[\w\-\.]+@([\w\-]+\.)+[\w\-]{2,4}$'
+        if not re.match(email_regex, email):
+            messages.error(request, "Please enter a valid email address.")
+            return render(request, "TeacherRegistration.html")
+        
         if User.objects.filter(email=email).exists():
             print("Teacher Register: User already exists ---")
             return render(request, 'TeacherRegistration.html', {'error': 'Email already exists'})
@@ -183,24 +178,18 @@ def teacher_register_view(request):
             return render(request, 'TeacherRegistration.html', {'error': 'Email already exists'})
 
         try:
-            # Create User
-            user = User.objects.create_user(
-                username=request.POST.get('name'),  # Changed from email to name
-                email=email, 
-                password=password
-            )
-
-            # Create Profile - Student or Teacher
-
-            teacher = Teacher.objects.create(
-                user=user,
-                full_name=request.POST.get('name'),
+            # Added by Ariel: Creates user object using simple_factory.py registration function
+            user, teacher_profile = UserRegistrationFactory.register_user(
+                user_type='teacher',
+                email=email,
+                password=password,
+                name=name,
+                image_url=image_url,
                 license_number=request.POST.get('license'),
-                specialization=request.POST.get('specialization'),
-                profile_image_url=image_url
+                specialization=request.POST.get('specialization')
             )
             
-            # Auto Login
+            # Auto Login after registration
             login(request, user)
             return redirect('signin_page_view') # replace with 'teacher_dashboard' when ready
 
@@ -210,8 +199,9 @@ def teacher_register_view(request):
 
     return render(request, 'TeacherRegistration.html')
 
-"""Added By Mark: For redirects """
 
+
+"""Added By Mark: Below are views for redirects"""
 class CustomLoginView(LoginView):
     template_name = 'StudentHomePage.html'
 
@@ -242,7 +232,7 @@ def signin_page_view(request):
         if user is not None:
             login(request, user)
             
-            # DEBUGGING PRINTS - Check your terminal/console!
+            # DEBUGGING PRINTS
             print(f"User {email} logged in.")
             print(f"Has Student Profile: {hasattr(user, 'students_student_profile')}")
             

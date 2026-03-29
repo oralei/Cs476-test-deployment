@@ -117,3 +117,22 @@ body {
     color: #4482ee;
     text-decoration: none
 }
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
+ * Type:            class
+ * Last Modified:   2026-02-21
+ * Modified By:     Saim Munshi
+ * Purpose:          logo style 
+ *-------------------------------------------------------------------------*/
+.brand-badge {
+    background: linear-gradient(135deg, #f5f9ff 0%, #e8f1ff 100%);
+    border-radius: 12px;
+    padding: 20px 24px;
+    border: 1px solid rgba(0, 102, 204, 0.1);
+    display: inline-flex;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.logo-container img {
+    display: block;
+}
