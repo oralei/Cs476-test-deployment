@@ -160,7 +160,7 @@ def Calendar(request):
             'start': start_str,
             'end': end_str,
             'extendedProps': {
-                'type': 'assignment',
+                'type': task.task_type.lower() if getattr(task, 'task_type', None) else 'assignment',
                 'course': str(task.course_id),
             }
         })
