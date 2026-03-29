@@ -320,6 +320,11 @@ def studentTaskSubmit(request, task_id):
     student = request.student_profile
     task = get_object_or_404(Task, id=task_id, assigned_students=student)
     submission = TaskSubmission.objects.filter(task=task, student=student).first()
+    
+    if not submission_text.strip() and not media_file:
+        from django.contrib import messages
+        messages.error(request, 'Submission cannot be empty. Please type an answer or upload a file.')
+        return redirect(request.path)
 
     if request.method == "POST":
         submission_text = request.POST.get('submission_text', '')

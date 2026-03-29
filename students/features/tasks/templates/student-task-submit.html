@@ -24,6 +24,16 @@
   <!-- Submission Form -->
   <div class="card mt-4 p-4">
       <h3>Your Submission</h3>
+
+    <!--Added by win516-->
+    {% if messages %}
+       {% for message in messages %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+       {% endfor %}
+    {% endif %}
       
       <form method="POST" action="{% url 'student-task-submit' task.id %}" enctype="multipart/form-data">
           {% csrf_token %}
