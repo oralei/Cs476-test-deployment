@@ -123,6 +123,18 @@ h2, .fw-bold, .text-dark, span {
 
 /*-------------------------------------------------------------------------
  * Author:          Saim Munshi
+ * Type:            Sidebar Styling
+ * Last Modified:   2026-03-29
+ * Purpose:         side pill logo css
+ *-------------------------------------------------------------------------*/
+.sidebar-pill-logo{
+    width: 40px; 
+    height: auto; 
+    display: block;
+}
+
+/*-------------------------------------------------------------------------
+ * Author:          Saim Munshi
  * Type:            UI Components (Avatars)
  * Last Modified:   2026-03-16
  * Purpose:         Circular profile for students and mentors. for both normal 

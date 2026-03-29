@@ -27,11 +27,13 @@
             </div>
             <!-- Right side (buttons grouped) -->
             <div class="d-flex align-items-center ms-auto">
-                <button class="btn border-0 d-flex me-2" id="mobile-side-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#chatWindow" style="max-width: 30px">
+                <button class="btn border-0 d-flex me-2" id="mobile-side-button" type="button"
+                    data-bs-toggle="offcanvas" data-bs-target="#chatWindow" style="max-width: 30px">
                     <i class="bi bi-bell-fill"></i>
                 </button>
 
-                <button class="btn border-0 d-flex" id="mobile-side-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+                <button class="btn border-0 d-flex" id="mobile-side-button" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#mobileSidebar">
                     <i class="bi bi-list"></i>
                 </button>
             </div>
@@ -75,7 +77,7 @@
                         </a>
 
                         <hr>
-              
+
                         <a href="{% url 'logout' %}" class="nav-link text-danger"><i
                                 class="bi bi-box-arrow-right me-3"></i>Log out</a>
             </nav>
@@ -85,9 +87,11 @@
     <!-- Desktop view side bar -->
     <div class="sidebar-container d-none d-lg-block">
         <div class="sidebar-pill shadow-sm">
-            <div class="d-flex align-items-center mb-5 px-3">
-                <div class="me-3"><img src="{% static 'images/mentora_logo2.png' %}" style="max-width: 40px;"></div>
-                <span class="fs-4 fw-bold text-dark">Mentora</span>
+            <div class="d-flex align-items-center justify-content-center w-100 mb-5 px-0">
+                <div class="d-flex align-items-center">
+                    <img src="{% static 'images/mentora_logo2.png' %}" class="me-2 sidebar-pill-logo">
+                    <span class="fs-4 fw-bold text-dark" style="line-height: 1;">Mentora</span>
+                </div>
             </div>
 
             <nav class="nav flex-column nav-pills mb-auto">

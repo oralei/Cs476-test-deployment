@@ -27,10 +27,12 @@
             </div>
             <!-- Right side (buttons grouped) -->
             <div class="d-flex align-items-center ms-auto">
-                <button class="btn border-0 d-flex me-2" id="mobile-side-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#chatWindow" style="max-width: 30px">
+                <button class="btn border-0 d-flex me-2" id="mobile-side-button" type="button"
+                    data-bs-toggle="offcanvas" data-bs-target="#chatWindow" style="max-width: 30px">
                     <i class="bi bi-bell-fill"></i>
                 </button>
-                <button class="btn border-0 d-flex" id="mobile-side-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" style="max-width: 30px">
+                <button class="btn border-0 d-flex" id="mobile-side-button" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#mobileSidebar" style="max-width: 30px">
                     <i class="bi bi-list"></i>
                 </button>
             </div>
@@ -87,7 +89,8 @@
                     <i class="bi bi-calendar3"></i> Calendar
                 </a>
 
-                <a href="{% url 'student-settings' %}" class="nav-link {% if request.resolver_match.url_name == '#' %}active{% endif %}">
+                <a href="{% url 'student-settings' %}"
+                    class="nav-link {% if request.resolver_match.url_name == '#' %}active{% endif %}">
                     <i class="bi bi-gear"></i> Settings
                 </a>
 
@@ -103,9 +106,13 @@
     <!--Desktop view side bar -->
     <div class="sidebar-container d-none d-lg-block">
         <div class="sidebar-pill shadow-sm">
-            <div class="d-flex align-items-center mb-5 px-3">
-                <div class="me-3"><img src="{% static 'images/mentora_logo.png' %}" style="max-width: 40px;"></div>
-                <span class="fs-4 fw-bold text-dark">Mentora</span>
+            <div class="d-flex align-items-center justify-content-center w-100 mb-5 px-0">
+                <div class="d-flex align-items-center">
+                    <div class="me-2">
+                        <img src="{% static 'images/mentora_logo.png' %}" class="sidebar-pill-logo">
+                    </div>
+                    <span class="fs-4 fw-bold text-dark" style="line-height: 1;">Mentora</span>
+                </div>
             </div>
 
             <nav class="nav flex-column nav-pills mb-auto">
@@ -150,7 +157,8 @@
                 </a>
 
                 <hr>
-                <a href="{% url 'student-settings' %}" class="nav-link {% if request.resolver_match.url_name == 'student-settings' %}active{% endif %}">
+                <a href="{% url 'student-settings' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'student-settings' %}active{% endif %}">
                     <i class="bi bi-gear"></i> Settings
                 </a>
             </nav>
@@ -197,13 +205,13 @@
 
                     <div class="d-flex justify-content-between align-items-center">
                         <small class="text-secondary">Sent by System</small>
-                            <form action="{% url 'student-notif-read' notification.id %}" method="POST" style="margin: 0;">
-                                {% csrf_token %}
-                                <button type="submit"
-                                    style="background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
-                                    Remove
-                                </button>
-                            </form>
+                        <form action="{% url 'student-notif-read' notification.id %}" method="POST" style="margin: 0;">
+                            {% csrf_token %}
+                            <button type="submit"
+                                style="background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                                Remove
+                            </button>
+                        </form>
                     </div>
                 </div>
                 {% empty %}
