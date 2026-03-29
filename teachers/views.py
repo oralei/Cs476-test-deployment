@@ -66,37 +66,51 @@ def teacherHome(request):
     student_count = len(distinct_students)
 
     #Added By Saim Munshi: Count of all tasks created across all this teacher's courses 
+    courses = list(Course.objects.filter(teacher=teacher))
     task_count = Task.objects.filter(course__teacher=teacher).count()
 
     # Added By Saim Munshi: this is progress logic
     # **Note: this was logic from waseera code***
-    courses = Course.objects.filter(teacher=teacher)
+    # Added By Saim Munshi: Convert to a set for O(1) lookup speed
+
+
+    all_tasks = list(Task.objects.filter(course__in=courses))
+    
+    # Added By Saim Munshi: bulk Fetch Submissions 
+    # Added By Saim Munshi: This replaces the queries that were inside your nested loops
+    reviewed_data = TaskSubmission.objects.filter(
+        task__in=all_tasks, 
+        status='reviewed'
+    ).values_list('student_id', 'task_id')
+
+    reviewed_lookup = {(str(s_id), str(t_id)) for s_id, t_id in reviewed_data}
     student_map = {}
+    distinct_students = set()
     now = timezone.now()
 
     # Added By Saim Munshi: this is progress logic
     # **Note: this was logic from waseera code***
     for course in courses:
-        for student in course.students.all():
+        course_students = course.students.all()
+        # Added By Saim Munshi: filter tasks for this specific course from our prefetched list
+        course_tasks = [t for t in all_tasks if t.course_id == course.id]
+        
+        for student in course_students:
             sid = str(student.id)
+            distinct_students.add(sid)
             
-            total_t = Task.objects.filter(course=course, assigned_students=student).count()
-            comp_t = TaskSubmission.objects.filter(task__course=course, student=student, status='reviewed').count()
-            
-            overdue_count = Task.objects.filter(
-                course=course, 
-                assigned_students=student, 
-                due_date__lt=now
-            ).exclude(
-                id__in=TaskSubmission.objects.filter(student=student, status='reviewed').values_list('task_id', flat=True)
-            ).count()
-
             if sid not in student_map:
                 student_map[sid] = {"comp": 0, "over": 0, "total": 0}
 
-            student_map[sid]["comp"] += comp_t
-            student_map[sid]["over"] += overdue_count
-            student_map[sid]["total"] += total_t
+            # Added By Saim Munshi: Check task assignments and completion status in Python memory
+            for task in course_tasks:
+                if student in task.assigned_students.all():
+                    student_map[sid]["total"] += 1
+                    
+                    if (sid, str(task.id)) in reviewed_lookup:
+                        student_map[sid]["comp"] += 1
+                    elif task.due_date and task.due_date < now:
+                        student_map[sid]["over"] += 1
 
     # Added By Saim Munshi: this is progress logic
     # **Note: this was logic from waseera code***
@@ -128,6 +142,7 @@ def teacherHome(request):
     }
    
     return render(request, 'TeacherHomePage/templates/TeacherHomePage.html', context)
+
 
 @login_required
 @teacher_required
