@@ -174,9 +174,6 @@ def Calendar(request):
 def Mentor(request):
     return render(request, '/Mentors/templates/Mentor.html')
 
-def Progress(request):
-    return render(request, '/Progess/templates/Progess.html')
-
 """ ------------------------------ Student Courses Views/Functions ------------------------------ """
 
 """
@@ -320,16 +317,17 @@ def studentTaskSubmit(request, task_id):
     student = request.student_profile
     task = get_object_or_404(Task, id=task_id, assigned_students=student)
     submission = TaskSubmission.objects.filter(task=task, student=student).first()
-    
-    if not submission_text.strip() and not media_file:
-        from django.contrib import messages
-        messages.error(request, 'Submission cannot be empty. Please type an answer or upload a file.')
-        return redirect(request.path)
 
     if request.method == "POST":
         submission_text = request.POST.get('submission_text', '')
         media_file = request.FILES.get('attached_file')
         uploaded_file_url = submission.file_url if submission else ""
+        
+        # Added by win516 — validate empty submission
+        if not submission_text.strip() and not media_file:
+            from django.contrib import messages
+            messages.error(request, 'Submission cannot be empty. Please type an answer or upload a file.')
+            return redirect(request.path)
 
         if media_file:
             try:
@@ -586,7 +584,7 @@ def Progress(request):
         "total_overdue": total_overdue_all,
     }
 
-    return render(request, 'StudentProgress.html', {
+    return render(request, 'Progress/templates/StudentProgress.html', {
         "courses": course_data,
         "upcoming_tasks": upcoming_tasks,
         "recent_feedback": recent_feedback,
