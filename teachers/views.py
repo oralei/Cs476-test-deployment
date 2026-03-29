@@ -703,7 +703,7 @@ def Progress(request):
         "avg_completion": int(sum(s["progress"] for s in student_data) / len(student_data)) if student_data else 0,
     }
 
-    return render(request, "Progress/templates/Progress.html", {
+    return render(request, "Progress/templates/progress.html", {
         "students": student_data,
         "courses": course_names,
         "stats": stats,
