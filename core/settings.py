@@ -26,8 +26,7 @@ load_dotenv()  # 2. Call the tool to "open the vault"
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -176,7 +175,7 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
-USE_TZ = False
+USE_TZ = True
 
 # Where to go after a successful manual login if no 'next' parameter is present
 ###LOGIN_REDIRECT_URL = 'teacher_home' 
