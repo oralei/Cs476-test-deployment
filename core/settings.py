@@ -176,7 +176,7 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
-USE_TZ = True
+USE_TZ = False
 
 # Where to go after a successful manual login if no 'next' parameter is present
 ###LOGIN_REDIRECT_URL = 'teacher_home' 
