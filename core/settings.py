@@ -223,6 +223,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'teachers/features/tasks/static'),  # Added by Mark
     os.path.join(BASE_DIR, 'teachers/features/My_Student/static'),
     os.path.join(BASE_DIR, 'teachers/features/Setting/static'),
+    os.path.join(BASE_DIR, 'teachers/features/Progress/static'),  # added by win516
     os.path.join(BASE_DIR, 'teachers/BaseTeacher/static'),
 ]
 
