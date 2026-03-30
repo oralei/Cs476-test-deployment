@@ -38,7 +38,7 @@ urlpatterns = [
     path('calendar/', views.Calendar, name='calendar'),
 
     # Added by win516
-    path('progress/', views.Progress, name='teacher_progress'),
+    path('progress/', views.TeacherProgress, name='teacher_progress'),
     
     # Added by Stephen:
     path("settings/", views.teacherSettings, name="teacher-settings"),

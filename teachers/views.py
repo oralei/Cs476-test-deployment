@@ -575,7 +575,7 @@ def deleteTask(request, task_id):
 # added by win516
 @login_required
 @teacher_required
-def Progress(request):
+def TeacherProgress(request):
     from django.utils import timezone
     current_teacher = request.teacher_profile
     courses = Course.objects.filter(teacher=current_teacher)

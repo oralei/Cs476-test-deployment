@@ -174,9 +174,6 @@ def Calendar(request):
 def Mentor(request):
     return render(request, '/Mentors/templates/Mentor.html')
 
-def Progress(request):
-    return render(request, '/Progess/templates/Progess.html')
-
 """ ------------------------------ Student Courses Views/Functions ------------------------------ """
 
 """
@@ -587,7 +584,7 @@ def Progress(request):
         "total_overdue": total_overdue_all,
     }
 
-    return render(request, 'StudentProgress.html', {
+    return render(request, 'Progress/templates/StudentProgress.html', {
         "courses": course_data,
         "upcoming_tasks": upcoming_tasks,
         "recent_feedback": recent_feedback,
